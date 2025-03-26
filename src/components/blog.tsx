@@ -38,15 +38,21 @@ export function useBlog(route: string) {
       return data;
     } catch (error) {
       console.error(`Error fetching blog data for ${route}:`, error);
-      return {};
+      return {
+        date: new Date().toISOString(),
+        tags: [],
+        title: '',
+        description: '',
+      }; // Ensure it matches the Blog type
     }
   });
 }
 
 export function BlogCard({ route }: { route: string }) {
-  const {
-    data: { date = new Date(), tags = [], title = '', description = '' } = {},
-  } = useBlog(route)
+  const { data } = useBlog(route);
+
+  // Ensure default values if `data` is undefined
+  const { date = new Date().toISOString(), tags = [], title = '', description = '' } = data ?? {};
 
   const linkRoute = normalizeLinkRoute(route);
 

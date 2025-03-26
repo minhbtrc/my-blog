@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "^1.1.0",
-    "@gears-bot/rehype": "^2.1.0",
+    "@gears-bot/rehype": "^1.2.1",
     "@jsdevtools/rehype-toc": "^3.0.2",
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
