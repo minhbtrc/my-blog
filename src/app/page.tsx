@@ -4,6 +4,7 @@ import ky from 'ky'
 import useSWR from 'swr'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
+import { Suspense } from 'react'
 
 import { BlogCard } from '@/components/blog'
 import Tags from '@/components/tags'
@@ -156,9 +157,11 @@ export default function Page() {
               >
                 Welcome to my digital space! I&apos;m an AI Engineer specializing in LLMs and NLP, with a passion for pushing the boundaries of AI. Here, I share insights on AI, research, and my thoughts on the field.
               </motion.p>
+              <Suspense fallback={<div>Loading tags...</div>}>
               <Island>
                 <TagList />
               </Island>
+              </Suspense>
             </div>
             <div className="content-section profile-section">
               <Island>
@@ -173,9 +176,11 @@ export default function Page() {
         <div className="container">
           <h2 className="text-3xl font-bold mb-8">Latest Posts</h2>
           <div className="grid grid-cols-12 gap-6">
+          <Suspense fallback={<div>Loading...</div>}>
             <Island>
-              <BlogList />
+                <BlogList />
             </Island>
+            </Suspense>
           </div>
         </div>
       </section>

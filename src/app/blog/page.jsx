@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -18,7 +18,7 @@ const fallbackBlogData = [
   }
 ]
 
-export default function BlogPage() {
+function BlogPageTemp() {
   const searchParams = useSearchParams()
   const tagFilter = searchParams.get('tag')
   const [loading, setLoading] = useState(true)
@@ -239,3 +239,11 @@ export default function BlogPage() {
     </div>
   )
 } 
+
+export default function BlogPage(){
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BlogPageTemp />
+    </Suspense>
+  )
+}
