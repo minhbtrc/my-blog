@@ -231,13 +231,14 @@
   resolved "https://registry.npmjs.org/@fortawesome/fontawesome-free/-/fontawesome-free-6.6.0.tgz"
   integrity sha512-60G28ke/sXdtS9KZCpZSHHkCbdsOGEhIUGlwq6yhY74UpTiToIh8np7A8yphhM4BWsvNFtIvLpi4co+h9Mr9Ow==
 
-"@gears-bot/rehype@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.npmjs.org/@gears-bot/rehype/-/rehype-1.1.2.tgz"
-  integrity sha512-f4QRHan2pfApWuqV+UyW/dfUOYAGpNNI+W8l7BBj6jIsjEqmbr+OjGRAKwDRXYo7ud5qKn6hHeh5Wj3b4HCpzQ==
+"@gears-bot/rehype@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@gears-bot/rehype/-/rehype-2.1.0.tgz#038ce2aaa29d575a228eca4fe1f6caaf8f9c2d9a"
+  integrity sha512-pBs2vYBQtRfZMkIjLhJI9nc09+5AA2rahgRKrAzIH/ncYHjAAXBTdJwmpusjqpP0o1pJShWSP0sLdwHv+aRsnA==
   dependencies:
     attributes-parser "^2.2.2"
     isomorphic-git "^1.26.4"
+    mdast-util-to-string "^4.0.0"
     rehype-highlight "^7.0.0"
     unist-util-visit "^5.0.0"
 
