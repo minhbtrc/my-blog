@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import SearchButton from './searchButton'
-import SearchButton2 from './searchButton2'
 import PlayButton from './playButton'
 import Menu from './menu'
 import Theme from '@/app/footer/theme'

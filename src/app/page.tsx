@@ -154,7 +154,7 @@ export default function Page() {
                 transition={{ duration: 0.5 }}
                 className="text-lg leading-relaxed"
               >
-                Welcome to my digital space! I'm an AI Engineer specializing in LLMs and NLP, with a passion for pushing the boundaries of AI. Here, I share insights on AI, research, and my thoughts on the field.
+                Welcome to my digital space! I&apos;m an AI Engineer specializing in LLMs and NLP, with a passion for pushing the boundaries of AI. Here, I share insights on AI, research, and my thoughts on the field.
               </motion.p>
               <Island>
                 <TagList />

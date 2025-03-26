@@ -32,13 +32,13 @@ export default function LangChainChatbotPost() {
       </div>
       
       <p>
-        In an era where AI-powered conversations are transforming how we interact with technology, building a chatbot that balances functionality with user privacy is more critical than ever. The open-source langchain-chatbot repository, created by minhbtrc, offers a compelling solution. This project leverages the LangChain framework to deliver a customizable, memory-enabled chatbot with robust privacy features and developer-friendly tools. Whether you're a developer exploring AI applications or a business seeking a conversational tool, this repo is worth a closer look. In this blog post, we'll dive into its key features, architecture, setup process, and more—complete with visuals to bring it to life.
+        In an era where AI-powered conversations are transforming how we interact with technology, building a chatbot that balances functionality with user privacy is more critical than ever. The open-source langchain-chatbot repository, created by minhbtrc, offers a compelling solution. This project leverages the LangChain framework to deliver a customizable, memory-enabled chatbot with robust privacy features and developer-friendly tools. Whether you&apos;re a developer exploring AI applications or a business seeking a conversational tool, this repo is worth a closer look. In this blog post, we&apos;ll dive into its key features, architecture, setup process, and more—complete with visuals to bring it to life.
       </p>
 
       <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-slate-200">What is langchain-chatbot?</h2>
       
       <p>
-        At its core, langchain-chatbot is a full-stack chatbot implementation that uses the LangChain framework to connect with large language models (LLMs) like Vertex AI or OpenAI. What sets it apart is its focus on privacy, ease of use, and customization. It stores conversation history in MongoDB, anonymizes sensitive data with Microsoft Presidio, and provides tracing capabilities via LangSmith. Plus, it's built with a modern tech stack—Next.js for the frontend and FastAPI for the backend—making it a ready-to-deploy solution.
+        At its core, langchain-chatbot is a full-stack chatbot implementation that uses the LangChain framework to connect with large language models (LLMs) like Vertex AI or OpenAI. What sets it apart is its focus on privacy, ease of use, and customization. It stores conversation history in MongoDB, anonymizes sensitive data with Microsoft Presidio, and provides tracing capabilities via LangSmith. Plus, it&apos;s built with a modern tech stack—Next.js for the frontend and FastAPI for the backend—making it a ready-to-deploy solution.
       </p>
       
       <div className="bg-blue-50 p-5 rounded-lg border-l-4 border-blue-500 my-6">
@@ -56,7 +56,7 @@ export default function LangChainChatbotPost() {
             LangChain is a framework that simplifies building applications with LLMs. In this repo, it connects the chatbot to powerful models like Vertex AI or OpenAI via their APIs. This flexibility lets developers choose their preferred provider without major code changes.
           </p>
           <p className="mt-2 text-blue-700">
-            <strong>Why it's cool:</strong> You're not locked into one LLM—experiment with different models to suit your needs.
+            <strong>Why it&apos;s cool:</strong> You&apos;re not locked into one LLM—experiment with different models to suit your needs.
           </p>
         </div>
         
@@ -80,7 +80,7 @@ export default function LangChainChatbotPost() {
         <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
           <h3 className="text-xl font-bold mb-3">4. Privacy with Microsoft Presidio</h3>
           <p>
-            Privacy is a standout feature. The chatbot uses Microsoft Presidio to anonymize personally identifiable information (PII) before sending it to the LLM API. Think of it like redacting a sensitive document—your name becomes "[NAME]" to keep it safe.
+            Privacy is a standout feature. The chatbot uses Microsoft Presidio to anonymize personally identifiable information (PII) before sending it to the LLM API. Think of it like redacting a sensitive document—your name becomes &quot;[NAME]&quot; to keep it safe.
           </p>
           <p className="mt-2">
             <a href="https://microsoft.github.io/presidio/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Learn more about Presidio →</a>
@@ -93,7 +93,7 @@ export default function LangChainChatbotPost() {
             Debugging AI can be tricky, but LangSmith makes it easier. This tool traces how the chatbot processes inputs and generates outputs, giving developers a window into its behavior.
           </p>
           <p className="mt-2 text-blue-700">
-            <strong>Why it's handy:</strong> Spot issues fast and optimize performance.
+            <strong>Why it&apos;s handy:</strong> Spot issues fast and optimize performance.
             <a href="https://docs.smith.langchain.com/" target="_blank" rel="noopener noreferrer" className="ml-2 text-blue-600 hover:underline">LangSmith Documentation →</a>
           </p>
         </div>
@@ -101,14 +101,14 @@ export default function LangChainChatbotPost() {
 
       <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-slate-200">The Architecture</h2>
       <p>
-        This isn't just a backend script—it's a full-stack app:
+        This isn&apos;t just a backend script—it&apos;s a full-stack app:
       </p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
         <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
           <h3 className="text-xl font-bold mb-3">Frontend (Next.js)</h3>
           <p>
-            A sleek, responsive interface built with Next.js handles user interactions. It's where you type your messages and see the bot reply.
+            A sleek, responsive interface built with Next.js handles user interactions. It&apos;s where you type your messages and see the bot reply.
           </p>
           <div className="mt-4 bg-slate-100 p-4 rounded-lg">
             <p className="text-sm text-center">
@@ -121,7 +121,7 @@ export default function LangChainChatbotPost() {
         <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
           <h3 className="text-xl font-bold mb-3">Backend (FastAPI)</h3>
           <p>
-            The FastAPI-powered backend manages the logic—connecting to LangChain, MongoDB, and the LLM API. It's fast, modern, and perfect for handling API requests.
+            The FastAPI-powered backend manages the logic—connecting to LangChain, MongoDB, and the LLM API. It&apos;s fast, modern, and perfect for handling API requests.
           </p>
           <p className="mt-3">
             <strong>How It Works Together:</strong> User input goes from the frontend to the backend, gets anonymized, queries the LLM, and pulls context from MongoDB before sending a response back.
@@ -168,7 +168,7 @@ export default function LangChainChatbotPost() {
       </div>
       
       <p>
-        Here's a peek at how the backend might set up the LangChain chain (simplified for illustration):
+        Here&apos;s a peek at how the backend might set up the LangChain chain (simplified for illustration):
       </p>
       
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm my-6">
@@ -192,7 +192,7 @@ response = conversation.predict(input="Hello, how can I assist you today?")`}
 
       <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-slate-200">Getting Started</h2>
       <p>
-        Ready to try it? Here's how to get langchain-chatbot running:
+        Ready to try it? Here&apos;s how to get langchain-chatbot running:
       </p>
       
       <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm my-6">
@@ -225,7 +225,7 @@ python -m venv venv
 
 # Activate the virtual environment
 # On Windows
-venv\Scripts\activate
+venv\\Scripts\\activate
 # On macOS/Linux
 source venv/bin/activate
 
@@ -282,11 +282,11 @@ docker-compose up --build
 
       <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-slate-200">Privacy Features in Action</h2>
       <p>
-        In 2025, data privacy isn't optional—it's essential. By integrating Microsoft Presidio, langchain-chatbot ensures that sensitive info like names or emails is masked before leaving your system. This is a game-changer for industries like healthcare or finance, where compliance is non-negotiable.
+        In 2025, data privacy isn&apos;t optional—it&apos;s essential. By integrating Microsoft Presidio, langchain-chatbot ensures that sensitive info like names or emails is masked before leaving your system. This is a game-changer for industries like healthcare or finance, where compliance is non-negotiable.
       </p>
       
       <h3 className="text-xl font-bold mt-8 mb-4">Implementing Anonymization</h3>
-      <p>Here's how the anonymization layer is implemented in our solution:</p>
+      <p>Here&apos;s how the anonymization layer is implemented in our solution:</p>
       
       <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm my-6">
         <div className="bg-slate-700 text-white py-2 px-4 font-semibold">anonymization_handler.py</div>
@@ -300,7 +300,7 @@ class AnonymizationHandler(BaseCallbackHandler):
     def __init__(self, encryption_key):
         self.cipher = Fernet(encryption_key)
         self.pii_patterns = {
-            'email': '\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b',
+            &apos;email': '\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b',
             'phone': '\\b(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}\\b',
             'ssn': '\\b\\d{3}-\\d{2}-\\d{4}\\b',
             'credit_card': '\\b\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}\\b'
@@ -378,7 +378,7 @@ chain = ConversationChain(llm=llm)`}
     
       <h2>Why Privacy Matters</h2>
       <p>
-        In 2025, data privacy isn't optional—it's essential. By integrating Microsoft Presidio, langchain-chatbot ensures that sensitive info like names or emails is masked before leaving your system. This is a game-changer for industries like healthcare or finance, where compliance is non-negotiable.
+        In 2025, data privacy isn&apos;t optional—it&apos;s essential. By integrating Microsoft Presidio, langchain-chatbot ensures that sensitive info like names or emails is masked before leaving your system. This is a game-changer for industries like healthcare or finance, where compliance is non-negotiable.
       </p>
       
       <div className="my-6">
@@ -394,7 +394,7 @@ chain = ConversationChain(llm=llm)`}
         </p>
       </div>
 
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-slate-200">Who's It For?</h2>
+      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-slate-200">Who&apos;s It For?</h2>
       <p>
         This repo shines for:
       </p>
@@ -425,11 +425,11 @@ chain = ConversationChain(llm=llm)`}
       <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-slate-200">Conclusion</h2>
       <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 shadow-sm">
         <p className="mb-4">
-          The langchain-chatbot repository is a gem for anyone looking to build a smart, secure, and user-friendly chatbot. Its blend of LangChain's power, MongoDB's memory, Presidio's privacy, and a full-stack design makes it both practical and innovative. Whether you're enhancing a business or exploring AI, this project offers a solid starting point.
+          The langchain-chatbot repository is a gem for anyone looking to build a smart, secure, and user-friendly chatbot. Its blend of LangChain&apos;s power, MongoDB&apos;s memory, Presidio&apos;s privacy, and a full-stack design makes it both practical and innovative. Whether you&apos;re enhancing a business or exploring AI, this project offers a solid starting point.
         </p>
         
         <p className="mb-0">
-          Ready to dive in? <a href="https://github.com/minhbtrc/langchain-chatbot" target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">Visit the GitHub repo</a>, clone it, and give it a spin. Have ideas to improve it? It's open-source—jump in and contribute!
+          Ready to dive in? <a href="https://github.com/minhbtrc/langchain-chatbot" target="_blank" rel="noopener noreferrer" className="text-blue-600 font-bold hover:underline">Visit the GitHub repo</a>, clone it, and give it a spin. Have ideas to improve it? It&apos;s open-source—jump in and contribute!
         </p>
       </div>
 

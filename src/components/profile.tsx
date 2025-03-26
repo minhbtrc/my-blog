@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
 import Link from 'next/link'
 import Image from 'next/image'
-import clsx from 'clsx'
 
 export default function Profile() {
   return (
