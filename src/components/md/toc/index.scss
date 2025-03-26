@@ -1,0 +1,29 @@
+.toc {
+  @apply max-h-[75dvh] overflow-y-auto py-6 px-4 m-1 w-64 bg-base-100 rounded-3xl shadow-lg border-2 border-base-300;
+
+  // Ensure the TOC is hidden on small screens and visible on medium+ screens
+  @apply hidden md:block;
+
+  .toc-level {
+    @apply list-none px-0 m-0;
+
+    .toc-item {
+      @apply px-2 m-0;
+
+      &.active {
+        & > a {
+          @apply text-base-content;
+        }
+      }
+
+      & > a {
+        @apply text-base-content/50 hover:text-base-content decoration-base-content no-underline truncate block font-normal;
+      }
+    }
+  }
+}
+
+// Blog content styling for responsiveness
+.blog-content {
+  @apply mr-72; // Adjust the margin to leave space for the TOC on the right side
+}

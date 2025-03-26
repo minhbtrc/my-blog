@@ -1,0 +1,19 @@
+h1:has(span.icon.icon-link),
+h2:has(span.icon.icon-link),
+h3:has(span.icon.icon-link),
+h4:has(span.icon.icon-link),
+h5:has(span.icon.icon-link) {
+  .icon.icon-link::after {
+    content: '#';
+    margin-left: 0.5rem;
+    opacity: 0;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  &:hover {
+    .icon.icon-link::after {
+      opacity: 1;
+    }
+  }
+}

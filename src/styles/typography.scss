@@ -1,0 +1,46 @@
+@font-face {
+  font-family: Satoshi;
+  font-weight: 300;
+  src: url('./fonts/Satoshi-Light.ttf');
+}
+@font-face {
+  font-family: Satoshi;
+  font-weight: 400;
+  src: url('./fonts/Satoshi-Regular.ttf');
+}
+@font-face {
+  font-family: Satoshi;
+  font-weight: 500;
+  src: url('./fonts/Satoshi-Medium.ttf');
+}
+@font-face {
+  font-family: Satoshi;
+  font-weight: 700;
+  src: url('./fonts/Satoshi-Bold.ttf');
+}
+@font-face {
+  font-family: Satoshi;
+  font-weight: 900;
+  src: url('./fonts/Satoshi-Black.ttf');
+}
+
+h1 {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 2.25em;
+  font-weight: 900;
+  line-height: 1.1111111;
+}
+
+h2 {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 1.5em;
+  font-weight: 700;
+  line-height: 1.3333333;
+}
+
+h3 {
+  font-family: 'Satoshi', sans-serif;
+  font-size: 1.25em;
+  font-weight: 500;
+  line-height: 1.6;
+}
