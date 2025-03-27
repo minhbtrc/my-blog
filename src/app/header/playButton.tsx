@@ -11,7 +11,10 @@ export default function PlayButton() {
   const [isMounted, setIsMounted] = useState(false)
   
   useEffect(() => {
-    setIsMounted(true)
+    setIsMounted(true);
+    if (process.env.NEXT_PUBLIC_LISTEN_URL) {
+      setPlaying(true);
+    }
   }, [])
   
   if (!isMounted) {
@@ -31,7 +34,7 @@ export default function PlayButton() {
       <Island>
         <ReactPlayer
           className="invisible !w-dvw !h-dvh fixed top-0 left-0 pointer-events-none"
-          url="https://www.youtube.com/watch?v=zhDwjnYZiCo&t=185s"
+          url={process.env.NEXT_PUBLIC_LISTEN_URL}
           playing={playing}
           loop
         />

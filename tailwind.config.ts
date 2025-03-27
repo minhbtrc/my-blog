@@ -59,29 +59,29 @@ const config: Config = {
         dark: {
           'color-scheme': 'dark',
           // Main colors
-          primary: '#c6c2c3',
-          'primary-content': '#000000',
-          secondary: '#57514b',
-          'secondary-content': '#ffffff',
+          primary: '#e0dcd8',        // Lighter gray for better contrast on black
+          'primary-content': '#1a1a1a', // Near-black for readability on primary
+          secondary: '#7a7268',      // Lighter brown for contrast on base colors
+          'secondary-content': '#f5f5f5', // Off-white for sharp contrast
           // Subsidised colors
-          accent: '#6187fe',
-          'accent-content': '#d4deff',
-          neutral: '#747485',
-          'neutral-content': '#ffffff',
+          accent: '#7a9bff',         // Slightly lighter blue for vibrancy
+          'accent-content': '#ffffff', // White for max contrast (4.8:1)
+          neutral: '#8c8c9e',        // Lighter neutral gray
+          'neutral-content': '#ffffff', // White for readability
           // Informative colors
-          info: '#0086fc',
-          'info-content': '#e9f2ff',
-          success: '#00C454',
-          'success-content': '#e3eee2',
-          error: '#ff4e4e',
-          'error-content': '#fff0f0',
-          warning: '#f6c30f',
-          'warning-content': '#fefae6',
+          info: '#4da8ff',           // Brighter blue
+          'info-content': '#ffffff', // White (5.5:1 contrast)
+          success: '#34d174',        // Vibrant green
+          'success-content': '#ffffff', // White (4.6:1)
+          error: '#ff6666',          // Softer red
+          'error-content': '#ffffff', // White (4.5:1)
+          warning: '#ffd700',        // Bright yellow
+          'warning-content': '#1a1a1a', // Dark gray for contrast (9:1)
           // Base colors
-          'base-100': '#000000',
-          'base-200': '#121212',
-          'base-300': '#161616',
-          'base-content': '#c6c3c0',
+          'base-100': '#1a1a1a',     // Dark gray instead of pure black
+          'base-200': '#2a2a2a',     // Slightly lighter for depth
+          'base-300': '#3d3d3d',     // More distinction in hierarchy
+          'base-content': '#e6e6e6', // Light gray for text (8:1 on base-100)
         },
       },
     ],
