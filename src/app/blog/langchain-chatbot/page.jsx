@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { table } from '@/db'
 
 export const metadata = {
   title: 'Building a Privacy-First AI Chatbot with LangChain',
@@ -7,28 +8,16 @@ export const metadata = {
 }
 
 export default function LangChainChatbotPost() {
-  const tags = []
-  
   return (
     <article className="prose max-w-none">
-      <h1 className="text-3xl font-bold mb-4">Building a Privacy-First AI Chatbot with LangChain</h1>
-      
-      <div className="flex gap-2 mb-6">
-        {tags.map(tag => (
-          <Link 
-            key={tag} 
-            href={`/?tag=${tag}`}
-            className="badge badge-primary hover:badge-secondary transition-colors no-underline"
-          >
-            {tag}
-          </Link>
-        ))}
-      </div>
-      
-      <div className="bg-base-200 p-6 rounded-lg border border-neutral mb-8">
-        <p className="italic text-lg mb-0 text-base-content">
-          A comprehensive guide to creating a full-stack AI chatbot using LangChain, with a focus on privacy, customization, and developer experience.
-        </p>
+      <div className="mt-6">
+        <h1 className="text-3xl font-bold mb-4">Building a Privacy-First AI Chatbot with LangChain</h1>
+        
+        <div className="bg-base-200 p-6 rounded-lg border border-neutral mb-8">
+          <p className="italic text-lg mb-0 text-base-content">
+            A comprehensive guide to creating a full-stack AI chatbot using LangChain, with a focus on privacy, customization, and developer experience.
+          </p>
+        </div>
       </div>
       
       <p>
@@ -56,7 +45,7 @@ export default function LangChainChatbotPost() {
             LangChain is a framework that simplifies building applications with LLMs. In this repo, it connects the chatbot to powerful models like Vertex AI or OpenAI via their APIs. This flexibility lets developers choose their preferred provider without major code changes.
           </p>
           <p className="mt-2 text-accent">
-            <strong>Why it’s cool:</strong> You’re not locked into one LLM—experiment with different models to suit your needs.
+            <strong>Why it's cool:</strong> You're not locked into one LLM—experiment with different models to suit your needs.
           </p>
         </div>
 
@@ -93,7 +82,7 @@ export default function LangChainChatbotPost() {
             Debugging AI can be tricky, but LangSmith makes it easier. This tool traces how the chatbot processes inputs and generates outputs, giving developers a window into its behavior.
           </p>
           <p className="mt-2 text-accent">
-            <strong>Why it’s handy:</strong> Spot issues fast and optimize performance.
+            <strong>Why it's handy:</strong> Spot issues fast and optimize performance.
             <a href="https://docs.smith.langchain.com/" target="_blank" rel="noopener noreferrer" className="ml-2 text-accent hover:underline">LangSmith Documentation →</a>
           </p>
         </div>
@@ -108,7 +97,7 @@ export default function LangChainChatbotPost() {
         <div className="bg-base-200 p-6 rounded-lg border border-neutral shadow-sm">
           <h3 className="text-xl font-bold mb-3 text-base-content">Frontend (Next.js)</h3>
           <p className="text-base-content">
-            A sleek, responsive interface built with Next.js handles user interactions. It’s where you type your messages and see the bot reply.
+            A sleek, responsive interface built with Next.js handles user interactions. It's where you type your messages and see the bot reply.
           </p>
           <div className="mt-4 bg-base-300 p-4 rounded-lg">
             <p className="text-sm text-center text-base-content">
@@ -121,7 +110,7 @@ export default function LangChainChatbotPost() {
         <div className="bg-base-200 p-6 rounded-lg border border-neutral shadow-sm">
           <h3 className="text-xl font-bold mb-3 text-base-content">Backend (FastAPI)</h3>
           <p className="text-base-content">
-            The FastAPI-powered backend manages the logic—connecting to LangChain, MongoDB, and the LLM API. It’s fast, modern, and perfect for handling API requests.
+            The FastAPI-powered backend manages the logic—connecting to LangChain, MongoDB, and the LLM API. It's fast, modern, and perfect for handling API requests.
           </p>
           <p className="mt-3 text-base-content">
             <strong>How It Works Together:</strong> User input goes from the frontend to the backend, gets anonymized, queries the LLM, and pulls context from MongoDB before sending a response back.

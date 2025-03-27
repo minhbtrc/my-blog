@@ -1,13 +1,15 @@
 'use client'
 import dynamic from 'next/dynamic'
 import { Fragment, ReactNode, useMemo } from 'react'
+import clsx from 'clsx'
 
 export type IslandProps = {
   children: ReactNode
   Loading?: React.FC
+  className?: string
 }
 
-export default function Island({ children, Loading = Fragment }: IslandProps) {
+export default function Island({ children, Loading = Fragment, className = '' }: IslandProps) {
   const Lazy = useMemo(
     () =>
       dynamic(
@@ -23,5 +25,5 @@ export default function Island({ children, Loading = Fragment }: IslandProps) {
     [Loading],
   )
 
-  return <Lazy>{children}</Lazy>
+  return <div className={className}><Lazy>{children}</Lazy></div>
 }

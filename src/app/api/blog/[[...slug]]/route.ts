@@ -79,17 +79,17 @@ class Route {
     _req: NextRequest,
     @Body(PostDto) { q, t, limit, offset }: z.infer<typeof PostDto>,
   ) {
-    if (q) {
-      const document = Index.load(index)
-      const results = document.search(q)
-      const data = results
-        .filter(({ score }) => score >= 1)
-        .map(({ ref }) => ref)
-        .slice(offset, offset + limit)
-      return NextResponse.json(data)
-    }
-    if (t) {
-      try {
+    try {
+      let routes = [];
+      
+      if (q) {
+        const document = Index.load(index)
+        const results = document.search(q)
+        routes = results
+          .filter(({ score }) => score >= 1)
+          .map(({ ref }) => ref)
+      }
+      else if (t) {
         // Convert tag to lowercase for case-insensitive matching
         const tagLower = t.toLowerCase();
         
@@ -122,43 +122,39 @@ class Route {
           return [];
         });
         
-        // Normalize all routes to be consistent
-        const normalizedRoutes = [...mainRoutes, ...childRoutes].map(route => {
-          // Strip leading slash for consistency
-          return route.startsWith('/') ? route.substring(1) : route;
-        });
-        
-        // Combine routes, remove duplicates, and apply pagination
-        const data = [...new Set(normalizedRoutes)]
-          .filter(route => route) // Make sure we have no empty routes
-          .slice(offset, offset + limit);
-          
-        console.log('Tag-filtered routes:', data);
-        return NextResponse.json(data || []) // Always return an array
-      } catch (error) {
-        console.error('Error filtering by tag:', error);
-        return NextResponse.json([]) // Return empty array on error
+        routes = [...mainRoutes, ...childRoutes];
       }
+      else {
+        // Get blog root children
+        const blogRoot = table.find(({ route }) => 
+          normalizeRoute(route) === '/blog' || route === 'blog'
+        );
+        
+        if (blogRoot && Array.isArray(blogRoot.children)) {
+          // Process children to get routes (handling both string and object children)
+          routes = blogRoot.children
+            .map(child => getRouteFromChild(child))
+            .filter(route => route); // Filter out empty routes
+        }
+      }
+      
+      // Normalize routes for consistent comparison
+      const normalizedRoutes = routes.map(route => {
+        // Strip leading slash for consistency
+        return route.startsWith('/') ? route.substring(1) : route;
+      });
+      
+      // Remove duplicates using Set
+      const uniqueRoutes = [...new Set(normalizedRoutes)]
+        .filter(Boolean) // Remove empty strings
+        .slice(offset, offset + limit);
+        
+      console.log(`Returning ${uniqueRoutes.length} unique blog routes`);
+      return NextResponse.json(uniqueRoutes);
+    } catch (error) {
+      console.error('Error in blog API:', error);
+      return NextResponse.json([], { status: 500 });
     }
-    
-    // Get blog root children
-    const blogRoot = table.find(({ route }) => 
-      normalizeRoute(route) === '/blog' || route === 'blog'
-    );
-    if (!blogRoot) return NextResponse.json([]);
-    
-    // Process children to get routes (handling both string and object children)
-    const childRoutes = blogRoot.children.map(child => {
-      return getRouteFromChild(child);
-    }).filter(route => route); // Filter out empty routes
-    
-    // Normalize routes for consistency
-    const normalizedRoutes = childRoutes.map(route => {
-      // Strip leading slash for consistency
-      return route.startsWith('/') ? route.substring(1) : route;
-    });
-    
-    return NextResponse.json(normalizedRoutes.slice(offset, offset + limit))
   }
 }
 

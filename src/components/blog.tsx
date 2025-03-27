@@ -4,8 +4,10 @@ import useSWR from 'swr'
 import ky from 'ky'
 
 import Link from 'next/link'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Calendar, ArrowRight, Tag } from 'lucide-react'
 import Tags from './tags'
+import { motion } from 'framer-motion'
+import { memo } from 'react'
 
 // Helper function to normalize API routes
 function normalizeApiRoute(route: string): string {
@@ -17,15 +19,14 @@ function normalizeApiRoute(route: string): string {
 
 // Helper function to normalize link routes
 function normalizeLinkRoute(route: string): string {
-  // For links, remove blog/ prefix if it exists
-  let normalizedRoute = route;
-  if (route.startsWith('blog/')) {
-    normalizedRoute = route.substring(5); // Remove 'blog/'
-  } else if (route.startsWith('/blog/')) {
-    normalizedRoute = route.substring(6); // Remove '/blog/'
+  // Check if the route already has blog/ prefix
+  if (route.startsWith('blog/') || route.startsWith('/blog/')) {
+    // If it does, use it as is
+    return route;
   }
-  console.log(`Normalized link route: ${route} → ${normalizedRoute}`);
-  return normalizedRoute;
+  
+  // If no blog prefix, return the route as is
+  return route;
 }
 
 export function useBlog(route: string) {
@@ -48,37 +49,102 @@ export function useBlog(route: string) {
   });
 }
 
-export function BlogCard({ route }: { route: string }) {
-  const { data } = useBlog(route);
+export const BlogCard = memo(function BlogCard({
+  route,
+}: {
+  route: string
+}) {
+  // Fetch blog data using the custom hook
+  const { data, error, isLoading } = useBlog(route);
+  
+  // Format the display date using dayjs
+  const displayDate = data?.date 
+    ? dayjs(data.date).format('MMM D, YYYY')
+    : null;
+    
+  // Generate proper href for the blog post
+  const href = route.startsWith('blog/') || route.startsWith('/blog/') 
+    ? `/blog/${route.replace(/^(\/)?blog\//, '')}`
+    : `/blog/${route}`;
 
-  // Ensure default values if `data` is undefined
-  const { date = new Date().toISOString(), tags = [], title = '', description = '' } = data ?? {};
-
-  const linkRoute = normalizeLinkRoute(route);
+  // Placeholder gradient for loading state
+  const loadingGradient = "bg-gradient-to-r from-base-300/40 to-base-300/20 animate-pulse";
 
   return (
-    <Link
-      className="w-full grid grid-cols-6 gap-4 py-16 border-t border-base-300 cursor-pointer relative group"
-      href={`/blog/${linkRoute}`}
+    <motion.div 
+      whileHover={{ scale: 1.01 }}
+      className="relative overflow-hidden rounded-xl border border-base-300/30 bg-base-200/40 backdrop-blur-sm hover:bg-base-200/60 transition-all duration-300 shadow-sm hover:shadow-md"
     >
-      <div className="col-span-full sm:col-span-1 sm:mt-1 flex flex-col gap-3">
-        <p className="text-xs opacity-60">
-          {dayjs(date).format('DD MMMM, YYYY')}
-        </p>
-        <Tags value={tags} readOnly />
-      </div>
-      <h2 className="col-span-full sm:col-span-2 font-semibold tracking-tight sm:-mt-1">
-        {title}
-      </h2>
-      <p className="col-span-full sm:col-span-3 text-sm opacity-60">
-        {description}
-      </p>
-      <button className="btn btn-circle btn-outline btn-sm absolute bottom-4 left-0 hidden transition-all group-hover:flex">
-        <ArrowUpRight className="w-4 h-4" />
-      </button>
-    </Link>
+      <Link 
+        className="block p-6"
+        href={href}
+      >
+        <div className="grid grid-cols-1 gap-4">
+          {/* Date and tags row */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
+            {/* Date with calendar icon */}
+            {isLoading ? (
+              <div className={`h-5 w-32 rounded ${loadingGradient}`}></div>
+            ) : displayDate && (
+              <div className="flex items-center gap-1.5 text-base-content/60 text-sm">
+                <Calendar className="w-3.5 h-3.5" />
+                <time dateTime={data?.date?.toString()}>{displayDate}</time>
+              </div>
+            )}
+            
+            {/* Tags */}
+            {!isLoading && data?.tags && data.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {data.tags.map(tag => (
+                  <span 
+                    key={tag}
+                    className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs flex items-center gap-1"
+                  >
+                    <Tag className="w-3 h-3" />
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          {/* Title with hover effect */}
+          {isLoading ? (
+            <div className={`h-7 w-full rounded ${loadingGradient}`}></div>
+          ) : (
+            <h3 className="text-xl md:text-2xl font-bold tracking-tight hover:text-primary transition-colors line-clamp-2">
+              {data?.title || 'Untitled Post'}
+            </h3>
+          )}
+          
+          {/* Description */}
+          {isLoading ? (
+            <>
+              <div className={`h-4 w-full rounded ${loadingGradient}`}></div>
+              <div className={`h-4 w-3/4 rounded ${loadingGradient}`}></div>
+            </>
+          ) : (
+            <p className="text-base-content/70 line-clamp-2 text-sm leading-relaxed">
+              {data?.description || 'No description available.'}
+            </p>
+          )}
+          
+          {/* Read more button */}
+          <div className="flex justify-end mt-2">
+            <motion.div
+              className="flex items-center gap-1.5 text-primary font-medium text-sm"
+              whileHover={{ x: 3 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+            >
+              Read article
+              <ArrowRight className="w-3.5 h-3.5" />
+            </motion.div>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
   )
-}
+})
 
 export function LiteBlogCard({ route }: { route: string }) {
   const { data: { title = '', description = '' } = {} } = useBlog(route)

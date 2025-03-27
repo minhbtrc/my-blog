@@ -45,16 +45,19 @@ function dreelize(root: string): ExtendedDree | null {
       extensions: ['md', 'mdx'],
     },
     (node) => {
-      const file = readFileSync(node.path)
+      const file = readFileSync(node.path, 'utf-8')
       const md = fromMarkdown(file, {
         extensions: [frontmatter(['yaml', 'toml'])],
         mdastExtensions: [frontmatterFromMarkdown(['yaml', 'toml'])],
       })
-      const matter = select('root > toml', md)
+      
+      // Try to extract both YAML and TOML frontmatter
+      const matterNode = select('root > yaml', md) || select('root > toml', md) || {}
       const heading = select('root > heading', md) || {}
       const paragraph = select('root > paragraph', md) || {}
       const text = selectAll('heading, paragraph', md)
       const images = selectAll('image', md)
+      
       const [image = ''] = images.map((image) => {
         try {
           const { url } = Object.assign({ url: '' }, image)
@@ -74,20 +77,58 @@ function dreelize(root: string): ExtendedDree | null {
           return ''
         }
       })
-      const { tags, date } = z
-        .object({
-          tags: z
-            .string()
-            .default('')
-            .transform((tags) =>
-              tags
+      
+      // Check if this is a YAML or TOML frontmatter
+      let tags = []
+      let date = new Date()
+      
+      try {
+        const matterContent = toString(matterNode)
+        
+        // Check if it's YAML (starts with ---)
+        if (file.trim().startsWith('---')) {
+          // Extract YAML frontmatter
+          const yamlMatch = file.match(/---\s*([\s\S]*?)\s*---/)
+          if (yamlMatch && yamlMatch[1]) {
+            const yamlContent = yamlMatch[1]
+            
+            // Extract tags
+            const tagsMatch = yamlContent.match(/tags:\s*\[(.*?)\]/)
+            if (tagsMatch && tagsMatch[1]) {
+              tags = tagsMatch[1]
                 .split(',')
-                .map((e) => e.trim())
-                .filter((e) => !!e),
-            ),
-          date: z.coerce.date().default(new Date()),
-        })
-        .parse(toml.parse(toString(matter)))
+                .map(tag => tag.trim().replace(/"/g, '').replace(/'/g, ''))
+                .filter(tag => tag)
+            }
+            
+            // Extract date
+            const dateMatch = yamlContent.match(/date:\s*"?([^"\n]+)"?/)
+            if (dateMatch && dateMatch[1]) {
+              date = new Date(dateMatch[1])
+            }
+          }
+        } else if (matterContent) {
+          // Assume it's TOML if not YAML
+          const parsedToml = toml.parse(matterContent)
+          if (parsedToml.tags) {
+            if (typeof parsedToml.tags === 'string') {
+              tags = parsedToml.tags
+                .split(',')
+                .map(e => e.trim())
+                .filter(e => !!e)
+            } else if (Array.isArray(parsedToml.tags)) {
+              tags = parsedToml.tags
+            }
+          }
+          
+          if (parsedToml.date) {
+            date = new Date(parsedToml.date)
+          }
+        }
+      } catch (error) {
+        console.error('Error parsing frontmatter:', error)
+      }
+      
       node.title = toString(heading)
       node.image = image
       node.tags = tags
@@ -97,6 +138,8 @@ function dreelize(root: string): ExtendedDree | null {
         .map((e) => toString(e))
         .join(' ')
         .replaceAll('\n', ' ')
+        
+      console.log(`Processed page '${node.path}' with tags:`, tags)
     },
   )
   return dree
