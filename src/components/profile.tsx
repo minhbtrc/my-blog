@@ -14,11 +14,11 @@ interface SkillTagProps {
 }
 
 const colorMap = {
-  blue: 'bg-blue-500/10 text-blue-700 dark:text-blue-300 hover:bg-blue-500/20',
-  purple: 'bg-purple-500/10 text-purple-700 dark:text-purple-300 hover:bg-purple-500/20',
-  green: 'bg-green-500/10 text-green-700 dark:text-green-300 hover:bg-green-500/20',
-  orange: 'bg-orange-500/10 text-orange-700 dark:text-orange-300 hover:bg-orange-500/20',
-  red: 'bg-red-500/10 text-red-700 dark:text-red-300 hover:bg-red-500/20'
+  blue: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800/40',
+  purple: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800/40',
+  green: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800/40',
+  orange: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 hover:bg-orange-200 dark:hover:bg-orange-800/40',
+  red: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800/40'
 }
 
 function SkillTag({ label, color, description }: SkillTagProps) {
@@ -51,100 +51,47 @@ function SkillTag({ label, color, description }: SkillTagProps) {
 
 export default function Profile() {
   return (
-    <motion.div
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="relative w-full rounded-xl overflow-hidden shadow-lg"
-    >
-      {/* 3D Tilt Effect */}
-      <motion.div
-        whileHover={{ 
-          rotateX: 5, 
-          rotateY: 5, 
-          z: 10, 
-          boxShadow: "0 20px 40px rgba(0,0,0,0.1)" 
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 15 }}
-        className="relative z-10 p-8 bg-base-200/30 backdrop-blur-lg border border-base-300/30 rounded-xl"
-      >
+    <div className="bg-base-200/30 backdrop-blur-sm border border-base-300/30 rounded-2xl overflow-hidden">
+      <div className="p-6">
+        {/* Profile header */}
         <div className="flex flex-col items-center text-center">
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="relative"
-          >
-            {/* Profile Picture Container */}
-            <div className="relative w-28 h-28 mb-6">
-              <div className="absolute inset-0 rounded-full overflow-hidden flex-shrink-0 border-2 border-white/20 shadow-xl p-0.5 bg-gradient-to-br from-blue-500 to-purple-500 animate-pulse-glow">
-                <Image 
-                  src="/profile.jpeg" 
-                  alt="Minh BTC" 
-                  width={112} 
-                  height={112}
-                  className="w-full h-full object-cover rounded-full"
-                />
-              </div>
-
-              {/* Decorative circles */}
-              <motion.div
-                className="absolute -z-10 -top-1 -left-1 w-30 h-30 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-md"
-                animate={{ 
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{ 
-                  duration: 3,
-                  repeat: Infinity,
-                  repeatType: "reverse"
-                }}
-              />
-
-              {/* Status indicator */}
-              <motion.div 
-                className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-green-400 border-2 border-white"
-                animate={{ 
-                  boxShadow: ["0 0 0px rgba(74, 222, 128, 0)", "0 0 8px rgba(74, 222, 128, 0.6)", "0 0 0px rgba(74, 222, 128, 0)"]
-                }}
-                transition={{ 
-                  duration: 2, 
-                  repeat: Infinity,
-                  repeatType: "loop"
-                }}
+          {/* Profile picture */}
+          <div className="relative mb-4">
+            <div className="w-24 h-24 rounded-full overflow-hidden">
+              <Image 
+                src="/profile.jpeg" 
+                alt="Minh BTC" 
+                width={96} 
+                height={96}
+                className="w-full h-full object-cover"
               />
             </div>
-            
-          </motion.div>
+            {/* Online indicator */}
+            <div className="absolute bottom-1 right-1 w-3 h-3 rounded-full bg-green-500"></div>
+          </div>
           
-          <h2 className="text-2xl font-black font-satoshi mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">Minh BTC</h2>
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col gap-2 items-center"
-          >
-            <p className="text-base-content/80 text-lg flex items-center justify-center gap-2">
-              <span>AI Engineer</span> 
-              <motion.span 
-                whileHover={{ y: -3, scale: 1.1 }}
-                className="inline-flex items-center justify-center w-6 h-6 bg-gradient-to-br from-red-500 to-yellow-500 rounded-full text-white font-bold text-xs"
-              >
+          {/* Name */}
+          <h2 className="text-2xl font-bold mb-1 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+            Minh BTC
+          </h2>
+          
+          {/* Title and description */}
+          <div className="mb-4">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <span className="text-base-content/80">AI Engineer</span>
+              <span className="inline-flex items-center justify-center w-5 h-5 bg-orange-500 rounded-full text-white text-xs">
                 🇻🇳
-              </motion.span>
-            </p>
-            <p className="text-base-content/60 text-sm max-w-[240px]">
+              </span>
+            </div>
+            <p className="text-base-content/60 text-sm">
               Building intelligent systems with a focus on privacy and efficiency
             </p>
-          </motion.div>
+          </div>
         </div>
         
-        <motion.div
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="mt-6 mb-6"
-        >
-          <h3 className="text-base font-semibold mb-3 text-base-content/70 text-left">Specializations</h3>
+        {/* Specializations */}
+        <div className="mb-6">
+          <h3 className="text-sm font-medium mb-3 text-base-content/70">Specializations</h3>
           <div className="flex flex-wrap gap-2 justify-center">
             <SkillTag 
               label="AI/LLM/NLP" 
@@ -167,69 +114,51 @@ export default function Profile() {
               description="Software engineering & full-stack development"
             />
           </div>
-        </motion.div>
-
-        <motion.div 
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-          className="flex flex-col gap-4 mt-6"
-        >
-          <h3 className="text-base font-semibold text-base-content/70 text-left">Connect</h3>
-          <div className="flex justify-center gap-3">
+        </div>
+        
+        {/* Connect */}
+        <div>
+          <h3 className="text-sm font-medium mb-3 text-base-content/70">Connect</h3>
+          <div className="flex justify-center gap-4 mb-4">
             <Link
               href="https://github.com/minhbtrc"
               target="_blank"
-              className="group flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-base-300/50 transition-all transform hover:scale-110 hover:rotate-12"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-base-300/50 hover:bg-base-300 transition-colors"
               aria-label="GitHub Profile"
             >
-              <SiGithub className="w-5 h-5 text-base-content/70 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              <SiGithub className="w-4 h-4" />
             </Link>
             <Link
               href="https://www.linkedin.com/in/minhbtcm00/"
               target="_blank"
-              className="group flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-base-300/50 transition-all transform hover:scale-110 hover:rotate-12"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-base-300/50 hover:bg-base-300 transition-colors"
               aria-label="LinkedIn Profile"
             >
-              <SiLinkedin className="w-5 h-5 text-base-content/70 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+              <SiLinkedin className="w-4 h-4" />
             </Link>
             <Link
               href="mailto:contact@minhbtc.blog"
-              className="group flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-base-300/50 transition-all transform hover:scale-110 hover:rotate-12"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-base-300/50 hover:bg-base-300 transition-colors"
               aria-label="Email Me"
             >
-              <Mail className="w-5 h-5 text-base-content/70 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors" />
+              <Mail className="w-4 h-4" />
             </Link>
             <Link
               href="/resume"
-              className="group flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border border-base-300/50 transition-all transform hover:scale-110 hover:rotate-12"
+              className="w-9 h-9 flex items-center justify-center rounded-full bg-base-300/50 hover:bg-base-300 transition-colors"
               aria-label="Resume"
             >
-              <FileText className="w-5 h-5 text-base-content/70 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors" />
+              <FileText className="w-4 h-4" />
             </Link>
           </div>
-          <Link
-            href="/about"
-            className="mt-2 btn btn-primary btn-sm w-full rounded-full group relative overflow-hidden"
-          >
-            <span className="relative z-10">View Full Profile</span>
-            <span className="absolute inset-0 w-full h-full bg-white/20 transform translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
+          
+          <Link href="/about" className="w-full block">
+            <button className="w-full py-2 px-4 rounded-full bg-base-300/50 hover:bg-base-300 transition-colors text-sm font-medium">
+              View Full Profile
+            </button>
           </Link>
-        </motion.div>
-      </motion.div>
-      
-      {/* Background gradient effect */}
-      <motion.div 
-        className="absolute inset-0 -z-10 bg-gradient-to-br from-blue-200/20 via-base-200/0 to-purple-200/20 dark:from-blue-900/20 dark:via-base-900/0 dark:to-purple-900/20" 
-        animate={{ 
-          boxShadow: ["0 0 0px rgba(59, 130, 246, 0)", "0 0 20px rgba(59, 130, 246, 0.3)", "0 0 0px rgba(59, 130, 246, 0)"]
-        }}
-        transition={{ 
-          duration: 5, 
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      />
-    </motion.div>
+        </div>
+      </div>
+    </div>
   )
 } 

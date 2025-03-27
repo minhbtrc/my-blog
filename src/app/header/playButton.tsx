@@ -12,7 +12,7 @@ export default function PlayButton() {
   const [hasInteracted, setHasInteracted] = useState(false)
   const playerRef = useRef(null)
   const hasUrl = !!process.env.NEXT_PUBLIC_LISTEN_URL
-  
+
   useEffect(() => {
     setIsMounted(true)
     
@@ -21,16 +21,11 @@ export default function PlayButton() {
     if (hasUserInteracted === 'true') {
       setHasInteracted(true)
     }
-    
+
     // Listen for the first user interaction on the page
     const handleFirstInteraction = () => {
       setHasInteracted(true)
       localStorage.setItem('music-interaction', 'true')
-      
-      // We can try to start playing after user interaction
-      if (hasUrl) {
-        setPlaying(true)
-      }
       
       // Remove the event listeners after first interaction
       window.removeEventListener('click', handleFirstInteraction)
@@ -41,13 +36,18 @@ export default function PlayButton() {
     window.addEventListener('click', handleFirstInteraction)
     window.addEventListener('touchstart', handleFirstInteraction)
     window.addEventListener('keydown', handleFirstInteraction)
-    
+
     return () => {
       window.removeEventListener('click', handleFirstInteraction)
       window.removeEventListener('touchstart', handleFirstInteraction)
       window.removeEventListener('keydown', handleFirstInteraction)
     }
   }, [hasUrl])
+
+  // Function to toggle play state
+  const togglePlay = () => {
+    setPlaying(prevState => !prevState);
+  };
   
   if (!isMounted || !hasUrl) {
     return null
@@ -56,7 +56,7 @@ export default function PlayButton() {
   return (
     <button
       className="btn btn-sm rounded-full relative group"
-      onClick={() => setPlaying(!playing)}
+      onClick={togglePlay}
       aria-label={playing ? "Pause music" : "Play music"}
     >
       <Island>
@@ -68,6 +68,7 @@ export default function PlayButton() {
           loop
           volume={0.7}
           muted={false}
+          controls={false}
           onError={(e) => console.error("Player error:", e)}
         />
       </Island>

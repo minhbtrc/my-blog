@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Home, RotateCcw, Cpu } from 'lucide-react'
+import { Home, RotateCcw, Cpu, Search } from 'lucide-react'
 
 export default function NotFound() {
   const [counter, setCounter] = useState(5)
   const [messages, setMessages] = useState<string[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
+  
   const errorMessages = [
     "Error: Neural pathways disconnected...",
     "Attempting to reconnect synapses...",
@@ -30,7 +32,7 @@ export default function NotFound() {
       }, 700)
       return () => clearTimeout(timer)
     }
-  }, [messages])
+  }, [messages, errorMessages])
   
   // Countdown timer
   useEffect(() => {
@@ -38,7 +40,18 @@ export default function NotFound() {
       const timer = setTimeout(() => setCounter(counter - 1), 1000)
       return () => clearTimeout(timer)
     }
+    if (counter === 0) {
+      window.location.href = '/'
+    }
   }, [counter])
+
+  // Handle search submission
+  const handleSearchSubmit = useCallback((e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      window.location.href = `/blog?search=${encodeURIComponent(searchQuery)}`
+    }
+  }, [searchQuery])
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 text-center">
@@ -90,8 +103,32 @@ export default function NotFound() {
           </div>
           
           <p className="text-base-content/80 mb-6">
-            The page you're looking for has wandered off into a parallel dimension. Our AI is working on retrieving it.
+            The page you&apos;re looking for has wandered off into a parallel dimension. Our AI is working on retrieving it.
           </p>
+          
+          {/* Search form */}
+          <form 
+            className="mb-6 flex flex-col gap-2" 
+            onSubmit={handleSearchSubmit}
+          >
+            <p className="text-sm text-base-content/70">Looking for something specific?</p>
+            <div className="join w-full">
+              <input
+                type="text"
+                placeholder="Try searching for it..."
+                className="input input-bordered join-item flex-1"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button 
+                type="submit" 
+                className="btn join-item btn-primary"
+                disabled={!searchQuery.trim()}
+              >
+                <Search className="w-4 h-4" />
+              </button>
+            </div>
+          </form>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="/">
@@ -152,7 +189,6 @@ export default function NotFound() {
   )
 }
 
-// Auto-redirect to home after 5 seconds
 export function generateMetadata() {
   return {
     title: '404 - Page Not Found | Minh\'s Space',

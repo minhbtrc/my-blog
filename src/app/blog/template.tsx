@@ -1,6 +1,6 @@
 'use client'
 import { type ReactNode, useState, useEffect } from 'react'
-import { useSelectedLayoutSegments } from 'next/navigation'
+import { useSelectedLayoutSegments, usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import useSWR from 'swr'
 import ky from 'ky'
@@ -19,6 +19,7 @@ import ReadingProgress from '@/components/reading-progress'
 
 export default function Template({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments()
+  const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
   const { data: { tags = [], children: routes = [] } = {} } = useSWR(
     `/api/blog/${segments.join('/')}`,
@@ -32,6 +33,9 @@ export default function Template({ children }: { children: ReactNode }) {
     setMounted(true)
   }, [])
 
+  // Only show suggestions on individual blog post pages, not on the main blog listing page
+  const isMainBlogPage = pathname === '/blog'
+  
   return (
     <div className="w-full flex flex-col gap-4 items-center">
       {mounted && (
@@ -54,12 +58,14 @@ export default function Template({ children }: { children: ReactNode }) {
             >
               <MessageSquareText className="w-4 h-4" />
             </Link>
-            <Link
-              className="btn btn-square btn-sm transition-all hidden group-hover:flex"
-              href="#suggestion"
-            >
-              <CornerDownRight className="w-4 h-4" />
-            </Link>
+            {!isMainBlogPage && (
+              <Link
+                className="btn btn-square btn-sm transition-all hidden group-hover:flex"
+                href="#suggestion"
+              >
+                <CornerDownRight className="w-4 h-4" />
+              </Link>
+            )}
           </div>
         </div>
       )}
@@ -93,41 +99,27 @@ export default function Template({ children }: { children: ReactNode }) {
         )}
         {children}
       </motion.article>
-      {/*<div*/}
-      {/*  id="question"*/}
-      {/*  className="w-full max-w-[65ch] bg-base-200 border-2 border-base-300 p-4 rounded-box flex flex-col gap-1"*/}
-      {/*>*/}
-      {/*  <p className="font-bold">You have questions?</p>*/}
-      {/*  <p>*/}
-      {/*    <span className="opacity-60">*/}
-      {/*      To ask questions, you can create issues on{' '}*/}
-      {/*    </span>*/}
-      {/*    <Link*/}
-      {/*      className="text-info-content hover:underline inline-flex"*/}
-      {/*      href="https://github.com/misterbo271"*/}
-      {/*      target="_blank"*/}
-      {/*    >*/}
-      {/*      my GitHub.*/}
-      {/*      <ExternalLink className="w-3 h-3" />*/}
-      {/*    </Link>*/}
-      {/*  </p>*/}
-      {/*</div>*/}
-      <div
-        id="suggestion"
-        className="w-full max-w-[65ch] grid grid-cols-12 gap-4"
-      >
-        {[...routes].reverse().map((route, i) => (
-          <motion.div
-            key={route}
-            className="col-span-full"
-            initial={{ y: 8 * (i + 1), opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          >
-            <BlogCard route={route} />
-          </motion.div>
-        ))}
-      </div>
+      
+      {/* Only show suggestions on individual blog posts, not on the main blog page */}
+      {!isMainBlogPage && routes.length > 0 && (
+        <div
+          id="suggestion"
+          className="w-full max-w-[65ch] grid grid-cols-12 gap-4"
+        >
+          <h3 className="col-span-full text-xl font-bold mb-4">Related Articles</h3>
+          {[...routes].reverse().map((route, i) => (
+            <motion.div
+              key={route}
+              className="col-span-full"
+              initial={{ y: 8 * (i + 1), opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <BlogCard route={route} />
+            </motion.div>
+          ))}
+        </div>
+      )}
       <ReadingProgress />
     </div>
   )

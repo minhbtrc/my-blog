@@ -2,18 +2,14 @@
 import { useCallback, useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, AlertCircle, Calendar, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import ky from 'ky'
 import useSWR from 'swr'
-import clsx from 'clsx'
 
 import { BlogCard } from '@/components/blog'
 import Tags from '@/components/tags'
-import Island from '@/components/island'
 import InfiniteLoading from '@/components/infiniteLoading'
 import Profile from '@/components/profile'
-import FeaturedPost from '@/components/featured-post'
-import Newsletter from '@/components/newsletter'
 
 import { useSignalSwitch } from '@/lib/hooks/useSignal'
 import { useTag } from '@/lib/hooks/useTag'
@@ -22,8 +18,6 @@ interface BlogRoute {
   route: string
   [key: string]: any
 }
-
-type PostRouteType = string | BlogRoute
 
 function HeroTags() {
   const { data: tags = [] } = useSWR('/api/tag', async (api: string) => {
@@ -55,7 +49,7 @@ function HeroTags() {
   
   return (
     <div className="flex flex-wrap gap-3">
-      {displayTags.map((tag, i) => (
+      {displayTags.map((tag) => (
         <Link href={`/blog?tag=${tag}`} key={tag}>
           <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${colorMap[tag] || defaultColor}`}>
             #{tag}
@@ -63,21 +57,6 @@ function HeroTags() {
         </Link>
       ))}
     </div>
-  )
-}
-
-function TagList() {
-  const tag = useTag()  
-  const { data: tags = [] } = useSWR('/api/tag', async (api: string) => {
-    const data = await ky.get(api).json<string[]>()
-    return data
-  }, { 
-    revalidateOnFocus: true,
-    revalidateOnMount: true,
-    dedupingInterval: 0 // Disable deduping to ensure fresh data
-  })
-  return (
-    <Tags className="flex flex-row flex-wrap gap-2" value={tags} active={tag} />
   )
 }
 
@@ -144,14 +123,15 @@ function BlogList() {
         return;
       }
       
-      return setData(({ blogs: [...blogs] }) => {
-        data.forEach((item, i) => (blogs[offset + i] = item))
-        return { disabled: data.length !== limit, blogs }
-      })
+      return setData(({ blogs: prevBlogs }) => {
+        const newBlogs = [...prevBlogs];
+        data.forEach((item, i) => (newBlogs[offset + i] = item));
+        return { disabled: data.length !== limit, blogs: newBlogs };
+      });
     } catch (error) {
       console.error('Error loading more blog data:', error);
     }
-  }, [limit, offset, tag, blogs])
+  }, [limit, offset, tag]);
 
   useEffect(() => {
     if (reset) setData({ disabled: false, blogs: [] })
@@ -160,14 +140,14 @@ function BlogList() {
   if (blogs.length === 0) {
     return (
       <motion.div 
-        className="col-span-full text-center py-12"
+        className="col-span-full text-center py-12 bg-base-200/50 backdrop-blur-sm rounded-lg border border-base-300/30 shadow-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
         <h3 className="font-medium text-xl mb-2">No posts found</h3>
         <p className="text-base-content/70 mb-4">
           {tag ? `No blog posts found for the tag "${tag}". Try another tag.` : 
-            "There aren't any blog posts published yet. Check back soon!"}
+            "There aren&apos;t any blog posts published yet. Check back soon!"}
         </p>
         {tag && (
           <Link href="/">
@@ -185,7 +165,7 @@ function BlogList() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {blogs.map((route, i) => (
         <motion.div
           key={route}
@@ -196,11 +176,11 @@ function BlogList() {
           <BlogCard route={route} />
         </motion.div>
       ))}
-      <div className="flex justify-center py-4">
+      <div className="flex justify-center py-6">
         <InfiniteLoading onLoad={onLoad} disabled={disabled} />
         {disabled && blogs.length > 0 && (
           <p className="text-xs text-base-content/50 ml-2 mt-2">
-            <span>You've reached the bottom</span> 🎉
+            <span>You&apos;ve reached the bottom</span> 🎉
           </p>
         )}
       </div>
@@ -209,47 +189,12 @@ function BlogList() {
 }
 
 export default function Page() {
-  const { data: featuredPost, error: featuredError } = useSWR('/api/featured-post', async (api: string) => {
-    try {
-      return await ky.get(api).json<{
-        title: string
-        date: string
-        description: string
-        slug: string
-        image?: string
-        tags?: string[]
-      }>()
-    } catch (err) {
-      console.error('Error fetching featured post:', err)
-      return null
-    }
-  }, { 
-    fallbackData: {
-      title: "Building an AI-Powered Chatbot with LangChain",
-      date: "2023-10-15",
-      description: "Learn how to create a sophisticated chatbot using LangChain, vector databases, and modern LLMs for enhanced conversational experiences.",
-      slug: "langchain-chatbot",
-      image: "/blog/langchain-preview.jpg",
-      tags: ["AI", "LLM", "Tutorial"]
-    },
-    revalidateOnFocus: false
-  })
-
-  const defaultPost = {
-    title: "Building an AI-Powered Chatbot with LangChain",
-    date: "2023-10-15",
-    description: "Learn how to create a sophisticated chatbot using LangChain, vector databases, and modern LLMs for enhanced conversational experiences.",
-    slug: "langchain-chatbot",
-    image: "/blog/langchain-preview.jpg",
-    tags: ["AI", "LLM", "Tutorial"]
-  }
-
   return (
-    <div className="space-y-16 max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 pb-20">
       {/* Hero Section */}
-      <section className="relative pt-12 pb-16 px-4">
+      <section className="relative pt-12 pb-16">
         {/* Animated gradient background */}
-        <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 -z-10 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-800/10 dark:via-purple-800/10 dark:to-pink-800/10 animate-gradient-slow" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(255,255,255,0.1),transparent)]" />
           
@@ -272,7 +217,7 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-8">
             <div className="flex flex-col space-y-6 max-w-3xl">
@@ -281,20 +226,20 @@ export default function Page() {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1 }}
               >
-                <h1 className="font-bold text-5xl md:text-6xl tracking-tight">
+                <h1 className="font-bold text-5xl md:text-6xl tracking-tight inline-flex flex-wrap">
                   <motion.span
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
-                    className="inline-block"
+                    className="mr-4"
                   >
-                    Welcome to my{' '}
+                    Welcome to my
                   </motion.span>
                   <motion.span
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
-                    className="inline-block bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-shimmer"
+                    className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-shimmer"
                   >
                     Blog
                   </motion.span>
@@ -303,18 +248,18 @@ export default function Page() {
                   initial={{ width: 0 }}
                   animate={{ width: "40%" }}
                   transition={{ duration: 0.8, delay: 0.6 }}
-                  className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 mt-4 rounded-full"
+                  className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 mt-4 mb-6 rounded-full"
                 />
               </motion.div>
               
               <motion.p 
-                className="text-lg text-base-content/80 leading-relaxed"
+                className="text-lg md:text-xl text-base-content/80 leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
               >
                 Exploring the intersection of AI, machine learning, and software engineering
-                through hands-on tutorials and practical insights. I'm on a mission to make
+                through hands-on tutorials and practical insights. I&apos;m on a mission to make
                 complex AI concepts accessible and useful for everyone.
               </motion.p>
 
@@ -343,24 +288,15 @@ export default function Page() {
               >
                 <Link href="/blog">
                   <motion.button
-                    className="btn btn-primary rounded-full px-6 relative overflow-hidden group"
-                    whileHover={{ scale: 1.05 }}
+                    className="btn btn-primary rounded-full px-8 py-3 relative overflow-hidden group"
+                    whileHover={{ scale: 1.05, boxShadow: "0 5px 15px rgba(59, 130, 246, 0.3)" }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <span className="relative z-10">Explore Articles</span>
+                    <span className="relative z-10 font-medium">Explore Articles</span>
                     <motion.span 
                       className="absolute inset-0 bg-white/20 transform translate-x-full group-hover:translate-x-0 transition-transform duration-300"
                     />
-                    <ArrowRight className="ml-1 w-4 h-4 relative z-10" />
-                  </motion.button>
-                </Link>
-                <Link href="/about">
-                  <motion.button
-                    className="btn btn-outline rounded-full px-6 border-2 hover:bg-base-200/50"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    About Me
+                    <ArrowRight className="ml-2 w-4 h-4 relative z-10" />
                   </motion.button>
                 </Link>
               </motion.div>
@@ -379,17 +315,18 @@ export default function Page() {
         </div>
       </section>
 
-      <div className="h-px w-full bg-base-300/30 mx-auto max-w-5xl" />
+      {/* Divider */}
+      <div className="h-px w-full bg-base-300/30 mx-auto max-w-5xl mt-8 mb-12" />
 
       {/* Latest Posts Section */}
-      <section className="space-y-6 px-4">
+      <section className="space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Latest Posts</h2>
+          <h2 className="text-3xl font-bold">Latest Posts</h2>
           <Link 
             href="/blog" 
-            className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium group"
+            className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium group bg-primary/5 px-4 py-2 rounded-full hover:bg-primary/10 transition-colors"
           >
-            <span>View all</span>
+            <span>View all posts</span>
             <motion.span
               whileHover={{ x: 4 }}
               className="inline-block"

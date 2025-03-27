@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, useScroll, useSpring } from 'framer-motion'
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion'
 import { ArrowUp } from 'lucide-react'
 
 export default function ReadingProgress() {
@@ -54,7 +54,7 @@ export default function ReadingProgress() {
   return (
     <>
       <div 
-        className="fixed top-16 left-0 right-0 h-1.5 z-40 bg-transparent cursor-pointer"
+        className="fixed top-16 left-0 right-0 h-2 md:h-1.5 z-40 bg-transparent cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleClick}
@@ -70,7 +70,7 @@ export default function ReadingProgress() {
           style={{ 
             scaleX,
             opacity: isVisible ? 1 : 0,
-            height: isHovered ? '8px' : '100%',
+            height: isHovered ? '10px' : '100%',
             transition: 'opacity 0.3s ease, height 0.2s ease',
             boxShadow: isHovered 
               ? '0 0 12px rgba(168, 85, 247, 0.7)' 
@@ -79,20 +79,37 @@ export default function ReadingProgress() {
         />
       </div>
       
-      {isHovered && isVisible && (
-        <motion.div 
-          className="fixed top-20 right-4 bg-base-200 text-base-content shadow-lg px-3 py-2 rounded-md z-40 flex items-center gap-2 text-sm border border-base-300"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          role="tooltip"
-          aria-live="polite"
-        >
-          <ArrowUp className="w-4 h-4" /> 
-          <span>Scroll to top</span>
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {isHovered && isVisible && (
+          <motion.div 
+            className="fixed top-20 right-4 bg-base-200 text-base-content shadow-lg px-3 py-2 rounded-md z-40 flex items-center gap-2 text-sm border border-base-300"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            role="tooltip"
+            aria-live="polite"
+          >
+            <ArrowUp className="w-4 h-4" /> 
+            <span>Scroll to top</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile indicator that shows progress percentage */}
+      <AnimatePresence>
+        {isVisible && !isHovered && (
+          <motion.div
+            className="fixed bottom-4 right-4 bg-base-200/80 backdrop-blur-sm text-base-content shadow-lg px-3 py-1.5 rounded-full z-40 text-xs border border-base-300/50 md:hidden flex items-center gap-1"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.2 }}
+          >
+            <span className="font-medium">{progressPercentage}%</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 } 

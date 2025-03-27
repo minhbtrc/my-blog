@@ -38,7 +38,7 @@ export default function Header() {
   const closeMenu = () => setIsMenuOpen(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-base-100/80 backdrop-blur-md border-b border-base-300/30 shadow-sm">
+    <header className="sticky top-0 z-50 bg-base-100/90 backdrop-blur-md border-b border-base-300/30 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center">
@@ -48,7 +48,7 @@ export default function Header() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            Minh's Space
+            Minh&apos;s Space
           </motion.div>
         </Link>
 
@@ -70,7 +70,18 @@ export default function Header() {
                       : 'text-base-content/70 hover:text-base-content'
                   )}
                 >
-                  {item.name}
+                  <span className="relative z-10">{item.name}</span>
+                  
+                  {/* Active item background */}
+                  {isActive && (
+                    <motion.div
+                      className="absolute inset-0 bg-primary/10 rounded-md -z-0"
+                      layoutId="navbar-bg"
+                      transition={{ type: 'spring', duration: 0.5 }}
+                    />
+                  )}
+                  
+                  {/* Active item indicator */}
                   {isActive && (
                     <motion.div
                       className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
