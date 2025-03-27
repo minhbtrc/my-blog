@@ -7,17 +7,11 @@ import ky from 'ky'
 import useSWR from 'swr'
 
 import { BlogCard } from '@/components/blog'
-import Tags from '@/components/tags'
 import InfiniteLoading from '@/components/infiniteLoading'
 import Profile from '@/components/profile'
 
 import { useSignalSwitch } from '@/lib/hooks/useSignal'
 import { useTag } from '@/lib/hooks/useTag'
-
-interface BlogRoute {
-  route: string
-  [key: string]: any
-}
 
 function HeroTags() {
   const { data: tags = [] } = useSWR('/api/tag', async (api: string) => {

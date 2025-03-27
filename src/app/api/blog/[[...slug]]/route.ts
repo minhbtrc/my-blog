@@ -80,7 +80,7 @@ class Route {
     @Body(PostDto) { q, t, limit, offset }: z.infer<typeof PostDto>,
   ) {
     try {
-      let routes = [];
+      let routes: string[] = [];
       
       if (q) {
         const document = Index.load(index)

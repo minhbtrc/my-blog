@@ -83,9 +83,6 @@ export default function Profile() {
                 🇻🇳
               </span>
             </div>
-            <p className="text-base-content/60 text-sm">
-              Building intelligent systems with a focus on privacy and efficiency
-            </p>
           </div>
         </div>
         

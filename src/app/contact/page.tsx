@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Mail, MapPin, Send } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
-import Link from 'next/link'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -76,7 +75,7 @@ export default function ContactPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Get in Touch</h1>
           <p className="text-base-content/70 max-w-xl mx-auto">
-            Interested in discussing AI technologies, NLP solutions, or potential collaboration? I'm always open to connecting with fellow AI enthusiasts and industry professionals.
+            Interested in discussing AI technologies, NLP solutions, or potential collaboration? I&apos;m always open to connecting with fellow AI enthusiasts and industry professionals.
           </p>
         </div>
         
@@ -153,7 +152,7 @@ export default function ContactPage() {
               
               {formStatus === 'success' && (
                 <div className="alert alert-success mt-4">
-                  <p>Your message has been sent successfully! I'll get back to you soon.</p>
+                  <p>Your message has been sent successfully! I&apos;ll get back to you soon.</p>
                 </div>
               )}
               
@@ -207,7 +206,7 @@ export default function ContactPage() {
                 <a 
                   href="https://github.com/minhbtrc" 
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noreferrer"
                   className="flex items-center gap-4 p-3 rounded-lg hover:bg-base-200/50 transition-colors"
                 >
                   <div className="bg-base-200 p-2 rounded-full">
@@ -222,7 +221,7 @@ export default function ContactPage() {
                 <a 
                   href="https://www.linkedin.com/in/minhbtcm00/" 
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noreferrer"
                   className="flex items-center gap-4 p-3 rounded-lg hover:bg-base-200/50 transition-colors"
                 >
                   <div className="bg-base-200 p-2 rounded-full">
@@ -239,7 +238,7 @@ export default function ContactPage() {
             <div className="mt-8 bg-base-200/30 backdrop-blur-sm border border-base-300/30 p-6 rounded-xl">
               <h3 className="text-xl font-bold mb-2">Professional Focus</h3>
               <p className="text-base-content/70">
-                I specialize in natural language processing (NLP) and Transformer-based architectures. My expertise includes applying Large Language Models (LLMs) to tasks like question generation, sentiment analysis, and data extraction. I'm particularly passionate about optimizing LLM performance using frameworks like Langchain.
+                I specialize in natural language processing (NLP) and Transformer-based architectures. My expertise includes applying Large Language Models (LLMs) to tasks like question generation, sentiment analysis, and data extraction. I&apos;m particularly passionate about optimizing LLM performance using frameworks like Langchain.
               </p>
             </div>
           </motion.div>

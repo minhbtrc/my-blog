@@ -1,7 +1,6 @@
 'use client'
 import dynamic from 'next/dynamic'
 import { Fragment, ReactNode, useMemo } from 'react'
-import clsx from 'clsx'
 
 export type IslandProps = {
   children: ReactNode

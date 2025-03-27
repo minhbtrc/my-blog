@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Github, Linkedin, Mail, ArrowUp } from 'lucide-react'
-import Newsletter from '@/components/newsletter'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -23,11 +22,11 @@ export default function Footer() {
           <div className="md:col-span-4">
             <Link href="/">
               <h3 className="font-satoshi font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-4">
-                Minh's Space
+                Minh&apos;s Space
               </h3>
             </Link>
             <p className="text-base-content/70 text-sm max-w-md mb-6">
-              Exploring the intersection of AI, machine learning, and software engineering
+              Exploring AI, machine learning, and software engineering
               through hands-on tutorials and practical insights.
             </p>
             <div className="flex items-center gap-4">
@@ -155,7 +154,7 @@ export default function Footer() {
         
         <div className="flex flex-col sm:flex-row justify-between items-center border-t border-base-300/30 mt-12 pt-8">
           <p className="text-sm text-base-content/60 mb-4 sm:mb-0">
-            © {currentYear} Minh BTC. All rights reserved.
+            © {currentYear} MinhBTC. All rights reserved.
           </p>
           
           <motion.button

@@ -114,8 +114,8 @@ function dreelize(root: string): ExtendedDree | null {
             if (typeof parsedToml.tags === 'string') {
               tags = parsedToml.tags
                 .split(',')
-                .map(e => e.trim())
-                .filter(e => !!e)
+                .map((e: string) => e.trim())
+                .filter((e: string) => !!e)
             } else if (Array.isArray(parsedToml.tags)) {
               tags = parsedToml.tags
             }

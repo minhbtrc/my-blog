@@ -4,10 +4,19 @@ import useSWR from 'swr'
 import ky from 'ky'
 
 import Link from 'next/link'
-import { ArrowUpRight, Calendar, ArrowRight, Tag } from 'lucide-react'
-import Tags from './tags'
+import { Calendar, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { memo } from 'react'
+
+// Define Blog type for TypeScript
+interface Blog {
+  title: string;
+  date: string;
+  tags: string[];
+  description: string;
+  route?: string;
+  image?: string | null;
+}
 
 // Helper function to normalize API routes
 function normalizeApiRoute(route: string): string {
@@ -55,7 +64,7 @@ export const BlogCard = memo(function BlogCard({
   route: string
 }) {
   // Fetch blog data using the custom hook
-  const { data, error, isLoading } = useBlog(route);
+  const { data, isLoading } = useBlog(route);
   
   // Format the display date using dayjs
   const displayDate = data?.date 
@@ -89,21 +98,6 @@ export const BlogCard = memo(function BlogCard({
               <div className="flex items-center gap-1.5 text-base-content/60 text-sm">
                 <Calendar className="w-3.5 h-3.5" />
                 <time dateTime={data?.date?.toString()}>{displayDate}</time>
-              </div>
-            )}
-            
-            {/* Tags */}
-            {!isLoading && data?.tags && data.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {data.tags.map(tag => (
-                  <span 
-                    key={tag}
-                    className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs flex items-center gap-1"
-                  >
-                    <Tag className="w-3 h-3" />
-                    {tag}
-                  </span>
-                ))}
               </div>
             )}
           </div>

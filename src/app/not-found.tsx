@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Home, RotateCcw, Cpu, Search } from 'lucide-react'
@@ -9,8 +9,10 @@ export default function NotFound() {
   const [counter, setCounter] = useState(5)
   const [messages, setMessages] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
   
-  const errorMessages = [
+  // Wrap errorMessages in useMemo to prevent recreating the array on each render
+  const errorMessages = useMemo(() => [
     "Error: Neural pathways disconnected...",
     "Attempting to reconnect synapses...",
     "AI consciousness temporarily offline...",
@@ -21,7 +23,7 @@ export default function NotFound() {
     "Initiating self-repair sequence...",
     "Searching alternate multiverse branches...",
     "404: Content has been consumed by a black hole"
-  ]
+  ], [])
   
   // Add messages gradually with a typewriter effect
   useEffect(() => {
@@ -44,6 +46,12 @@ export default function NotFound() {
       window.location.href = '/'
     }
   }, [counter])
+
+  useEffect(() => {
+    // Select a random error message
+    const randomIndex = Math.floor(Math.random() * errorMessages.length)
+    setErrorMessage(errorMessages[randomIndex])
+  }, [errorMessages])
 
   // Handle search submission
   const handleSearchSubmit = useCallback((e: React.FormEvent) => {
@@ -103,7 +111,7 @@ export default function NotFound() {
           </div>
           
           <p className="text-base-content/80 mb-6">
-            The page you&apos;re looking for has wandered off into a parallel dimension. Our AI is working on retrieving it.
+            {errorMessage}
           </p>
           
           {/* Search form */}

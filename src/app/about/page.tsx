@@ -162,6 +162,7 @@ export default function AboutPage() {
                 <a 
                   href="https://github.com/minhbtrc/langchain-chatbot" 
                   target="_blank" 
+                  rel="noreferrer"
                   className="text-primary hover:underline inline-flex items-center mt-2"
                 >
                   View Project
@@ -224,7 +225,7 @@ export default function AboutPage() {
               <div>
                 <h3 className="text-lg font-semibold">LangChain & Vector Databases in Production</h3>
                 <p className="text-base-content/70 text-sm">Activeloop • 08/2023</p>
-                <a href="https://learn.activeloop.ai/certificates/snnl0bjoa4" target="_blank" className="text-primary hover:underline text-sm">View Certificate</a>
+                <a href="https://learn.activeloop.ai/certificates/snnl0bjoa4" target="_blank" rel="noreferrer" className="text-primary hover:underline text-sm">View Certificate</a>
               </div>
             </div>
             
@@ -235,7 +236,7 @@ export default function AboutPage() {
               <div>
                 <h3 className="text-lg font-semibold">Generative AI with Large Language Models</h3>
                 <p className="text-base-content/70 text-sm">Coursera • 08/2023</p>
-                <a href="https://www.coursera.org/account/accomplishments/certificate/M8Q,JYLYC9FCD" target="_blank" className="text-primary hover:underline text-sm">View Certificate</a>
+                <a href="https://www.coursera.org/account/accomplishments/certificate/M8Q,JYLYC9FCD" target="_blank" rel="noreferrer" className="text-primary hover:underline text-sm">View Certificate</a>
               </div>
             </div>
             
@@ -246,7 +247,7 @@ export default function AboutPage() {
               <div>
                 <h3 className="text-lg font-semibold">Natural Language Processing Specialization</h3>
                 <p className="text-base-content/70 text-sm">Coursera • 03/2022</p>
-                <a href="https://www.coursera.org/account/accomplishments/specialization/certificate/8JVX3M2H36T2" target="_blank" className="text-primary hover:underline text-sm">View Certificate</a>
+                <a href="https://www.coursera.org/account/accomplishments/specialization/certificate/8JVX3M2H36T2" target="_blank" rel="noreferrer" className="text-primary hover:underline text-sm">View Certificate</a>
               </div>
             </div>
           </div>
@@ -259,6 +260,7 @@ export default function AboutPage() {
             <Link
               href="https://github.com/minhbtrc"
               target="_blank"
+              rel="noreferrer"
               className="bg-base-200 hover:bg-base-300 p-3 rounded-full transition-colors"
             >
               <SiGithub className="w-5 h-5" />
@@ -266,6 +268,7 @@ export default function AboutPage() {
             <Link
               href="https://www.linkedin.com/in/minhbtcm00/"
               target="_blank"
+              rel="noreferrer"
               className="bg-base-200 hover:bg-base-300 p-3 rounded-full transition-colors"
             >
               <SiLinkedin className="w-5 h-5" />

@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Loader2, Calendar, Tag, ArrowLeft, Info, Search, Sparkles, BookOpen } from 'lucide-react'
+import { Loader2, Calendar, Tag, ArrowLeft, Info, BookOpen } from 'lucide-react'
 import Image from 'next/image'
 
 // Blog data hardcoded for fallback
@@ -20,6 +20,11 @@ const fallbackBlogData = [
   }
 ]
 
+// Local implementation to replace the imported Blog.all()
+const Blog = {
+  all: () => fallbackBlogData
+}
+
 function BlogPageTemp() {
   const searchParams = useSearchParams()
   const tagFilter = searchParams.get('tag')
@@ -28,6 +33,14 @@ function BlogPageTemp() {
   const [blogData, setBlogData] = useState([])
   const [filteredPosts, setFilteredPosts] = useState([])
   const [allTags, setAllTags] = useState([])
+  
+  // Use Blog.all() as initial data or fallback
+  useEffect(() => {
+    // If no blog data loaded yet, initialize with Blog.all()
+    if (blogData.length === 0) {
+      setBlogData(Blog.all());
+    }
+  }, [blogData.length]);
   
   // Fetch blog posts data
   useEffect(() => {
@@ -217,9 +230,6 @@ function BlogPageTemp() {
       </div>
     )
   }
-  
-  // Get featured post (first post or null if none)
-  const featuredPost = filteredPosts.length > 0 ? filteredPosts[0] : null;
   
   // Other posts (excluding featured when not filtering by tag)
   const allPosts = filteredPosts;

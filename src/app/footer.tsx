@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, CheckCircle, Github, Linkedin, Mail, Send } from 'lucide-react'
+import { Github, Linkedin, Mail } from 'lucide-react'
 
 export default function Footer() {
   const [email, setEmail] = useState('')
@@ -29,7 +29,7 @@ export default function Footer() {
           <div className="md:col-span-5 space-y-4">
             <h3 className="text-xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">Minh BTC</h3>
             <p className="text-base-content/80 text-sm leading-relaxed">
-              A personal blog focused on AI, machine learning, and software development. 
+              A personal blog about AI, machine learning, and software development.
               Sharing insights, tutorials, and thoughts on the latest advancements in technology.
             </p>
             <div className="flex gap-3 pt-2">
@@ -123,12 +123,14 @@ export default function Footer() {
                     {loading ? (
                       <span className="loading loading-spinner loading-xs" />
                     ) : (
-                      <Send className="w-4 h-4" />
+                      <span>
+                        Subscribe
+                      </span>
                     )}
                   </motion.button>
                 </div>
                 <p className="text-xs text-base-content/50 mt-2">
-                  I respect your privacy. Unsubscribe at any time.
+                  Your privacy matters. Unsubscribe at any time.
                 </p>
               </form>
             ) : (
@@ -137,13 +139,9 @@ export default function Footer() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <CheckCircle className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="font-medium text-base-content">Thanks for subscribing!</h4>
-                  <p className="text-sm text-base-content/70 mt-1">
-                    You'll receive updates about new content and announcements.
-                  </p>
-                </div>
+                <span>
+                  Thanks for subscribing! You&apos;ll receive updates about new content and announcements.
+                </span>
               </motion.div>
             )}
           </div>
