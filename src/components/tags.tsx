@@ -1,72 +1,78 @@
 'use client'
-import clsx from 'clsx'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { Tag } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next-nprogress-bar'
-import { usePathname } from 'next/navigation'
 
-export type TagsProps = {
+export interface TagsProps {
   value?: string[]
-  active?: string
-  className?: string
+  tags?: string[]
   readOnly?: boolean
+  baseUrl?: string
+  className?: string
 }
 
-export default function Tags({
-  className = 'flex flex-row flex-wrap gap-1',
-  value = [],
-  active,
-  readOnly = false,
+export default function Tags({ 
+  value = [], 
+  tags = [],
+  readOnly = true,
+  baseUrl = '',
+  className = ''
 }: TagsProps) {
-  const { push } = useRouter()
-  const pathname = usePathname()
-  
-  // Function to handle navigation with correct path context
-  const navigateToTag = (tag?: string) => {
-    if (readOnly) return;
-    
-    // If we're on the blog page, use relative URL to stay on that page
-    if (pathname === '/blog') {
-      push(tag ? `?tag=${tag}` : '');
-    } else {
-      // On home page or other pages, navigate to home with tag
-      push(tag ? `/?tag=${tag}` : '/');
-    }
-  };
+  const tagList = tags.length > 0 ? tags : value;
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
 
   return (
-    <div className={className}>
-      <motion.div
-        className={clsx('badge badge-sm truncate', {
-          'badge-outline': !!active,
-          'badge-primary': !active,
-          hidden: typeof active !== 'string',
-          'cursor-pointer': !readOnly,
-        })}
-        onClick={() => navigateToTag()}
-        initial={{ x: 0, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        whileHover={{ opacity: 0.6, transition: { duration: 0 } }}
-        transition={{ duration: 0.5 }}
-      >
-        all
-      </motion.div>
-      {value.map((tag, i) => (
-        <motion.div
+    <div className={`flex flex-wrap gap-2 ${className}`}>
+      {tagList.map((tag) => (
+        <TagItem
           key={tag}
-          className={clsx('badge badge-sm truncate', {
-            'badge-outline': active !== tag,
-            'badge-primary': active === tag,
-            'cursor-pointer': !readOnly,
-          })}
-          onClick={() => navigateToTag(tag)}
-          initial={{ x: Math.min(4 * (i + 1), 32), opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          whileHover={{ opacity: 0.6, transition: { duration: 0 } }}
-          transition={{ duration: 0.5 }}
-        >
-          {tag}
-        </motion.div>
+          tag={tag}
+          readOnly={readOnly}
+          baseUrl={baseUrl}
+        />
       ))}
     </div>
+  )
+}
+
+function TagItem({
+  tag,
+  readOnly = true,
+  baseUrl = '',
+}: {
+  tag: string
+  readOnly?: boolean
+  baseUrl?: string
+}) {
+  const href = `${baseUrl}?tag=${encodeURIComponent(tag)}`
+
+  return (
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="inline-flex items-center"
+    >
+      {readOnly ? (
+        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-primary/10 text-primary/90">
+          <Tag className="w-3 h-3" />
+          <span>{tag}</span>
+        </span>
+      ) : (
+        <Link
+          href={href}
+          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-primary/10 text-primary/90 hover:bg-primary/20 transition-colors"
+        >
+          <Tag className="w-3 h-3 flex-shrink-0" />
+          <span>{tag}</span>
+        </Link>
+      )}
+    </motion.div>
   )
 }

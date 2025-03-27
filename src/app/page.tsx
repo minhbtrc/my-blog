@@ -2,323 +2,240 @@
 import { useCallback, useEffect, useState, Suspense } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Code, FileText, Sparkles, Star } from 'lucide-react'
 import ky from 'ky'
 import useSWR from 'swr'
+import { usePathname } from 'next/navigation'
 
 import { BlogCard } from '@/components/blog'
-import InfiniteLoading from '@/components/infiniteLoading'
 import Profile from '@/components/profile'
+import Tags from '@/components/tags'
 
-import { useSignalSwitch } from '@/lib/hooks/useSignal'
-import { useTag } from '@/lib/hooks/useTag'
+// Animated Particle Component for Hero Background
+const ParticleBackground = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/5 via-sky-800/5 to-teal-800/5 dark:from-indigo-900/20 dark:via-sky-800/20 dark:to-teal-800/20" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(56,189,248,0.12),transparent)]" />
+      
+      {Array.from({ length: 30 }).map((_, i) => {
+        const size = Math.random() * 8 + 2;
+        const duration = Math.random() * 30 + 15;
+        const initialX = Math.random() * 100;
+        const initialY = Math.random() * 100;
+        const targetX = Math.random() * 100;
+        const targetY = Math.random() * 100;
+        
+        return (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-sky-500/20 dark:bg-sky-400/10"
+            style={{
+              width: size,
+              height: size,
+              top: `${initialY}%`,
+              left: `${initialX}%`,
+            }}
+            animate={{
+              y: [`${initialY}%`, `${targetY}%`],
+              x: [`${initialX}%`, `${targetX}%`],
+              opacity: [Math.random() * 0.5 + 0.2, Math.random() * 0.3 + 0.1, Math.random() * 0.5 + 0.2],
+            }}
+            transition={{
+              duration,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+};
+
+// Terminal-inspired hero section with typing animation
+const TerminalHero = () => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+      className="max-w-3xl"
+    >
+      <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6">
+        <div className="overflow-hidden">
+          <motion.span
+            initial={{ y: 90 }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
+            className="inline-block mr-4 text-slate-800 dark:text-slate-50"
+          >
+            Welcome to my
+          </motion.span>
+        </div>
+        <div className="overflow-hidden">
+          <motion.span
+            initial={{ y: 90 }}
+            animate={{ y: 0 }}
+            transition={{ 
+              duration: 0.8, 
+              ease: [0.43, 0.13, 0.23, 0.96],
+              delay: 0.2 
+            }}
+            className="inline-block bg-gradient-to-r from-sky-500 via-indigo-500 to-sky-500 bg-clip-text text-transparent animate-gradient"
+          >
+            AI Engineering Space
+          </motion.span>
+        </div>
+      </h1>
+      
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: "35%" }}
+        transition={{ duration: 1.2, delay: 0.6, ease: "easeInOut" }}
+        className="h-1 bg-gradient-to-r from-sky-500 to-indigo-500 mb-8 rounded-full"
+      />
+      
+      <motion.div 
+        className="relative p-4 glass rounded-lg font-mono text-sm"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+      >
+        <div className="flex gap-1.5 absolute top-3 left-3">
+          <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+        </div>
+        <div className="pt-4 pb-1">
+          <span className="text-sky-600 dark:text-sky-400">minh@ai-blog</span>:<span className="text-indigo-500 dark:text-indigo-400">~</span>$ <span className="typing-effect text-slate-700 dark:text-slate-300">
+            Exploring the intersection of AI, machine learning, and privacy-first engineering. 
+            I build intelligent systems that help businesses leverage the power of AI while 
+            maintaining data security and efficiency.
+          </span>
+          <span className="inline-block w-2 h-4 bg-sky-500/70 animate-pulse ml-1"></span>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 function HeroTags() {
-  const { data: tags = [] } = useSWR('/api/tag', async (api: string) => {
-    const data = await ky.get(api).json<string[]>()
-    return data
-  }, { 
-    revalidateOnFocus: false,
-    revalidateOnMount: true
+  const { data, error, isLoading } = useSWR('/api/tag', async (url) => {
+    const res = await ky.get(url).json<string[]>()
+    return Array.isArray(res) ? res : []
   })
   
-  // Color mappings for consistent tag colors
-  const colorMap: Record<string, string> = {
-    'AI': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800/40',
-    'ML': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-800/40',
-    'NLP': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800/40',
-    'Tutorial': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 hover:bg-orange-200 dark:hover:bg-orange-800/40',
-    'Dev': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-800/40',
-    'LLM': 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300 hover:bg-cyan-200 dark:hover:bg-cyan-800/40',
-    'Privacy': 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-800/40',
-    'Agents': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-800/40',
-    'RAG': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-800/40',
-  }
+  const pathname = usePathname()
   
-  // Default color for tags not in the mapping
-  const defaultColor = 'bg-gray-100 text-gray-800 dark:bg-gray-800/30 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700/40'
-  
-  // Show at most 4 tags in the hero section
-  const displayTags = tags.slice(0, 4)
-  
-  return (
-    <div className="flex flex-wrap gap-3">
-      {displayTags.map((tag) => (
-        <Link href={`/blog?tag=${tag}`} key={tag}>
-          <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${colorMap[tag] || defaultColor}`}>
-            #{tag}
-          </span>
-        </Link>
-      ))}
-    </div>
-  )
-}
-
-function BlogList() {
-  const tag = useTag()
-  const reset = useSignalSwitch(tag)
-  const [{ disabled, blogs }, setData] = useState<{
-    disabled: boolean
-    blogs: string[]
-  }>({ disabled: false, blogs: [] })
-  const limit = 10
-  const offset = blogs.length
-
-  useEffect(() => {
-    // Initial data load
-    const loadInitialData = async () => {
-      try {
-        console.log('Loading initial blog data with tag:', tag);
-        const data = await ky
-          .post('/api/blog', {
-            json: {
-              t: tag,
-              limit,
-              offset: 0,
-            },
-          })
-          .json<string[]>();
-        
-        console.log('Initial blog routes loaded:', data);
-        
-        if (Array.isArray(data)) {
-          setData({
-            disabled: data.length < limit,
-            blogs: data,
-          });
-        } else {
-          console.error('Blog API did not return an array:', data);
-        }
-      } catch (error) {
-        console.error('Error loading initial blog data:', error);
-      }
-    };
-    
-    loadInitialData();
-  }, [tag, limit]);
-
-  const onLoad = useCallback(async () => {
-    try {
-      console.log('Loading more blogs with offset:', offset);
-      const data = await ky
-        .post('/api/blog', {
-          json: {
-            t: tag,
-            limit,
-            offset,
-          },
-        })
-        .json<string[]>()
-      
-      console.log('Additional blog routes loaded:', data);
-      
-      if (!Array.isArray(data)) {
-        console.error('Blog API did not return an array:', data);
-        return;
-      }
-      
-      return setData(({ blogs: prevBlogs }) => {
-        const newBlogs = [...prevBlogs];
-        data.forEach((item, i) => (newBlogs[offset + i] = item));
-        return { disabled: data.length !== limit, blogs: newBlogs };
-      });
-    } catch (error) {
-      console.error('Error loading more blog data:', error);
-    }
-  }, [limit, offset, tag]);
-
-  useEffect(() => {
-    if (reset) setData({ disabled: false, blogs: [] })
-  }, [reset])
-
-  if (blogs.length === 0) {
+  if (isLoading) {
     return (
-      <motion.div 
-        className="col-span-full text-center py-12 bg-base-200/50 backdrop-blur-sm rounded-lg border border-base-300/30 shadow-sm"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-      >
-        <h3 className="font-medium text-xl mb-2">No posts found</h3>
-        <p className="text-base-content/70 mb-4">
-          {tag ? `No blog posts found for the tag "${tag}". Try another tag.` : 
-            "There aren&apos;t any blog posts published yet. Check back soon!"}
-        </p>
-        {tag && (
-          <Link href="/">
-            <motion.button
-              className="btn btn-primary btn-sm rounded-full"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              View All Posts
-            </motion.button>
-          </Link>
-        )}
-      </motion.div>
+      <div className="flex gap-2">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-7 w-16 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-full"></div>
+        ))}
+      </div>
     )
   }
-
+  
+  if (error || !data || data.length === 0) {
+    return null
+  }
+  
   return (
-    <div className="space-y-6">
-      {blogs.map((route, i) => (
-        <motion.div
-          key={route}
-          initial={{ y: 8 * (i + 1), opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, delay: i * 0.1 }}
-        >
-          <BlogCard route={route} />
-        </motion.div>
-      ))}
-      <div className="flex justify-center py-6">
-        <InfiniteLoading onLoad={onLoad} disabled={disabled} />
-        {disabled && blogs.length > 0 && (
-          <p className="text-xs text-base-content/50 ml-2 mt-2">
-            <span>You&apos;ve reached the bottom</span> 🎉
-          </p>
-        )}
-      </div>
-    </div>
+    <Tags 
+      tags={data}
+      readOnly={false}
+      baseUrl={pathname.startsWith('/blog') ? '/blog' : '/'}
+    />
   )
 }
 
-export default function Page() {
+export default function Home() {
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 pb-20">
-      {/* Hero Section */}
-      <section className="relative pt-12 pb-16">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-800/10 dark:via-purple-800/10 dark:to-pink-800/10 animate-gradient-slow" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(255,255,255,0.1),transparent)]" />
-          
-          {/* Floating particles */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(15)].map((_, i) => (
-              <div 
-                key={i}
-                className="absolute rounded-full bg-blue-500/10 dark:bg-blue-400/10"
-                style={{
-                  width: `${Math.random() * 8 + 2}px`,
-                  height: `${Math.random() * 8 + 2}px`,
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                  animation: `float ${Math.random() * 10 + 10}s linear infinite`,
-                  animationDelay: `${Math.random() * 5}s`
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Main Content */}
-          <div className="lg:col-span-8 space-y-8">
-            <div className="flex flex-col space-y-6 max-w-3xl">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1 }}
-              >
-                <h1 className="font-bold text-5xl md:text-6xl tracking-tight inline-flex flex-wrap">
-                  <motion.span
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    className="mr-4"
-                  >
-                    Welcome to my
-                  </motion.span>
-                  <motion.span
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                    className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-shimmer"
-                  >
-                    Blog
-                  </motion.span>
-                </h1>
+    <div className="w-full relative z-10 min-h-screen">
+      {/* Hero Section with Enhanced Visuals */}
+      <section className="relative w-full py-20 overflow-visible">
+        {/* Animated Background */}
+        <ParticleBackground />
+        
+        <div className="container relative z-20 mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            {/* Main Content */}
+            <div className="lg:col-span-8 space-y-8">
+              <div className="flex flex-col space-y-6">
+                <TerminalHero />
+                
                 <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: "40%" }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                  className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 mt-4 mb-6 rounded-full"
-                />
-              </motion.div>
-              
-              <motion.p 
-                className="text-lg md:text-xl text-base-content/80 leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-              >
-                Exploring the intersection of AI, machine learning, and software engineering
-                through hands-on tutorials and practical insights. I&apos;m on a mission to make
-                complex AI concepts accessible and useful for everyone.
-              </motion.p>
+                  className="flex flex-wrap gap-3 pt-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.9 }}
+                >
+                  <Suspense fallback={
+                    <div className="flex gap-2">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className="h-7 w-16 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-full"></div>
+                      ))}
+                    </div>
+                  }>
+                    <HeroTags />
+                  </Suspense>
+                </motion.div>
 
-              <motion.div 
-                className="flex flex-wrap gap-3 pt-2"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.9 }}
-              >
-                <Suspense fallback={
-                  <div className="flex gap-2">
-                    {[...Array(4)].map((_, i) => (
-                      <div key={i} className="h-7 w-16 bg-base-300/40 animate-pulse rounded-full"></div>
-                    ))}
-                  </div>
-                }>
-                  <HeroTags />
-                </Suspense>
-              </motion.div>
-
-              <motion.div 
-                className="flex flex-wrap gap-4 pt-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1 }}
-              >
-                <Link href="/blog">
-                  <motion.button
-                    className="btn btn-primary rounded-full px-8 py-3 relative overflow-hidden group"
-                    whileHover={{ scale: 1.05, boxShadow: "0 5px 15px rgba(59, 130, 246, 0.3)" }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <span className="relative z-10 font-medium">Explore Articles</span>
-                    <motion.span 
-                      className="absolute inset-0 bg-white/20 transform translate-x-full group-hover:translate-x-0 transition-transform duration-300"
-                    />
-                    <ArrowRight className="ml-2 w-4 h-4 relative z-10" />
-                  </motion.button>
-                </Link>
-              </motion.div>
+                <motion.div 
+                  className="flex flex-wrap gap-4 pt-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.1 }}
+                >
+                  <Link href="/blog">
+                    <motion.button
+                      className="btn-gradient rounded-full px-8 py-3 font-medium relative overflow-hidden group"
+                      whileHover={{ scale: 1.05, boxShadow: "0 5px 15px rgba(14, 165, 233, 0.3)" }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span className="relative z-10">Explore Articles</span>
+                      <motion.span 
+                        className="absolute inset-0 bg-white/20 transform translate-x-full group-hover:translate-x-0 transition-transform duration-300"
+                      />
+                      <ArrowRight className="ml-2 inline-block w-5 h-5 relative z-10" />
+                    </motion.button>
+                  </Link>
+                </motion.div>
+              </div>
             </div>
+            
+            {/* Profile Card */}
+            <motion.div
+              className="lg:col-span-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+            >
+              <Profile />
+            </motion.div>
           </div>
-
-          {/* Profile Card */}
-          <motion.div 
-            className="lg:col-span-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-          >
-            <Profile />
-          </motion.div>
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="h-px w-full bg-base-300/30 mx-auto max-w-5xl mt-8 mb-12" />
-
+      {/* Divider with visual flair */}
+      <div className="relative h-px w-full max-w-5xl mx-auto my-16">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent"></div>
+        <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 w-24 h-px bg-sky-500/50"></div>
+      </div>
+      
       {/* Latest Posts Section */}
-      <section className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold">Latest Posts</h2>
+      <section className="container mx-auto px-4 md:px-6 mb-20">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-slate-800 dark:text-white flex items-center">
+            <Sparkles className="w-6 h-6 mr-2 text-sky-500" />
+            Latest Posts
+          </h2>
+          
           <Link 
             href="/blog" 
-            className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium group bg-primary/5 px-4 py-2 rounded-full hover:bg-primary/10 transition-colors"
+            className="text-sky-600 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 flex items-center gap-1 text-sm font-medium group bg-sky-50 dark:bg-sky-900/20 px-4 py-2 rounded-full hover:bg-sky-100 dark:hover:bg-sky-800/30 transition-colors"
           >
             <span>View all posts</span>
             <motion.span
@@ -330,15 +247,79 @@ export default function Page() {
           </Link>
         </div>
         
-        <Suspense fallback={
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-[160px] bg-base-200/40 rounded-xl animate-pulse"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Suspense fallback={
+            <div className="col-span-full space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-[200px] bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse"></div>
+              ))}
+            </div>
+          }>
+            {['blog/langchain-chatbot'].map((route) => (
+              <BlogCard 
+                key={route}
+                route={route}
+                title="Building a privacy-first LangChain Chatbot"
+                description="Learn how to build a secure, privacy-centric chatbot using LangChain, integrating large language models while keeping user data protected."
+                date="2023-07-15"
+                tags={["LangChain", "AI", "Privacy"]}
+                image="/images/placeholders/placeholder1.jpg"
+              />
             ))}
+          </Suspense>
+        </div>
+      </section>
+      
+      {/* Featured content section */}
+      <section className="container mx-auto px-4 md:px-6 mb-20">
+        <h2 className="text-2xl font-bold mb-8 text-slate-800 dark:text-white flex items-center">
+          <Star className="w-5 h-5 mr-2 text-indigo-500" />
+          Featured Content
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="card p-6 bg-gradient-to-br from-white to-sky-50 dark:from-slate-800 dark:to-slate-800">
+            <div className="flex items-start">
+              <div className="p-3 bg-sky-50 dark:bg-sky-900/30 rounded-full mr-4">
+                <Code className="w-6 h-6 text-sky-600 dark:text-sky-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-2 text-slate-800 dark:text-white">Open Source Projects</h3>
+                <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">
+                  Explore my open-source contributions and projects focused on privacy-preserving machine learning.
+                </p>
+                <Link 
+                  href="/projects" 
+                  className="text-sky-600 hover:text-sky-700 dark:text-sky-400 dark:hover:text-sky-300 text-sm font-medium inline-flex items-center"
+                >
+                  View projects
+                  <ArrowRight className="ml-1 w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
           </div>
-        }>
-          <BlogList />
-        </Suspense>
+          
+          <div className="card p-6 bg-gradient-to-br from-white to-indigo-50 dark:from-slate-800 dark:to-slate-800">
+            <div className="flex items-start">
+              <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mr-4">
+                <FileText className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold mb-2 text-slate-800 dark:text-white">Research Papers</h3>
+                <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">
+                  Read my latest research papers and articles on AI ethics and machine learning techniques.
+                </p>
+                <Link 
+                  href="/research" 
+                  className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 text-sm font-medium inline-flex items-center"
+                >
+                  View research
+                  <ArrowRight className="ml-1 w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   )

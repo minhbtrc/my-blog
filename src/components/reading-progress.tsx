@@ -1,115 +1,38 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion'
-import { ArrowUp } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { motion, useScroll } from 'framer-motion'
 
 export default function ReadingProgress() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [isHovered, setIsHovered] = useState(false)
-  const progressRef = useRef(0)
+  const [visible, setVisible] = useState(false)
   const { scrollYProgress } = useScroll()
-  const scaleX = useSpring(scrollYProgress, { 
-    stiffness: 100, 
-    damping: 30, 
-    restDelta: 0.001 
-  })
-
-  // Update the ref when scrollYProgress changes
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.onChange((latest) => {
-      progressRef.current = latest
-    })
-    return () => unsubscribe()
-  }, [scrollYProgress])
-
-  // Hide progress bar at the very top of the page
+  
   useEffect(() => {
     const handleScroll = () => {
+      // Show progress bar after scrolling past a certain point (e.g., 150px)
       const scrollPosition = window.scrollY
-      if (scrollPosition > 150) {
-        setIsVisible(true)
-      } else {
-        setIsVisible(false)
-      }
+      setVisible(scrollPosition > 150)
     }
     
-    // Check the initial scroll position
-    handleScroll()
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    // Set up scroll event listener
+    window.addEventListener('scroll', handleScroll)
+    
+    // Clean up event listener
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
-
-  const handleClick = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
-  }
-
-  // Calculate reading progress percentage for aria-valuenow
-  const progressPercentage = Math.round(progressRef.current * 100)
-
+  
+  if (!visible) return null
+  
   return (
-    <>
-      <div 
-        className="fixed top-16 left-0 right-0 h-2 md:h-1.5 z-40 bg-transparent cursor-pointer"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={handleClick}
-        role="progressbar"
-        aria-label="Reading progress"
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={progressPercentage}
-        title="Scroll to top"
-      >
-        <motion.div
-          className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 origin-left animate-shimmer"
-          style={{ 
-            scaleX,
-            opacity: isVisible ? 1 : 0,
-            height: isHovered ? '10px' : '100%',
-            transition: 'opacity 0.3s ease, height 0.2s ease',
-            boxShadow: isHovered 
-              ? '0 0 12px rgba(168, 85, 247, 0.7)' 
-              : '0 0 8px rgba(168, 85, 247, 0.5)'
-          }}
-        />
-      </div>
-      
-      <AnimatePresence>
-        {isHovered && isVisible && (
-          <motion.div 
-            className="fixed top-20 right-4 bg-base-200 text-base-content shadow-lg px-3 py-2 rounded-md z-40 flex items-center gap-2 text-sm border border-base-300"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            role="tooltip"
-            aria-live="polite"
-          >
-            <ArrowUp className="w-4 h-4" /> 
-            <span>Scroll to top</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Mobile indicator that shows progress percentage */}
-      <AnimatePresence>
-        {isVisible && !isHovered && (
-          <motion.div
-            className="fixed bottom-4 right-4 bg-base-200/80 backdrop-blur-sm text-base-content shadow-lg px-3 py-1.5 rounded-full z-40 text-xs border border-base-300/50 md:hidden flex items-center gap-1"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.2 }}
-          >
-            <span className="font-medium">{progressPercentage}%</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+    <motion.div 
+      className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-purple-500 to-blue-500 z-50 origin-left"
+      style={{ scaleX: scrollYProgress }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    />
   )
 } 

@@ -1,486 +1,316 @@
-'use client'
+"use client";
 
-import { useEffect, useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { Loader2, Calendar, Tag, ArrowLeft, Info, BookOpen } from 'lucide-react'
-import Image from 'next/image'
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowRight, Sparkles, Calendar, Clock, Tag, Search } from "lucide-react";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
-// Blog data hardcoded for fallback
-const fallbackBlogData = [
+// Fallback blog data for testing when API is not working
+const FALLBACK_BLOGS = [
   {
-    route: 'langchain-chatbot',
-    title: 'Building a Privacy-First AI Chatbot with LangChain',
-    date: '2024-03-26',
-    tags: ['ai', 'langchain', 'privacy', 'development'],
-    description: 'A comprehensive guide to creating a full-stack AI chatbot using LangChain, with a focus on privacy, customization, and developer experience.',
-    image: null,
-    _uniqueId: 'fallback-langchain-chatbot'
+    route: "/blog/langchain-chatbot",
+    title: "Building a privacy-first LangChain Chatbot",
+    description: "Learn how to build a secure, privacy-centric chatbot using LangChain, integrating large language models while keeping user data protected.",
+    date: "2023-07-15",
+    tags: ["LangChain", "AI", "Privacy"],
+    image: "/images/placeholders/placeholder1.jpg"
   }
-]
+];
 
-// Local implementation to replace the imported Blog.all()
-const Blog = {
-  all: () => fallbackBlogData
-}
+export default function BlogPage() {
+  const [blogs, setBlogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeTags, setActiveTags] = useState([]);
+  const [allTags, setAllTags] = useState([]);
 
-function BlogPageTemp() {
-  const searchParams = useSearchParams()
-  const tagFilter = searchParams.get('tag')
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [blogData, setBlogData] = useState([])
-  const [filteredPosts, setFilteredPosts] = useState([])
-  const [allTags, setAllTags] = useState([])
-  
-  // Use Blog.all() as initial data or fallback
   useEffect(() => {
-    // If no blog data loaded yet, initialize with Blog.all()
-    if (blogData.length === 0) {
-      setBlogData(Blog.all());
-    }
-  }, [blogData.length]);
-  
-  // Fetch blog posts data
-  useEffect(() => {
-    async function fetchBlogData() {
-      try {
-        setLoading(true)
-        // Fetch all blog posts
-        const response = await fetch('/api/blog')
-        if (!response.ok) {
-          throw new Error(`Error fetching blog posts: ${response.status}`)
+    loadInitialData();
+    // Load all available tags
+    fetch("/api/tag")
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAllTags(data);
         }
-        const postRoutes = await response.json()
-        
-        // Ensure postRoutes is always an array
-        const routesArray = Array.isArray(postRoutes) ? postRoutes : 
-                           (postRoutes && typeof postRoutes === 'object' ? Object.values(postRoutes) : []);
-        
-        console.log("Post routes before processing:", routesArray);
-        
-        // If no post routes, use fallback data
-        if (routesArray.length === 0) {
-          console.log("No blog routes found, using fallback data");
-          setBlogData(fallbackBlogData);
-          setLoading(false);
-          return;
-        }
-        
-        // Fetch details for each post
-        const postsData = await Promise.all(
-          routesArray.map(async (route) => {
-            try {
-              const routePath = route.startsWith('/') ? route : `/${route}`
-              const detailsResponse = await fetch(`/api/blog${routePath}`)
-              if (!detailsResponse.ok) {
-                console.error(`Error fetching details for ${route}:`, detailsResponse.status)
-                return null
-              }
-              const data = await detailsResponse.json()
-              
-              // Skip parent blog entry or entries without title
-              if (data.route === '/blog' || data.route === 'blog' || !data.title) {
-                console.log(`Skipping entry: ${data.route} (no title or parent blog entry)`);
-                return null
-              }
-              
-              console.log(`Processed post: ${data.route} - ${data.title}`);
-              return {
-                ...data,
-                // Add a unique ID to help identify duplicates
-                _uniqueId: `${data.route}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-              }
-            } catch (err) {
-              console.error(`Error processing ${route}:`, err)
-              return null
-            }
-          })
-        )
-        
-        // Filter out any failed requests
-        const validPosts = postsData.filter(post => post !== null)
-        
-        // Check for duplicate posts (by route)
-        const routeCounts = {};
-        validPosts.forEach(post => {
-          const normalizedRoute = post.route.replace(/^(\/)?blog\//, '');
-          routeCounts[normalizedRoute] = (routeCounts[normalizedRoute] || 0) + 1;
-        });
-        
-        const duplicates = Object.entries(routeCounts)
-          .filter(([_, count]) => count > 1)
-          .map(([route]) => route);
-          
-        if (duplicates.length > 0) {
-          console.warn('Duplicate posts detected:', duplicates);
-          
-          // Deduplicate posts - keep only the first occurrence of each route
-          const uniqueRoutes = new Set();
-          const dedupedPosts = validPosts.filter(post => {
-            const normalizedRoute = post.route.replace(/^(\/)?blog\//, '');
-            if (uniqueRoutes.has(normalizedRoute)) {
-              return false;
-            }
-            uniqueRoutes.add(normalizedRoute);
-            return true;
-          });
-          
-          console.log(`Removed ${validPosts.length - dedupedPosts.length} duplicate posts`);
-          setBlogData(dedupedPosts.length > 0 ? dedupedPosts : fallbackBlogData);
-        } else {
-          console.log("No duplicates found, total posts:", validPosts.length);
-          setBlogData(validPosts.length > 0 ? validPosts : fallbackBlogData);
-        }
-      } catch (err) {
-        console.error('Error fetching blog data:', err)
-        setError(err.message)
-        // Use fallback data if API fails
-        setBlogData(fallbackBlogData)
-      } finally {
-        setLoading(false)
-      }
-    }
-    
-    // Fetch all tags
-    async function fetchTags() {
-      try {
-        const response = await fetch('/api/tag')
-        if (!response.ok) {
-          throw new Error(`Error fetching tags: ${response.status}`)
-        }
-        const tags = await response.json()
-        
-        // Remove any duplicates (case-insensitive)
-        const uniqueTagsMap = new Map()
-        tags.forEach(tag => {
-          const lowerTag = tag.toLowerCase()
-          if (!uniqueTagsMap.has(lowerTag)) {
-            uniqueTagsMap.set(lowerTag, tag)
-          }
-        })
-        
-        const uniqueTags = Array.from(uniqueTagsMap.values())
-        setAllTags(uniqueTags)
-      } catch (err) {
-        console.error('Error fetching tags:', err)
-        // Extract tags from fallback data as a backup
-        const fallbackTags = [...new Set(fallbackBlogData.flatMap(post => post.tags))]
-        setAllTags(fallbackTags)
-      }
-    }
-    
-    fetchBlogData()
-    fetchTags()
-  }, [])
-  
-  // Filter posts by tag
-  useEffect(() => {
-    if (blogData.length > 0) {
-      console.log("Blog data before filtering:", blogData.map(post => post.title));
+      })
+      .catch(err => console.error("Failed to load tags:", err));
+  }, []);
+
+  async function loadInitialData() {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/blog", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       
-      if (tagFilter) {
-        // Ensure case-insensitive filtering
-        const tagLower = tagFilter.toLowerCase();
-        const filtered = blogData.filter(post => 
-          post.tags && post.tags.some(tag => tag.toLowerCase() === tagLower)
-        );
-        console.log(`Filtered posts for tag "${tagFilter}":`, filtered.map(post => post.title));
-        setFilteredPosts(filtered);
-      } else {
-        console.log("No tag filter, using all blog data");
-        setFilteredPosts(blogData);
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
       }
-    } else {
-      console.log("No blog data available, using empty array");
-      setFilteredPosts([]);
+      
+      const data = await response.json();
+      
+      // Use the API data or fallback to test data if empty
+      if (data && data.children && Array.isArray(data.children) && data.children.length > 0) {
+        // Transform the data into our expected format
+        const transformedBlogs = await Promise.all(data.children.map(async (route) => {
+          try {
+            const blogData = await fetch(`/api${route}`).then(res => res.json());
+            return {
+              route,
+              title: blogData.title || "Untitled Post",
+              description: blogData.description || "No description provided",
+              date: blogData.date || new Date().toISOString(),
+              tags: blogData.tags || [],
+              image: blogData.image || null
+            };
+          } catch (err) {
+            console.error(`Failed to load blog data for ${route}:`, err);
+            return {
+              route,
+              title: "Untitled Post",
+              description: "Failed to load content",
+              date: new Date().toISOString(),
+              tags: [],
+              image: null
+            };
+          }
+        }));
+        setBlogs(transformedBlogs);
+      } else {
+        console.warn("Using fallback blog data - API returned empty result");
+        setBlogs(FALLBACK_BLOGS);
+      }
+    } catch (error) {
+      console.error("Failed to load blogs:", error);
+      setBlogs(FALLBACK_BLOGS);
+    } finally {
+      setIsLoading(false);
     }
-  }, [tagFilter, blogData])
-  
-  if (loading) {
-    return (
-      <div className="w-full max-w-5xl mx-auto px-4 py-12 flex justify-center items-center min-h-[60vh]">
-        <div className="text-center">
-          <Loader2 className="animate-spin w-10 h-10 text-primary mx-auto mb-4" />
-          <p className="text-base-content/70">Loading blog posts...</p>
-        </div>
-      </div>
-    )
   }
-  
-  if (error) {
-    return (
-      <div className="w-full max-w-5xl mx-auto px-4 py-12">
-        <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-primary hover:text-primary/80 mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            <span>Back to Home</span>
-          </Link>
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Blog</h1>
-        </div>
-        <div className="alert alert-error bg-red-500/10 border border-red-500/20 p-6 rounded-xl">
-          <Info className="w-6 h-6 text-red-500 mr-3" />
-          <div>
-            <p className="font-medium mb-1">Error loading blog posts</p>
-            <p className="text-base-content/70 text-sm">{error}</p>
-            <p className="mt-4 text-sm">Please try again later or check your connection.</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-  
-  // Other posts (excluding featured when not filtering by tag)
-  const allPosts = filteredPosts;
-  
-  console.log("Posts to be rendered:", allPosts.map(p => `${p.route} - ${p.title}`));
-  console.log("Total posts to render:", allPosts.length);
-  
+
+  const toggleTag = (tag) => {
+    setActiveTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag) 
+        : [...prev, tag]
+    );
+  };
+
+  const filteredBlogs = activeTags.length > 0 
+    ? blogs.filter(blog => 
+        blog.tags && activeTags.some(tag => blog.tags.includes(tag))
+      )
+    : blogs;
+
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-16">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-14"
-      >
-        {/* Header section with improved spacing */}
-        <header className="space-y-8">
-          <h1 className="text-5xl sm:text-6xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent leading-tight">
-            Blog
-          </h1>
-          
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 border-b border-base-300/30 pb-8">
-            {allTags.length > 0 && (
-              <div className="flex flex-wrap gap-2 justify-end">
-                {allTags.slice(0, 4).map((tag, index) => (
-                  <Link 
-                    key={`tag-${tag}-${index}`}
-                    href={`?tag=${tag}`}
-                    className={`
-                      inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-200
-                      ${tagFilter === tag 
-                        ? 'bg-primary text-primary-content shadow-md' 
-                        : 'bg-base-300/40 hover:bg-primary/20 text-base-content/90 hover:text-primary'}
-                    `}
-                  >
-                    <Tag className="w-3 h-3 mr-1.5 shrink-0" />
-                    <span>{tag}</span>
-                  </Link>
-                ))}
-                {allTags.length > 4 && (
-                  <button 
-                    className="text-sm text-primary hover:text-primary/80 px-2 flex items-center"
-                    onClick={() => document.getElementById('topics-section').scrollIntoView({ behavior: 'smooth' })}
-                  >
-                    <span>+{allTags.length - 4} more</span>
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </header>
-        
-        {/* Tag filter info */}
-        {tagFilter && (
-          <motion.div 
-            className="p-4 border border-primary/20 rounded-xl bg-primary/5"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Tag className="w-4 h-4 text-primary mr-2" />
-                <p className="font-medium">
-                  Showing posts tagged with: <span className="text-primary">{tagFilter}</span>
-                </p>
-              </div>
-              <Link 
-                href="/blog" 
-                className="text-sm px-3 py-1 rounded-full bg-base-200 hover:bg-base-300 transition-colors"
-              >
-                Clear filter
-              </Link>
-            </div>
-          </motion.div>
-        )}
-        
-        {/* Article List section */}
-        <section>
-          <h2 className="text-2xl font-bold mb-8 flex items-center border-l-4 border-primary pl-4">
-            {tagFilter 
-              ? <><Tag className="w-5 h-5 mr-2 text-primary" /> Posts tagged with <span className="text-primary ml-1">{tagFilter}</span></> 
-              : "All Articles"}
-          </h2>
-          
-          {allPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {allPosts.map((post, index) => (
-                <motion.article 
-                  key={`post-${index}-${post.route}`} 
-                  className="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col h-full border border-base-300/30"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
-                  whileHover={{ y: -5, scale: 1.01 }}
-                >
-                  {/* Featured image or gradient background */}
-                  <div className="h-48 relative overflow-hidden">
-                    {post.image ? (
-                      <Image 
-                        src={post.image} 
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-primary/10 via-secondary/10 to-primary/5 flex items-center justify-center">
-                        <BookOpen className="w-12 h-12 text-base-content/10" />
-                      </div>
-                    )}
-                    
-                    {/* Overlay with gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
-                    
-                    {/* Title overlaid on image */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
-                      <h3 className="text-xl font-bold text-white group-hover:text-primary-content transition-colors line-clamp-2 mb-2">
-                        {post.title}
-                      </h3>
-                      
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-2 text-white/80">
-                          <Calendar className="w-3.5 h-3.5" />
-                          <time dateTime={post.date} className="text-sm">
-                            {new Date(post.date).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric'
-                            })}
-                          </time>
-                        </div>
-                        
-                        <div className="flex gap-1">
-                          {post.tags && post.tags.slice(0, 2).map((tag, tagIndex) => (
-                            <Link 
-                              key={`tag-${tagIndex}-${tag}`}
-                              href={`?tag=${tag}`}
-                              onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center px-2 py-0.5 bg-primary/80 text-white rounded-full text-xs"
-                            >
-                              <span>{tag}</span>
-                            </Link>
-                          ))}
-                          {post.tags && post.tags.length > 2 && (
-                            <span className="px-2 py-0.5 bg-base-200/80 text-white/90 rounded-full text-xs">
-                              +{post.tags.length - 2}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Content section */}
-                  <Link 
-                    href={`/blog/${post.route.replace(/^(\/)?blog\//, '')}`} 
-                    className="block p-5 bg-base-200/90 backdrop-blur-sm flex-1 flex flex-col"
-                  >
-                    <p className="text-base-content/70 line-clamp-3 leading-relaxed mb-4 text-sm flex-1">
-                      {post.description}
-                    </p>
-                    
-                    <div className="flex justify-end mt-auto">
-                      <motion.span 
-                        className="inline-flex items-center text-primary font-medium text-sm group-hover:underline"
-                        whileHover={{ x: 3 }}
-                      >
-                        Read article
-                        <ArrowLeft className="w-4 h-4 ml-1.5 rotate-180" />
-                      </motion.span>
-                    </div>
-                  </Link>
-                  
-                  {/* Highlight accent line */}
-                  <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </motion.article>
-              ))}
-            </div>
-          ) : (
-            <motion.div 
-              className="text-center py-16 bg-base-200/20 rounded-xl border border-base-300/30"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
+    <div className="min-h-screen bg-gradient-to-br from-sky-50/50 to-indigo-50/30 dark:from-slate-900 dark:to-slate-800">
+      <div className="container mx-auto px-4 py-16">
+        {/* Header */}
+        <div className="mb-16 relative">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="relative z-10 text-center md:text-left"
             >
-              <div className="max-w-md mx-auto">
-                <div className="bg-base-200/30 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4 border border-base-300/30">
-                  <BookOpen className="w-12 h-12 text-base-content/20" />
+              <div className="inline-block mb-4 text-xs font-medium px-3 py-1 bg-sky-100 dark:bg-sky-900/30 text-sky-800 dark:text-sky-300 rounded-full">
+                All Posts
+              </div>
+              
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-6 text-slate-800 dark:text-white">
+                <span className="relative">
+                  Developer <span className="gradient-text">Blog</span>
+                  <span className="absolute -top-6 -right-8">
+                    <Sparkles className="w-6 h-6 text-sky-500" />
+                  </span>
+                </span>
+              </h1>
+              
+              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-2xl mx-auto md:mx-0">
+                Insights, tutorials, and thoughts about AI engineering, machine learning, and building better technical solutions.
+              </p>
+              
+              {/* Search */}
+              <div className="max-w-md mx-auto md:mx-0 mb-8 relative">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <Search className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <input 
+                    type="text" 
+                    placeholder="Search articles..." 
+                    className="input w-full pl-10"
+                  />
                 </div>
-                <p className="text-xl font-medium mb-4">
-                  {tagFilter 
-                    ? `No posts found with the tag "${tagFilter}"` 
-                    : "No blog posts found"}
-                </p>
-                <p className="text-base-content/70 mb-6 leading-relaxed">
-                  {tagFilter 
-                    ? "Try selecting a different tag or check back later for new content." 
-                    : "Check back soon for new articles and insights!"}
-                </p>
-                {tagFilter && (
-                  <Link 
-                    href="/blog" 
-                    className="btn btn-primary btn-sm rounded-full px-6"
-                  >
-                    View all posts
-                  </Link>
-                )}
               </div>
             </motion.div>
-          )}
-        </section>
+            
+            {/* Decorative elements */}
+            <div className="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-sky-300/10 dark:bg-sky-700/10 rounded-full filter blur-3xl -z-10"></div>
+            <div className="absolute bottom-0 right-0 w-48 h-48 bg-indigo-300/10 dark:bg-indigo-700/10 rounded-full filter blur-3xl -z-10"></div>
+          </div>
+        </div>
         
-        {/* All Topics - only visible when there are many tags */}
-        {allTags.length > 4 && (
-          <section id="topics-section" className="pt-10">
-            <h2 className="text-xl font-bold mb-4 border-l-4 border-primary pl-4">All Topics</h2>
-            <div className="flex flex-wrap gap-3 p-4 bg-base-200/30 rounded-xl border border-base-300/30">
-              {allTags.map((tag, index) => (
-                <Link 
-                  key={`all-tag-${tag}-${index}`}
-                  href={`?tag=${tag}`}
-                  className={`
-                    inline-flex items-center px-3 py-2 rounded-full text-sm font-medium transition-all duration-200
-                    ${tagFilter === tag 
-                      ? 'bg-primary text-primary-content shadow-md' 
-                      : 'bg-base-300/50 hover:bg-primary/20 text-base-content/80 hover:text-primary'}
-                  `}
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Sidebar with filter tags */}
+          <div className="md:w-1/4">
+            <div className="sticky top-24 card p-6">
+              <h2 className="text-lg font-bold mb-4 flex items-center">
+                <Tag className="w-4 h-4 mr-2 text-sky-500" />
+                <span>Filter by Topic</span>
+              </h2>
+              
+              <div className="space-y-2">
+                {allTags.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => toggleTag(tag)}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium w-full text-left transition-colors ${
+                      activeTags.includes(tag) 
+                        ? 'bg-sky-500 text-white dark:bg-sky-600'
+                        : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+              
+              {activeTags.length > 0 && (
+                <button
+                  onClick={() => setActiveTags([])}
+                  className="mt-4 w-full text-center text-xs font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300"
                 >
-                  <Tag className="w-3 h-3 mr-1.5 shrink-0" />
-                  <span>{tag}</span>
-                </Link>
-              ))}
+                  Clear Filters
+                </button>
+              )}
             </div>
-          </section>
-        )}
-      </motion.div>
-    </div>
-  )
-} 
-
-export default function BlogPage(){
-  return (
-    <Suspense fallback={
-      <div className="w-full max-w-5xl mx-auto px-4 py-12 flex justify-center items-center" style={{ minHeight: '50vh' }}>
-        <div className="text-center">
-          <Loader2 className="animate-spin w-10 h-10 text-primary mx-auto mb-4" />
-          <p className="text-base-content/70">Loading blog...</p>
+          </div>
+          
+          {/* Main content */}
+          <div className="md:w-3/4">
+            {/* Blog Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {isLoading ? (
+                // Loading skeletons
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="card p-0 animate-pulse overflow-hidden">
+                    <div className="h-48 bg-slate-200 dark:bg-slate-700 mb-4"></div>
+                    <div className="p-6">
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-3"></div>
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-full mb-2"></div>
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-5/6 mb-4"></div>
+                      <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                    </div>
+                  </div>
+                ))
+              ) : filteredBlogs.length > 0 ? (
+                filteredBlogs.map((blog, index) => (
+                  <motion.div
+                    key={blog.route || index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <article className="card overflow-hidden flex flex-col">
+                      <Link href={blog.route} className="block relative h-48 overflow-hidden">
+                        {blog.image ? (
+                          <Image
+                            src={blog.image}
+                            alt={blog.title}
+                            fill
+                            className="object-cover transition-transform duration-700 ease-in-out hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-indigo-500 dark:from-sky-600 dark:to-indigo-700" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-70" />
+                        
+                        {blog.tags && blog.tags.length > 0 && (
+                          <div className="absolute top-3 left-3 flex flex-wrap gap-2 z-10">
+                            {blog.tags.slice(0, 2).map((tag) => (
+                              <span key={tag} className="px-2 py-1 text-xs font-medium rounded-full bg-sky-500/90 text-white backdrop-blur-sm">
+                                {tag}
+                              </span>
+                            ))}
+                            {blog.tags.length > 2 && (
+                              <span className="px-2 py-1 text-xs font-medium rounded-full bg-indigo-500/90 text-white backdrop-blur-sm">
+                                +{blog.tags.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </Link>
+                      
+                      <div className="flex flex-col justify-between flex-grow p-6">
+                        <div>
+                          <Link href={blog.route}>
+                            <h2 className="text-xl font-bold mb-3 text-slate-800 dark:text-white hover:text-sky-600 dark:hover:text-sky-400 transition-colors">
+                              {blog.title}
+                            </h2>
+                          </Link>
+                          <p className="text-slate-600 dark:text-slate-300 text-sm mb-6 line-clamp-3">
+                            {blog.description}
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400 mt-auto pt-4 border-t border-slate-100 dark:border-slate-700">
+                          <div className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-1" />
+                            <time>
+                              {blog.date ? new Date(blog.date).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric'
+                              }) : "No date"}
+                            </time>
+                          </div>
+                          
+                          <div className="flex items-center">
+                            <Clock className="w-4 h-4 mr-1" />
+                            <span>{Math.max(1, Math.ceil(blog.description.split(' ').length / 200))} min read</span>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </motion.div>
+                ))
+              ) : (
+                <div className="col-span-full flex items-center justify-center py-20 text-center">
+                  <div className="glass p-8 rounded-xl">
+                    <p className="text-xl text-slate-600 dark:text-slate-300 mb-4">
+                      {activeTags.length > 0 
+                        ? `No blog posts found with the selected tags: ${activeTags.join(', ')}`
+                        : "No blog posts found"}
+                    </p>
+                    {activeTags.length > 0 ? (
+                      <button
+                        onClick={() => setActiveTags([])}
+                        className="btn-gradient px-4 py-2 rounded-lg"
+                      >
+                        Clear Filters
+                      </button>
+                    ) : (
+                      <button
+                        onClick={loadInitialData}
+                        className="btn-secondary-gradient px-4 py-2 rounded-lg"
+                      >
+                        Retry
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    }>
-      <BlogPageTemp />
-    </Suspense>
-  )
+    </div>
+  );
 }

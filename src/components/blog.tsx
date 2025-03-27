@@ -4,9 +4,10 @@ import useSWR from 'swr'
 import ky from 'ky'
 
 import Link from 'next/link'
-import { Calendar, ArrowRight } from 'lucide-react'
+import Image from 'next/image'
+import { Calendar, ArrowRight, Clock, TagIcon } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { memo } from 'react'
+import { memo, useState, useMemo } from 'react'
 
 // Define Blog type for TypeScript
 interface Blog {
@@ -16,6 +17,7 @@ interface Blog {
   description: string;
   route?: string;
   image?: string | null;
+  readTime?: string;
 }
 
 // Helper function to normalize API routes
@@ -38,6 +40,7 @@ function normalizeLinkRoute(route: string): string {
   return route;
 }
 
+// Custom hook to fetch blog data
 export function useBlog(route: string) {
   const apiRoute = normalizeApiRoute(route);
   return useSWR(`/api${apiRoute}`, async (api: string) => {
@@ -58,87 +61,115 @@ export function useBlog(route: string) {
   });
 }
 
-export const BlogCard = memo(function BlogCard({
-  route,
-}: {
-  route: string
-}) {
-  // Fetch blog data using the custom hook
-  const { data, isLoading } = useBlog(route);
+export const BlogCard = ({ date, title, tags, route, description, image }: BlogCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   
-  // Format the display date using dayjs
-  const displayDate = data?.date 
-    ? dayjs(data.date).format('MMM D, YYYY')
-    : null;
+  // Generate a placeholder gradient based on the route if no image is provided
+  const placeholderStyle = useMemo(() => {
+    if (image) return {};
     
-  // Generate proper href for the blog post
-  const href = route.startsWith('blog/') || route.startsWith('/blog/') 
-    ? `/blog/${route.replace(/^(\/)?blog\//, '')}`
-    : `/blog/${route}`;
-
-  // Placeholder gradient for loading state
-  const loadingGradient = "bg-gradient-to-r from-base-300/40 to-base-300/20 animate-pulse";
+    // Hash the route to generate consistent colors for the same route
+    const hash = route.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hue1 = (hash % 60) + 180; // Blue to indigo range (180-240)
+    const hue2 = ((hash * 17) % 60) + 220; // Indigo to violet range (220-280)
+    
+    return {
+      background: `linear-gradient(135deg, hsl(${hue1}, 80%, 60%), hsl(${hue2}, 80%, 60%))`
+    };
+  }, [route, image]);
+  
+  // Placeholder image based on the first tag
+  const placeholderImage = useMemo(() => {
+    if (image) return image;
+    if (tags && tags.length > 0) {
+      const tagHash = tags[0].split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      return `/images/placeholders/placeholder${(tagHash % 5) + 1}.jpg`;
+    }
+    return "/images/placeholders/placeholder1.jpg";
+  }, [image, tags]);
 
   return (
-    <motion.div 
-      whileHover={{ scale: 1.01 }}
-      className="relative overflow-hidden rounded-xl border border-base-300/30 bg-base-200/40 backdrop-blur-sm hover:bg-base-200/60 transition-all duration-300 shadow-sm hover:shadow-md"
-    >
-      <Link 
-        className="block p-6"
-        href={href}
+    <Link href={route} passHref>
+      <div 
+        className="card group h-full flex flex-col transition-all duration-300"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="grid grid-cols-1 gap-4">
-          {/* Date and tags row */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-1">
-            {/* Date with calendar icon */}
-            {isLoading ? (
-              <div className={`h-5 w-32 rounded ${loadingGradient}`}></div>
-            ) : displayDate && (
-              <div className="flex items-center gap-1.5 text-base-content/60 text-sm">
-                <Calendar className="w-3.5 h-3.5" />
-                <time dateTime={data?.date?.toString()}>{displayDate}</time>
-              </div>
-            )}
+        <div 
+          className="relative h-48 overflow-hidden rounded-t-xl"
+          style={placeholderStyle}
+        >
+          {placeholderImage && (
+            <Image
+              src={placeholderImage}
+              alt={title || "Blog post"}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className={`object-cover transition-transform duration-500 ${
+                isHovered ? 'scale-110' : 'scale-100'
+              }`}
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-70" />
+          
+          {tags && tags.length > 0 && (
+            <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+              {tags.slice(0, 2).map((tag) => (
+                <span key={tag} className="px-2 py-1 text-xs font-medium rounded-full bg-sky-500/90 text-white backdrop-blur-sm">
+                  {tag}
+                </span>
+              ))}
+              {tags.length > 2 && (
+                <span className="px-2 py-1 text-xs font-medium rounded-full bg-indigo-500/90 text-white backdrop-blur-sm">
+                  +{tags.length - 2}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        
+        <div className="flex flex-col justify-between flex-grow p-5">
+          <div>
+            <h3 className="text-xl font-bold mb-2 text-slate-800 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
+              {title || "Untitled Post"}
+            </h3>
+            <p className="text-slate-600 dark:text-slate-300 text-sm line-clamp-3">
+              {description || "No description provided"}
+            </p>
           </div>
           
-          {/* Title with hover effect */}
-          {isLoading ? (
-            <div className={`h-7 w-full rounded ${loadingGradient}`}></div>
-          ) : (
-            <h3 className="text-xl md:text-2xl font-bold tracking-tight hover:text-primary transition-colors line-clamp-2">
-              {data?.title || 'Untitled Post'}
-            </h3>
-          )}
-          
-          {/* Description */}
-          {isLoading ? (
-            <>
-              <div className={`h-4 w-full rounded ${loadingGradient}`}></div>
-              <div className={`h-4 w-3/4 rounded ${loadingGradient}`}></div>
-            </>
-          ) : (
-            <p className="text-base-content/70 line-clamp-2 text-sm leading-relaxed">
-              {data?.description || 'No description available.'}
-            </p>
-          )}
-          
-          {/* Read more button */}
-          <div className="flex justify-end mt-2">
-            <motion.div
-              className="flex items-center gap-1.5 text-primary font-medium text-sm"
-              whileHover={{ x: 3 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-            >
-              Read article
-              <ArrowRight className="w-3.5 h-3.5" />
-            </motion.div>
+          <div className="mt-4 flex items-center justify-between">
+            <time className="text-xs text-slate-500 dark:text-slate-400">
+              {date ? new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              }) : "No date"}
+            </time>
+            
+            <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
+              <Clock className="w-3 h-3 mr-1" />
+              <span>{estimateReadTime(description || "")} min read</span>
+            </div>
           </div>
         </div>
-      </Link>
-    </motion.div>
-  )
-})
+        
+        <div 
+          className={`absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-sky-500 to-indigo-500 transform transition-transform duration-300 ${
+            isHovered ? 'translate-y-0' : 'translate-y-full'
+          }`}
+        />
+      </div>
+    </Link>
+  );
+};
+
+// Helper function to estimate read time
+const estimateReadTime = (text: string): number => {
+  const wordsPerMinute = 200;
+  const words = text.trim().split(/\s+/).length;
+  return Math.max(1, Math.ceil(words / wordsPerMinute));
+};
 
 export function LiteBlogCard({ route }: { route: string }) {
   const { data: { title = '', description = '' } = {} } = useBlog(route)
