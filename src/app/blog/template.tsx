@@ -68,7 +68,7 @@ export default function Template({ children }: { children: ReactNode }) {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="not-prose mb-16 flex flex-col gap-0">
+        <div className="not-prose mb-8 flex flex-col gap-0">
           <Navigation />
           <div className="w-full flex flex-row gap-2 justify-end py-3 border-y border-base-300">
             <FacebookShare />
@@ -85,9 +85,11 @@ export default function Template({ children }: { children: ReactNode }) {
             </motion.button>
           </div>
         </div>
-        <div className="not-prose w-full">
-          <Tags value={tags} />
-        </div>
+        {tags.length > 0 && (
+          <div className="not-prose w-full mb-2">
+            <Tags value={tags} />
+          </div>
+        )}
         {children}
       </motion.article>
       {/*<div*/}
