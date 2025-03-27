@@ -79,7 +79,7 @@ export default function Template({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="not-prose w-full">
-          <Tags value={tags} />
+          <Tags tags={tags} />
         </div>
         {children}
       </motion.article>

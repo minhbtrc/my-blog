@@ -1,171 +1,98 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { Github, Linkedin, Mail, ArrowUp } from 'lucide-react'
+import { useState } from 'react'
+import { Github, Linkedin, Mail, ArrowRight } from 'lucide-react'
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
-  
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
-  }
+  const [year] = useState(new Date().getFullYear())
   
   return (
-    <footer className="w-full bg-base-200/50 border-t border-base-300/30">      
-      <div className="max-w-7xl mx-auto py-12 px-4">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-          {/* Logo and Tagline */}
-          <div className="md:col-span-4">
-            <Link href="/">
-              <h3 className="font-satoshi font-bold text-xl bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent mb-4">
-                Minh&apos;s Space
-              </h3>
-            </Link>
-            <p className="text-base-content/70 text-sm max-w-md mb-6">
-              Exploring AI, machine learning, and software engineering
-              through hands-on tutorials and practical insights.
+    <footer className="w-full py-12 border-t border-slate-200 dark:border-slate-800">
+      <div className="container px-4 md:px-6 mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
+          {/* Column 1: About */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">About Me</h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 max-w-md">
+              AI Engineer specializing in LLMs, RAG systems, and agents. I write about AI engineering, NLP, and software development.
             </p>
-            <div className="flex items-center gap-4">
-              <a 
+            <div className="flex space-x-4">
+              <Link 
                 href="https://github.com/minhbtrc" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-base-content/60 hover:text-primary transition-colors"
-                aria-label="GitHub"
+                target="_blank"
+                className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
               >
-                <Github size={20} />
-              </a>
-              <a 
-                href="https://www.linkedin.com/in/minhbtcm00/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-base-content/60 hover:text-primary transition-colors"
-                aria-label="LinkedIn"
+                <Github className="w-5 h-5" />
+                <span className="sr-only">GitHub</span>
+              </Link>
+              <Link 
+                href="https://linkedin.com/in/minhbtcm00" 
+                target="_blank"
+                className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
               >
-                <Linkedin size={20} />
-              </a>
-              <a 
-                href="mailto:contact@minhbtc.blog" 
-                className="text-base-content/60 hover:text-primary transition-colors"
-                aria-label="Email"
+                <Linkedin className="w-5 h-5" />
+                <span className="sr-only">LinkedIn</span>
+              </Link>
+              <Link 
+                href="mailto:contact@minhbtc.blog"
+                className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
               >
-                <Mail size={20} />
-              </a>
+                <Mail className="w-5 h-5" />
+                <span className="sr-only">Email</span>
+              </Link>
             </div>
           </div>
           
-          {/* Navigation Links */}
-          <div className="md:col-span-2">
-            <h4 className="font-medium text-base mb-4">Navigation</h4>
-            <ul className="space-y-2">
+          {/* Column 2: Quick Links */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Quick Links</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="text-base-content/70 hover:text-primary transition-colors text-sm">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog" className="text-base-content/70 hover:text-primary transition-colors text-sm">
+                <Link 
+                  href="/blog"
+                  className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 flex items-center"
+                >
+                  <ArrowRight className="w-4 h-4 mr-1" />
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-base-content/70 hover:text-primary transition-colors text-sm">
+                <Link 
+                  href="/about"
+                  className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 flex items-center"
+                >
+                  <ArrowRight className="w-4 h-4 mr-1" />
                   About
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-base-content/70 hover:text-primary transition-colors text-sm">
+                <Link 
+                  href="/contact"
+                  className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 flex items-center"
+                >
+                  <ArrowRight className="w-4 h-4 mr-1" />
                   Contact
                 </Link>
               </li>
-            </ul>
-          </div>
-          
-          {/* Topics */}
-          <div className="md:col-span-3">
-            <h4 className="font-medium text-base mb-4">Topics</h4>
-            <ul className="space-y-2">
               <li>
-                <Link href="/blog?tag=AI" className="text-base-content/70 hover:text-primary transition-colors text-sm">
-                  Artificial Intelligence
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog?tag=LLM" className="text-base-content/70 hover:text-primary transition-colors text-sm">
-                  Large Language Models
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog?tag=Tutorial" className="text-base-content/70 hover:text-primary transition-colors text-sm">
-                  Tutorials
-                </Link>
-              </li>
-              <li>
-                <Link href="/blog?tag=RAG" className="text-base-content/70 hover:text-primary transition-colors text-sm">
-                  Retrieval Augmented Generation
-                </Link>
-              </li>
-            </ul>
-          </div>
-          
-          {/* Newsletter and Legal */}
-          <div className="md:col-span-3">
-            <div className="mb-6">
-              <h4 className="font-medium text-base mb-4">Stay Updated</h4>
-              <div className="flex flex-col gap-2">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="w-full h-10 px-3 rounded-lg bg-base-100/50 border border-base-300/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 text-sm"
-                />
-                <button
-                  type="button"
-                  className="h-10 px-4 rounded-lg font-medium text-white text-sm bg-primary hover:bg-primary/90 transition-all"
+                <Link 
+                  href="/resume"
+                  className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 flex items-center"
                 >
-                  Subscribe
-                </button>
-              </div>
-            </div>
-            
-            <h4 className="font-medium text-base mb-4">Legal</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/privacy" className="text-base-content/70 hover:text-primary transition-colors text-sm">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-base-content/70 hover:text-primary transition-colors text-sm">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link href="/sitemap.xml" className="text-base-content/70 hover:text-primary transition-colors text-sm">
-                  Sitemap
+                  <ArrowRight className="w-4 h-4 mr-1" />
+                  Resume
                 </Link>
               </li>
             </ul>
           </div>
-        </div>
-        
-        <div className="flex flex-col sm:flex-row justify-between items-center border-t border-base-300/30 mt-12 pt-8">
-          <p className="text-sm text-base-content/60 mb-4 sm:mb-0">
-            © {currentYear} MinhBTC. All rights reserved.
-          </p>
           
-          <motion.button
-            onClick={scrollToTop}
-            className="p-2 rounded-full bg-base-300/30 hover:bg-base-300/50 text-base-content/60 hover:text-primary transition-colors"
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Scroll to top"
-          >
-            <ArrowUp size={18} />
-          </motion.button>
+          {/* Copyright at the bottom */}
+          <div className="col-span-1 sm:col-span-2 lg:col-span-2 mt-8 pt-8 border-t border-slate-200 dark:border-slate-800 text-center text-sm text-slate-600 dark:text-slate-400">
+            <p>
+              © {year} Minh BTC. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
     </footer>

@@ -89,7 +89,7 @@ export default function SearchButton2() {
               hidden: loading,
             })}
           >
-            <Tags value={tags} />
+            <Tags tags={tags} />
           </div>
           {/* Results */}
           <div

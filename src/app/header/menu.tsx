@@ -7,7 +7,6 @@ import { ArrowUpRight, Mail, Rss } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import Image from 'next/image'
-import { FileText } from "lucide-react";
 
 export default function Menu() {
   const [isMounted, setIsMounted] = useState(false)
@@ -95,14 +94,6 @@ export default function Menu() {
         >
           CONTACT
         </motion.span>
-        <Link
-         className="btn btn-ghost btn-sm flex flex-row gap-4 justify-start items-center font-normal"
-          href="/static/Minh Bui.pdf"
-          target="_blank"
-        >
-          <FileText className="w-4 h-4" />
-          Resumé
-        </Link>
         
         <Link
           className="btn btn-ghost btn-sm flex flex-row gap-4 justify-start items-center font-normal group"
