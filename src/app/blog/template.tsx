@@ -15,6 +15,7 @@ import { BlogCard } from '@/components/blog'
 import Tags from '@/components/tags'
 import { FacebookShare, TwitterShare } from './share'
 import Navigation from './navigation'
+import ReadingProgress from '@/components/reading-progress'
 
 export default function Template({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments()
@@ -127,6 +128,7 @@ export default function Template({ children }: { children: ReactNode }) {
           </motion.div>
         ))}
       </div>
+      <ReadingProgress />
     </div>
   )
 }

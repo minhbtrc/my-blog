@@ -247,44 +247,82 @@ export default function Page() {
   return (
     <div className="space-y-16 max-w-7xl mx-auto">
       {/* Hero Section */}
-      <section className="relative pt-8 pb-16 px-4">
+      <section className="relative pt-12 pb-16 px-4">
+        {/* Animated gradient background */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-800/10 dark:via-purple-800/10 dark:to-pink-800/10" />
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 dark:from-blue-800/10 dark:via-purple-800/10 dark:to-pink-800/10 animate-gradient-slow" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(255,255,255,0.1),transparent)]" />
+          
+          {/* Floating particles */}
+          <div className="absolute inset-0 overflow-hidden">
+            {[...Array(15)].map((_, i) => (
+              <div 
+                key={i}
+                className="absolute rounded-full bg-blue-500/10 dark:bg-blue-400/10"
+                style={{
+                  width: `${Math.random() * 8 + 2}px`,
+                  height: `${Math.random() * 8 + 2}px`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animation: `float ${Math.random() * 10 + 10}s linear infinite`,
+                  animationDelay: `${Math.random() * 5}s`
+                }}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-8">
             <div className="flex flex-col space-y-6 max-w-3xl">
-              <motion.h1 
-                className="font-bold text-5xl md:text-6xl tracking-tight"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1 }}
               >
-                Welcome to my{' '}
-                <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                  Blog
-                </span>
-              </motion.h1>
+                <h1 className="font-bold text-5xl md:text-6xl tracking-tight">
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="inline-block"
+                  >
+                    Welcome to my{' '}
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                    className="inline-block bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-shimmer"
+                  >
+                    Blog
+                  </motion.span>
+                </h1>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: "40%" }}
+                  transition={{ duration: 0.8, delay: 0.6 }}
+                  className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 mt-4 rounded-full"
+                />
+              </motion.div>
               
               <motion.p 
                 className="text-lg text-base-content/80 leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
               >
-                Explore my thoughts, tutorials, and insights on AI, machine learning,
-                and software development. I share practical experiences and learnings
-                from building intelligent systems.
+                Exploring the intersection of AI, machine learning, and software engineering
+                through hands-on tutorials and practical insights. I'm on a mission to make
+                complex AI concepts accessible and useful for everyone.
               </motion.p>
 
               <motion.div 
                 className="flex flex-wrap gap-3 pt-2"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.9 }}
               >
                 <Suspense fallback={
                   <div className="flex gap-2">
@@ -301,20 +339,24 @@ export default function Page() {
                 className="flex flex-wrap gap-4 pt-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                transition={{ duration: 0.5, delay: 1 }}
               >
                 <Link href="/blog">
                   <motion.button
-                    className="btn btn-primary rounded-full px-6"
+                    className="btn btn-primary rounded-full px-6 relative overflow-hidden group"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Explore Articles <ArrowRight className="ml-1 w-4 h-4" />
+                    <span className="relative z-10">Explore Articles</span>
+                    <motion.span 
+                      className="absolute inset-0 bg-white/20 transform translate-x-full group-hover:translate-x-0 transition-transform duration-300"
+                    />
+                    <ArrowRight className="ml-1 w-4 h-4 relative z-10" />
                   </motion.button>
                 </Link>
                 <Link href="/about">
                   <motion.button
-                    className="btn btn-outline rounded-full px-6"
+                    className="btn btn-outline rounded-full px-6 border-2 hover:bg-base-200/50"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -330,7 +372,7 @@ export default function Page() {
             className="lg:col-span-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
           >
             <Profile />
           </motion.div>
@@ -345,9 +387,15 @@ export default function Page() {
           <h2 className="text-2xl font-bold">Latest Posts</h2>
           <Link 
             href="/blog" 
-            className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium"
+            className="text-primary hover:text-primary/80 flex items-center gap-1 text-sm font-medium group"
           >
-            View all <ArrowRight className="w-3.5 h-3.5" />
+            <span>View all</span>
+            <motion.span
+              whileHover={{ x: 4 }}
+              className="inline-block"
+            >
+              <ArrowRight className="w-3.5 h-3.5" />
+            </motion.span>
           </Link>
         </div>
         
