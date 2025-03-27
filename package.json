@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
+    "@heroicons/react": "v1",
     "@icons-pack/react-simple-icons": "^9.6.0",
     "@next/third-parties": "^14.2.5",
     "clsx": "^2.1.1",

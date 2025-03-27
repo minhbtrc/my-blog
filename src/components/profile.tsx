@@ -16,7 +16,7 @@ export default function Profile() {
       <div className="flex flex-col items-center text-center">
         <div className="w-24 h-24 rounded-full overflow-hidden flex-shrink-0 border-2 border-base-300 shadow-lg mb-4">
           <Image 
-            src="/profile1.jpeg" 
+            src="/profile.jpeg" 
             alt="Minh BTC" 
             width={96} 
             height={96}
@@ -25,7 +25,7 @@ export default function Profile() {
           />
         </div>
         <h2 className="text-2xl font-bold mb-2">minhbtc</h2>
-        <p className="text-base-content/60 text-lg">AI Engineer</p>
+        <p className="text-base-content/60 text-lg">AI Engineer | 🇻🇳</p>
       </div>
       
       <div className="section-spacing">
@@ -33,7 +33,6 @@ export default function Profile() {
           <span className="badge badge-primary bg-base-300/50 text-base-content/80">AI/LLM/NLP</span>
           <span className="badge badge-primary bg-base-300/50 text-base-content/80">Agents</span>
           <span className="badge badge-primary bg-base-300/50 text-base-content/80">RAG</span>
-          <span className="badge badge-primary bg-base-300/50 text-base-content/80">Insights</span>
           <span className="badge badge-primary bg-base-300/50 text-base-content/80">Tech</span>
         </div>
 

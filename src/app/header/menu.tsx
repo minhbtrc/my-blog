@@ -7,6 +7,7 @@ import { ArrowUpRight, Mail, Rss } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import Image from 'next/image'
+import { FileText } from "lucide-react";
 
 export default function Menu() {
   const [isMounted, setIsMounted] = useState(false)
@@ -31,7 +32,7 @@ export default function Menu() {
       <PopoverButton className="btn btn-sm btn-circle border-0 border-transparent">
         <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-base-300">
           <Image 
-            src="/profile1.jpeg" 
+            src="/profile.jpeg" 
             alt="Minh BTC" 
             width={32} 
             height={32}
@@ -86,30 +87,22 @@ export default function Menu() {
           <ArrowUpRight className="w-4 h-4 hidden group-hover:flex animate-pop-in" />
         </Link>
 
-        {/*Update Resumé*/}
-        {/*<Link*/}
-        {/*  className="btn btn-ghost btn-sm flex flex-row gap-4 justify-start items-center font-normal"*/}
-        {/*  href="/static/Curriculum_Vitae.pdf"*/}
-        {/*  target="_blank"*/}
-        {/*>*/}
-        {/*  <Clipboard className="w-4 h-4" />*/}
-        {/*  Resumé*/}
-        {/*</Link>*/}
-        {/* Contacts */}
-        <motion.span
-          className="text-xs font-light opacity-60 mx-3 mb-2 mt-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.6 }}
+        <Link
+         className="btn btn-ghost btn-sm flex flex-row gap-4 justify-start items-center font-normal"
+          href="/static/Minh Bui.pdf"
+          target="_blank"
         >
-          CONTACTS
-        </motion.span>
+          <FileText className="w-4 h-4" />
+          Resumé
+        </Link>
+        
         <Link
           className="btn btn-ghost btn-sm flex flex-row gap-4 justify-start items-center font-normal group"
-          href="mailto:minhbtc1412@gmail.com"
+          href="mailto:minh.btrc@gmail.com"
           target="_blank"
         >
           <Mail className="w-4 h-4" />
-          <span className="grow text-left">dm for business</span>
+          <span className="grow text-left">Contact</span>
           <ArrowUpRight className="w-4 h-4 hidden group-hover:flex animate-pop-in" />
         </Link>
       </PopoverPanel>

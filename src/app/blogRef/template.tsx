@@ -83,25 +83,6 @@ export default function Template({ children }: { children: ReactNode }) {
         </div>
         {children}
       </motion.article>
-      {/*<div*/}
-      {/*  id="question"*/}
-      {/*  className="w-full max-w-[65ch] bg-base-200 border-2 border-base-300 p-4 rounded-box flex flex-col gap-1"*/}
-      {/*>*/}
-      {/*  <p className="font-bold">You have questions?</p>*/}
-      {/*  <p>*/}
-      {/*    <span className="opacity-60">*/}
-      {/*      To ask questions, you can create issues on{' '}*/}
-      {/*    </span>*/}
-      {/*    <Link*/}
-      {/*      className="text-info-content hover:underline inline-flex"*/}
-      {/*      href="https://github.com/misterbo271"*/}
-      {/*      target="_blank"*/}
-      {/*    >*/}
-      {/*      my GitHub.*/}
-      {/*      <ExternalLink className="w-3 h-3" />*/}
-      {/*    </Link>*/}
-      {/*  </p>*/}
-      {/*</div>*/}
       <div
         id="suggestion"
         className="w-full max-w-[65ch] grid grid-cols-12 gap-4"
