@@ -80,7 +80,7 @@ export default function LangChainChatbotPost() {
         <div className="bg-base-200 p-6 rounded-lg border border-neutral shadow-sm">
           <h3 className="text-xl font-bold mb-3 text-base-content">4. Privacy with Microsoft Presidio</h3>
           <p className="text-base-content">
-            Privacy is a standout feature. The chatbot uses Microsoft Presidio to anonymize personally identifiable information (PII) before sending it to the LLM API. Think of it like redacting a sensitive document—your name becomes "[NAME]" to keep it safe.
+            Privacy is a standout feature. The chatbot uses Microsoft Presidio to anonymize personally identifiable information (PII) before sending it to the LLM API. Think of it like redacting a sensitive document—your name becomes &quot;[NAME]&quot; to keep it safe.
           </p>
           <p className="mt-2">
             <a href="https://microsoft.github.io/presidio/" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Learn more about Presidio →</a>
@@ -394,7 +394,7 @@ chain = ConversationChain(llm=llm)`}
         </p>
       </div>
 
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-neutral text-base-content">Who's It For?</h2>
+      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-neutral text-base-content">Who&apos;s It For?</h2>
         <p className="text-base-content">
           This repo shines for:
         </p>
@@ -425,11 +425,11 @@ chain = ConversationChain(llm=llm)`}
       <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-neutral dark:border-neutral">Conclusion</h2>
       <div className="bg-base-200 p-6 rounded-lg border border-neutral shadow-sm">
         <p className="mb-4 text-base-content">
-          The langchain-chatbot repository is a gem for anyone looking to build a smart, secure, and user-friendly chatbot. Its blend of LangChain's power, MongoDB's memory, Presidio's privacy, and a full-stack design makes it both practical and innovative. Whether you're enhancing a business or exploring AI, this project offers a solid starting point.
+          The langchain-chatbot repository is a gem for anyone looking to build a smart, secure, and user-friendly chatbot. Its blend of LangChain&apos;s power, MongoDB&apos;s memory, Presidio&apos;s privacy, and a full-stack design makes it both practical and innovative. Whether you&apos;re enhancing a business or exploring AI, this project offers a solid starting point.
         </p>
         
         <p className="mb-0 text-base-content">
-          Ready to dive in? <a href="https://github.com/minhbtrc/langchain-chatbot" target="_blank" rel="noopener noreferrer" className="text-accent font-bold hover:underline">Visit the GitHub repo</a>, clone it, and give it a spin. Have ideas to improve it? It's open-source—jump in and contribute!
+          Ready to dive in? <a href="https://github.com/minhbtrc/langchain-chatbot" target="_blank" rel="noopener noreferrer" className="text-accent font-bold hover:underline">Visit the GitHub repo</a>, clone it, and give it a spin. Have ideas to improve it? It&apos;s open-source—jump in and contribute!
         </p>
       </div>
 
