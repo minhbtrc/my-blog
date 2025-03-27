@@ -58,6 +58,7 @@ export default function Menu() {
           href="/"
         >
           <Rss className="w-4 h-4" />
+          
           Blog
         </Link>
         {/* About */}
@@ -87,6 +88,13 @@ export default function Menu() {
           <ArrowUpRight className="w-4 h-4 hidden group-hover:flex animate-pop-in" />
         </Link>
 
+        <motion.span
+          className="text-xs font-light opacity-60 mx-3 mb-2 mt-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.6 }}
+        >
+          CONTACT
+        </motion.span>
         <Link
          className="btn btn-ghost btn-sm flex flex-row gap-4 justify-start items-center font-normal"
           href="/static/Minh Bui.pdf"
