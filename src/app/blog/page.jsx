@@ -15,7 +15,7 @@ const fallbackBlogData = [
     date: '2024-03-26',
     tags: ['ai', 'langchain', 'privacy', 'development'],
     description: 'A comprehensive guide to creating a full-stack AI chatbot using LangChain, with a focus on privacy, customization, and developer experience.',
-    image: '/profile.jpeg',
+    image: null,
     _uniqueId: 'fallback-langchain-chatbot'
   }
 ]
