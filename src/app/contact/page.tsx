@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, MapPin, Send, Github, Linkedin, Phone } from 'lucide-react'
+import { Mail, MapPin, Send } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
+import Link from 'next/link'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -75,7 +76,7 @@ export default function ContactPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Get in Touch</h1>
           <p className="text-base-content/70 max-w-xl mx-auto">
-            Have a question about my work or want to discuss a potential project? Feel free to reach out using the form below or through any of my social channels.
+            Interested in discussing AI technologies, NLP solutions, or potential collaboration? I'm always open to connecting with fellow AI enthusiasts and industry professionals.
           </p>
         </div>
         
@@ -181,8 +182,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-medium">Email</h3>
-                    <a href="mailto:contact@minhbtc.blog" className="text-base-content/70 hover:text-primary">
-                      contact@minhbtc.blog
+                    <a href="mailto:minh.btrc@gmail.com" className="text-base-content/70 hover:text-primary">
+                      minh.btrc@gmail.com
                     </a>
                   </div>
                 </div>
@@ -236,9 +237,9 @@ export default function ContactPage() {
             </div>
             
             <div className="mt-8 bg-base-200/30 backdrop-blur-sm border border-base-300/30 p-6 rounded-xl">
-              <h3 className="text-xl font-bold mb-2">Available for Opportunities</h3>
-              <p className="text-base-content/70 mb-4">
-                I'm currently open to interesting AI projects and collaboration opportunities. Let's build something amazing together!
+              <h3 className="text-xl font-bold mb-2">Professional Focus</h3>
+              <p className="text-base-content/70">
+                I specialize in natural language processing (NLP) and Transformer-based architectures. My expertise includes applying Large Language Models (LLMs) to tasks like question generation, sentiment analysis, and data extraction. I'm particularly passionate about optimizing LLM performance using frameworks like Langchain.
               </p>
             </div>
           </motion.div>
