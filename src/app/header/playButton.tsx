@@ -72,23 +72,29 @@ export default function PlayButton() {
           onError={(e) => console.error("Player error:", e)}
         />
       </Island>
-      chill
+      
+      {/* Make Disc3 the primary icon */}
+      <Disc3 
+        className={clsx(
+          'w-5 h-5 text-blue-400',
+          {
+            'animate-[spin_3s_linear_infinite]': playing && hasInteracted,
+            '[animation-play-state:paused]': !playing || !hasInteracted,
+          },
+        )}
+      />
+      
+      <span className="ml-2">Listen</span>
+      
+      {/* Volume icons only shown on hover */}
       {playing ? (
         <Volume2 className="w-4 h-4 text-base-content hidden group-hover:block absolute right-4" />
       ) : (
         <VolumeX className="w-4 h-4 text-base-content hidden group-hover:block absolute right-4" />
       )}
-      <Disc3
-        className={clsx(
-          'w-4 h-4 bg-base-content text-base-100 rounded-full animate-[spin_2s_linear_infinite]',
-          {
-            '[animation-play-state:running]': playing && hasInteracted,
-            '[animation-play-state:paused]': !playing || !hasInteracted,
-          },
-        )}
-      />
+      
       {!hasInteracted && (
-        <span className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 text-xs bg-base-300 px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <span className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 text-xs bg-slate-700 dark:bg-slate-800 px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white">
           Click to enable music
         </span>
       )}

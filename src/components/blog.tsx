@@ -1,13 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client'
-import dayjs from 'dayjs'
+
 import useSWR from 'swr'
 import ky from 'ky'
 
 import Link from 'next/link'
-import Image from 'next/image'
-import { Calendar, ArrowRight, Clock, TagIcon } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { memo, useState, useMemo } from 'react'
+import { Calendar} from 'lucide-react'
 
 // Define Blog type for TypeScript
 interface Blog {
@@ -19,6 +17,18 @@ interface Blog {
   image?: string | null;
   readTime?: string;
 }
+
+// Define BlogMetadata type
+interface BlogMetadata {
+  title: string;
+  date: string;
+  tags: string[];
+  description: string;
+  readingTime?: string;
+}
+
+// Fetcher function for SWR
+const fetcher = (url: string) => ky.get(url).json<BlogMetadata>();
 
 // Helper function to normalize API routes
 function normalizeApiRoute(route: string): string {
@@ -41,128 +51,136 @@ function normalizeLinkRoute(route: string): string {
 }
 
 // Custom hook to fetch blog data
-export function useBlog(route: string) {
-  const apiRoute = normalizeApiRoute(route);
-  return useSWR(`/api${apiRoute}`, async (api: string) => {
-    console.log(`Fetching blog data from: ${api}`);
-    try {
-      const data = await ky.get(api).json<Blog>();
-      console.log(`Blog data for ${route}:`, data);
-      return data;
-    } catch (error) {
+export function useBlog(route: string): Promise<{
+  date: string;
+  tags: string[];
+  title: string;
+  description: string;
+  [key: string]: any;
+}> {
+  const apiRoute = route.startsWith('/') ? route : `/${route}`;
+  return fetch(`/api${apiRoute}`)
+    .then(res => res.json())
+    .catch(error => {
       console.error(`Error fetching blog data for ${route}:`, error);
       return {
         date: new Date().toISOString(),
         tags: [],
         title: '',
         description: '',
-      }; // Ensure it matches the Blog type
-    }
-  });
+      };
+    });
 }
 
-export const BlogCard = ({ date, title, tags, route, description, image }: BlogCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
+// If this is a getPlaceholderGradient function, keep it
+export function getPlaceholderGradient(route: string | undefined) {
+  if (!route || typeof route !== 'string') {
+    return 'from-blue-500 to-cyan-500'; // Default gradient
+  }
   
-  // Generate a placeholder gradient based on the route if no image is provided
-  const placeholderStyle = useMemo(() => {
-    if (image) return {};
-    
-    // Hash the route to generate consistent colors for the same route
-    const hash = route.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const hue1 = (hash % 60) + 180; // Blue to indigo range (180-240)
-    const hue2 = ((hash * 17) % 60) + 220; // Indigo to violet range (220-280)
-    
-    return {
-      background: `linear-gradient(135deg, hsl(${hue1}, 80%, 60%), hsl(${hue2}, 80%, 60%))`
-    };
-  }, [route, image]);
+  // Generate a deterministic gradient based on the route
+  const hash = route.split('').reduce((acc, char) => {
+    return char.charCodeAt(0) + ((acc << 5) - acc);
+  }, 0);
   
-  // Placeholder image based on the first tag
-  const placeholderImage = useMemo(() => {
-    if (image) return image;
-    if (tags && tags.length > 0) {
-      const tagHash = tags[0].split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      return `/images/placeholders/placeholder${(tagHash % 5) + 1}.jpg`;
-    }
-    return "/images/placeholders/placeholder1.jpg";
-  }, [image, tags]);
+  const gradients = [
+    'from-blue-500 to-cyan-500',
+    'from-indigo-500 to-purple-500',
+    'from-purple-500 to-pink-500',
+    'from-red-500 to-orange-500',
+    'from-amber-500 to-yellow-500',
+    'from-emerald-500 to-teal-500',
+    'from-teal-500 to-cyan-500',
+    'from-blue-500 to-indigo-500',
+  ];
+  
+  const index = Math.abs(hash) % gradients.length;
+  return gradients[index];
+}
+
+export interface BlogCardProps {
+  title?: string;
+  description?: string;
+  date?: string;
+  readingTime?: string;
+  route?: string;
+  tags?: string[];
+  image?: string;
+  blog?: {
+    title: string;
+    description: string;
+    date: string;
+    readingTime: string;
+    route: string;
+    tags: string[];
+    image: string;
+  }
+}
+
+export function BlogCard({ route }: { route: string }) {
+  const url = route.replace('content/', '')
+  const { data, isLoading, error } = useSWR<BlogMetadata>(
+    `/api/metadata/${url}`,
+    fetcher,
+  )
 
   return (
-    <Link href={route} passHref>
-      <div 
-        className="card group h-full flex flex-col transition-all duration-300"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <div 
-          className="relative h-48 overflow-hidden rounded-t-xl"
-          style={placeholderStyle}
-        >
-          {placeholderImage && (
-            <Image
-              src={placeholderImage}
-              alt={title || "Blog post"}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className={`object-cover transition-transform duration-500 ${
-                isHovered ? 'scale-110' : 'scale-100'
-              }`}
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-70" />
-          
-          {tags && tags.length > 0 && (
-            <div className="absolute top-3 left-3 flex flex-wrap gap-2">
-              {tags.slice(0, 2).map((tag) => (
-                <span key={tag} className="px-2 py-1 text-xs font-medium rounded-full bg-sky-500/90 text-white backdrop-blur-sm">
-                  {tag}
-                </span>
-              ))}
-              {tags.length > 2 && (
-                <span className="px-2 py-1 text-xs font-medium rounded-full bg-indigo-500/90 text-white backdrop-blur-sm">
-                  +{tags.length - 2}
+    <Link
+      href={`/blog/${url}`}
+      className="block w-full h-full bg-gradient-to-b from-slate-800 to-slate-800/80 hover:from-slate-800/90 hover:to-slate-800/70 transition-colors duration-300 rounded-xl border border-slate-700 overflow-hidden group relative shadow-md hover:shadow-xl hover:shadow-indigo-900/10"
+    >
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500/0 via-indigo-500/30 to-indigo-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div className="p-6">
+        {isLoading ? (
+          <div className="w-full flex flex-col gap-3 animate-pulse">
+            <div className="h-5 bg-slate-700 rounded w-3/4"></div>
+            <div className="h-3 bg-slate-700 rounded w-full mt-1"></div>
+            <div className="h-3 bg-slate-700 rounded w-5/6 mt-1"></div>
+            <div className="h-3 bg-slate-700 rounded w-1/2 mt-1"></div>
+            <div className="flex gap-2 mt-2">
+              <div className="h-4 w-14 bg-slate-700 rounded-full"></div>
+              <div className="h-4 w-14 bg-slate-700 rounded-full"></div>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h3 className="text-lg font-bold mb-3 text-slate-100 group-hover:text-white transition-colors line-clamp-2">
+              {data?.title || 'Unknown Article'}
+            </h3>
+            <p className="text-sm text-slate-400 mb-4 line-clamp-3">
+              {data?.description || 'No description available'}
+            </p>
+            {data?.tags && data.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {data.tags.slice(0, 3).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-slate-700/50 text-slate-300 border border-slate-700/30"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-indigo-400 mr-1.5"></span>
+                    {tag}
+                  </span>
+                ))}
+                {data.tags.length > 3 && (
+                  <span className="text-xs text-slate-500">+{data.tags.length - 3}</span>
+                )}
+              </div>
+            )}
+            <div className="flex items-center text-xs text-slate-500">
+              {data?.date && (
+                <span className="flex items-center">
+                  <Calendar className="w-3.5 h-3.5 mr-1 text-indigo-400/70" />
+                  {new Date(data.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                 </span>
               )}
             </div>
-          )}
-        </div>
-        
-        <div className="flex flex-col justify-between flex-grow p-5">
-          <div>
-            <h3 className="text-xl font-bold mb-2 text-slate-800 dark:text-white group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
-              {title || "Untitled Post"}
-            </h3>
-            <p className="text-slate-600 dark:text-slate-300 text-sm line-clamp-3">
-              {description || "No description provided"}
-            </p>
-          </div>
-          
-          <div className="mt-4 flex items-center justify-between">
-            <time className="text-xs text-slate-500 dark:text-slate-400">
-              {date ? new Date(date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-              }) : "No date"}
-            </time>
-            
-            <div className="flex items-center text-xs text-slate-500 dark:text-slate-400">
-              <Clock className="w-3 h-3 mr-1" />
-              <span>{estimateReadTime(description || "")} min read</span>
-            </div>
-          </div>
-        </div>
-        
-        <div 
-          className={`absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-sky-500 to-indigo-500 transform transition-transform duration-300 ${
-            isHovered ? 'translate-y-0' : 'translate-y-full'
-          }`}
-        />
+            <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-indigo-500/5 to-transparent rounded-tl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </>
+        )}
       </div>
     </Link>
-  );
-};
+  )
+}
 
 // Helper function to estimate read time
 const estimateReadTime = (text: string): number => {
@@ -172,18 +190,28 @@ const estimateReadTime = (text: string): number => {
 };
 
 export function LiteBlogCard({ route }: { route: string }) {
-  const { data: { title = '', description = '' } = {} } = useBlog(route)
+  const apiRoute = route.startsWith('/') ? route : `/${route}`;
+  const { data, isLoading } = useSWR<{
+    title?: string;
+    description?: string;
+    [key: string]: any;
+  }>(`/api${apiRoute}`, url => fetch(url).then(res => res.json()), {
+    fallbackData: { title: '', description: '' }
+  });
+
   const linkRoute = normalizeLinkRoute(route);
+  const title = data?.title || 'Unknown Article';
+  const description = data?.description || 'No description available';
 
   return (
     <Link
-      className="w-full grid grid-cols-12 gap-2 py-6 border-t border-base-300 cursor-pointer relative group"
+      className="block w-full py-4 border-t border-slate-700 hover:bg-slate-800/50 rounded transition-colors px-3 -mx-3"
       href={`/blog/${linkRoute}`}
     >
-      <h3 className="col-span-full font-semibold tracking-tight leading-tight">
+      <h3 className="font-medium text-slate-200 hover:text-white line-clamp-1 mb-1">
         {title}
       </h3>
-      <p className="col-span-full text-sm opacity-60 line-clamp-2">
+      <p className="text-sm text-slate-400 line-clamp-2">
         {description}
       </p>
     </Link>

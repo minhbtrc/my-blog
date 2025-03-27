@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Menu as MenuIcon, X, Home, BookOpen, User, Mail, Moon, Sun } from 'lucide-react'
+import { Menu as MenuIcon, X, Home, BookOpen, User, Mail } from 'lucide-react'
 import clsx from 'clsx'
 import PlayButton from './playButton'
 
@@ -19,21 +19,10 @@ export default function Header() {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
 
   useEffect(() => {
     setMounted(true)
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' || 'dark'
-    setTheme(savedTheme)
-    document.documentElement.setAttribute('data-theme', savedTheme)
   }, [])
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.setAttribute('data-theme', newTheme)
-  }
 
   const closeMenu = () => setIsMenuOpen(false)
 
@@ -97,17 +86,6 @@ export default function Header() {
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             {mounted && <PlayButton />}
-            
-            {/* Theme Toggle */}
-            {mounted && (
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full bg-base-200/50 text-base-content/70 hover:text-base-content hover:bg-base-200 transition-colors"
-                aria-label="Toggle theme"
-              >
-                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-              </button>
-            )}
           </div>
         </div>
 
@@ -115,19 +93,9 @@ export default function Header() {
         <div className="flex items-center md:hidden">
           {mounted && <PlayButton />}
           
-          {mounted && (
-            <button
-              onClick={toggleTheme}
-              className="p-2 mx-2 rounded-full bg-base-200/50 text-base-content/70 hover:text-base-content hover:bg-base-200 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-            </button>
-          )}
-          
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="p-2 rounded-md bg-base-200/50 text-base-content/70 hover:text-base-content hover:bg-base-200 transition-colors"
+            className="p-2 rounded-md bg-base-200/50 text-base-content/70 hover:text-base-content hover:bg-base-200 transition-colors ml-2"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={20} /> : <MenuIcon size={20} />}

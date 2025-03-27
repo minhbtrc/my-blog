@@ -149,7 +149,7 @@ export default function Footer() {
 
         <div className="border-t border-base-300/30 mt-12 pt-6 flex flex-col md:flex-row md:items-center md:justify-between">
           <p className="text-xs text-base-content/60">
-            © {new Date().getFullYear()} Minh BTC. All rights reserved.
+            © {new Date().getFullYear()} MinhBTC. All rights reserved.
           </p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <Link href="/privacy" className="text-xs text-base-content/60 hover:text-base-content transition-colors">

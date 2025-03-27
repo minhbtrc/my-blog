@@ -1,20 +1,38 @@
 'use client'
 import { useMemo } from 'react'
 import { useSelectedLayoutSegments } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
 import useSWR from 'swr'
 import ky from 'ky'
 
 import Link from 'next/link'
 
+// Define interface for blog metadata
+interface BlogMetadata {
+  title?: string;
+  description?: string;
+  date?: string;
+  [key: string]: any;
+}
+
 function NavLink({ href }: { href: string }) {
-  const { data: name = '#' } = useSWR(href, async (api: string) => {
-    if (api === '/') return 'Blog'
-    const data = await ky.get(`/api/${api}`).json<Blog | undefined>()
-    return data?.title || '#'
+  // Default to empty string for initial render to avoid hydration mismatch
+  const { data: name = '' } = useSWR<string>(href, async (api: string) => {
+    if (api === '/') return ''
+    
+    try {
+      const data = await ky.get(`/api/${api}`).json<BlogMetadata>()
+      return data?.title || ''
+    } catch (error) {
+      console.error(`Error fetching ${api}:`, error)
+      return ''
+    }
+  }, {
+    suspense: false,
+    revalidateOnFocus: false
   })
+  
   return (
-    <Link className="opacity-60" href={href}>
+    <Link className="text-slate-400 hover:text-slate-300 transition-colors" href={href}>
       {name}
     </Link>
   )
@@ -33,21 +51,14 @@ export default function Navigation() {
   )
 
   return (
-    <div className="breadcrumbs text-sm">
-      <ul>
-        <AnimatePresence>
-          {routes.map((route, i) => (
-            <motion.li
-              key={route}
-              initial={{ x: 16 * (i + 1), opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: 16 * (i + 1), opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <NavLink href={route} />
-            </motion.li>
-          ))}
-        </AnimatePresence>
+    <div className="text-sm">
+      <ul className="flex items-center gap-2">
+        {routes.map((route, i) => (
+          <li key={route} className="flex items-center">
+            {i > 0 && <span className="mx-2 text-slate-600">/</span>}
+            <NavLink href={route} />
+          </li>
+        ))}
       </ul>
     </div>
   )

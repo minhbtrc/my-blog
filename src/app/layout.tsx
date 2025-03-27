@@ -1,18 +1,48 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { AppProgressBar as NextProgressBar } from 'next-nprogress-bar'
 import { ThemeProvider } from 'next-themes'
 import { MotionConfig } from 'framer-motion'
-import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Moon, Sun, Volume2 } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
-
+import clsx from 'clsx'
+import Footer from '@/components/footer'
 import './globals.css'
+import dynamic from 'next/dynamic'
 
-const inter = Inter({ subsets: ['latin'] })
+// Import and configure fonts
+import { Inter, Roboto_Mono, Fira_Code, Oswald } from 'next/font/google'
+
+// Import ReactPlayer dynamically to avoid SSR issues
+const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false })
+
+// Define the fonts
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+// Define tech-focused fonts
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
+})
+
+const firaCode = Fira_Code({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-fira-code',
+})
+
+const oswald = Oswald({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-oswald',
+})
 
 export default function RootLayout({
   children,
@@ -21,6 +51,9 @@ export default function RootLayout({
 }>) {
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
+  const playerRef = useRef(null)
   const pathname = usePathname()
 
   // Track scroll position for sticky header
@@ -34,13 +67,45 @@ export default function RootLayout({
     }
     
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    
+    // Check if user has previously interacted with the music
+    const hasUserInteracted = localStorage.getItem('music-interaction')
+    if (hasUserInteracted === 'true') {
+      setHasInteracted(true)
+    }
+
+    // Listen for the first user interaction on the page
+    const handleFirstInteraction = () => {
+      setHasInteracted(true)
+      localStorage.setItem('music-interaction', 'true')
+      
+      // Remove the event listeners after first interaction
+      window.removeEventListener('click', handleFirstInteraction)
+      window.removeEventListener('touchstart', handleFirstInteraction)
+      window.removeEventListener('keydown', handleFirstInteraction)
+    }
+    
+    window.addEventListener('click', handleFirstInteraction)
+    window.addEventListener('touchstart', handleFirstInteraction)
+    window.addEventListener('keydown', handleFirstInteraction)
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('click', handleFirstInteraction)
+      window.removeEventListener('touchstart', handleFirstInteraction)
+      window.removeEventListener('keydown', handleFirstInteraction)
+    }
   }, [])
 
   // Close mobile menu when route changes
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [pathname])
+  
+  // Function to toggle music playback
+  const toggleMusic = () => {
+    setIsPlaying(prev => !prev)
+  }
 
   const navLinks = [
     { path: '/', label: 'Home', icon: <Home className="w-4 h-4" /> },
@@ -50,19 +115,38 @@ export default function RootLayout({
   ]
 
   return (
-    <html lang="en">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.className} ${robotoMono.variable} ${firaCode.variable} ${oswald.variable}`}
+    >
       <head>
         <title>Minh&apos;s Space | Personal Blog</title>
         <meta name="description" content="minhbtc blog - I write about technology, share my knowledge, talk about life perspectives, history, stories, trips,..." />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.className} flex flex-col min-h-screen`}>
+        {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
+          <div className="hidden">
+            <ReactPlayer
+              ref={playerRef}
+              url={process.env.NEXT_PUBLIC_LISTEN_URL}
+              playing={isPlaying && hasInteracted}
+              loop
+              volume={0.7}
+              muted={false}
+              controls={false}
+              onError={(e) => console.error("Player error:", e)}
+            />
+          </div>
+        )}
+        
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextProgressBar height="3px" color="rgba(var(--color-primary))" />
           <MotionConfig reducedMotion="user">
             {/* Sticky Navigation Bar */}
             <header 
               className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-                scrolled ? 'bg-base-100/90 backdrop-blur-md shadow-md' : 'bg-transparent'
+                scrolled ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md' : 'bg-transparent'
               }`}
             >
               {mounted && (
@@ -71,7 +155,7 @@ export default function RootLayout({
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
                       <motion.div 
-                        className="font-mono text-lg font-bold bg-gradient-to-r from-cyan-500 to-teal-400 bg-clip-text text-transparent"
+                        className="font-mono text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent"
                         whileHover={{ scale: 1.05 }}
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                       >
@@ -87,7 +171,7 @@ export default function RootLayout({
                           href={link.path}
                           className={`relative px-4 py-2 inline-flex items-center space-x-2 font-medium text-sm ${
                             pathname === link.path 
-                              ? 'text-cyan-600 dark:text-cyan-400' 
+                              ? 'text-blue-600 dark:text-sky-400' 
                               : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'
                           } transition-colors duration-200`}
                         >
@@ -95,7 +179,7 @@ export default function RootLayout({
                           <span>{link.label}</span>
                           {pathname === link.path && (
                             <motion.span 
-                              className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500 dark:bg-cyan-400 rounded-full"
+                              className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 dark:bg-sky-400 rounded-full"
                               layoutId="navbar-indicator"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
@@ -105,34 +189,68 @@ export default function RootLayout({
                         </Link>
                       ))}
                       
-                      {/* Listen Button */}
-                      <button 
-                        className="ml-2 p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-cyan-100 dark:hover:bg-cyan-900 transition-colors"
-                        aria-label="Listen to page content"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
+                      {/* Listen Button for music */}
+                      {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
+                        <button 
+                          className="ml-2 p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors relative group"
+                          aria-label={isPlaying ? "Pause music" : "Play music"}
+                          onClick={toggleMusic}
+                        >
+                          <Disc3 
+                            className={clsx(
+                              'w-5 h-5 text-blue-400',
+                              {
+                                'animate-[spin_3s_linear_infinite]': isPlaying && hasInteracted,
+                                '[animation-play-state:paused]': !isPlaying || !hasInteracted,
+                              },
+                            )}
+                          />
+                          
+                          {!hasInteracted && (
+                            <span className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 text-xs bg-slate-700 dark:bg-slate-800 px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white">
+                              Click to enable music
+                            </span>
+                          )}
+                        </button>
+                      )}
                       
                       {/* Theme Toggle */}
-                      <ThemeToggle />
+                      {/* <ThemeToggle /> */}
                     </nav>
                     
                     {/* Mobile Menu Button & Controls */}
                     <div className="md:hidden flex items-center space-x-2">
-                      {/* Listen Button */}
-                      <button 
-                        className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-cyan-100 dark:hover:bg-cyan-900 transition-colors"
-                        aria-label="Listen to page content"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
+                      {/* Listen Button for music (mobile) */}
+                      {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
+                        <button 
+                          className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors relative group"
+                          aria-label={isPlaying ? "Pause music" : "Play music"}
+                          onClick={toggleMusic}
+                        >
+                          <Disc3 
+                            className={clsx(
+                              'w-4 h-4 text-blue-400',
+                              {
+                                'animate-[spin_3s_linear_infinite]': isPlaying && hasInteracted,
+                                '[animation-play-state:paused]': !isPlaying || !hasInteracted,
+                              },
+                            )}
+                          />
+                          
+                          {!hasInteracted && (
+                            <span className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 text-xs bg-slate-700 dark:bg-slate-800 px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white z-10">
+                              Click to enable music
+                            </span>
+                          )}
+                        </button>
+                      )}
                       
                       {/* Theme Toggle */}
                       <ThemeToggle isMobile={true} />
                       
                       {/* Menu Button */}
                       <button 
-                        className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-cyan-100 dark:hover:bg-cyan-900 transition-colors"
+                        className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
                       >
@@ -160,7 +278,7 @@ export default function RootLayout({
                           href={link.path}
                           className={`block px-3 py-2 rounded-lg ${
                             pathname === link.path 
-                              ? 'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' 
+                              ? 'bg-blue-50 dark:bg-sky-900/30 text-blue-600 dark:text-sky-400' 
                               : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                           } transition-colors duration-200 flex items-center space-x-2`}
                         >
@@ -175,16 +293,12 @@ export default function RootLayout({
             </header>
             
             {/* Main Content with padding for the fixed header */}
-            <main className="relative pt-20 mt-0">
+            <main className="relative pt-20 mt-0 flex-grow">
               {children}
             </main>
 
             {/* Footer */}
-            <footer className="relative z-10 bg-slate-50 dark:bg-slate-900">
-              <div className="container mx-auto px-4 py-8 text-center text-sm text-slate-600 dark:text-slate-400">
-                © {new Date().getFullYear()} Minh BTC. All rights reserved.
-              </div>
-            </footer>
+            <Footer />
           </MotionConfig>
         </ThemeProvider>
       </body>
@@ -206,7 +320,7 @@ function ThemeToggle({ isMobile = false }: { isMobile?: boolean }) {
   return (
     <button
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-      className={`${isMobile ? 'p-2' : 'ml-1 p-2'} rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-cyan-100 dark:hover:bg-cyan-900 transition-colors`}
+      className={`${isMobile ? 'p-2' : 'ml-1 p-2'} rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors`}
       aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {resolvedTheme === 'dark' ? (
