@@ -1,0 +1,203 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base Styling */
+@layer base {
+  html {
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  ::selection {
+    background-color: rgba(59, 130, 246, 0.25);
+  }
+  
+  .dark ::selection {
+    background-color: rgba(96, 165, 250, 0.3);
+  }
+}
+
+/* Custom Animations */
+@layer utilities {
+  /* Gradient text animation */
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 5s ease infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  /* Shine effect for cards */
+  .animate-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .animate-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(30deg);
+    animation: shine 6s ease-in-out infinite;
+  }
+  
+  @keyframes shine {
+    0% {
+      transform: rotate(30deg) translate(-100%, -100%);
+    }
+    100% {
+      transform: rotate(30deg) translate(100%, 100%);
+    }
+  }
+  
+  /* Floating animation */
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+  
+  /* Glow effect */
+  .animate-glow {
+    animation: glow 3s ease-in-out infinite alternate;
+  }
+  
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 5px rgba(59, 130, 246, 0.2), 0 0 10px rgba(59, 130, 246, 0.1);
+    }
+    to {
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3), 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+  }
+}
+
+/* Custom Components */
+@layer components {
+  /* Gradient text */
+  .text-gradient {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400;
+  }
+  
+  /* Card with glass effect */
+  .card-glass {
+    @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm;
+  }
+  
+  /* Badge styles */
+  .badge-primary {
+    @apply px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300;
+  }
+  
+  .badge-secondary {
+    @apply px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300;
+  }
+  
+  .badge-success {
+    @apply px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300;
+  }
+  
+  /* Button with gradient */
+  .btn-gradient {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300;
+  }
+  
+  /* Subtle tooltip */
+  .tooltip-base {
+    @apply absolute px-2 py-1 text-xs font-medium rounded bg-slate-800 text-white dark:bg-slate-700 shadow-lg z-50 whitespace-nowrap;
+  }
+}
+
+/* Article content styling */
+.article-content {
+  @apply text-base-content/90 leading-relaxed;
+}
+
+.article-content h2 {
+  @apply text-2xl font-bold mt-8 mb-4 text-base-content;
+}
+
+.article-content h3 {
+  @apply text-xl font-bold mt-6 mb-3 text-base-content;
+}
+
+.article-content p {
+  @apply mb-5;
+}
+
+.article-content a {
+  @apply text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline;
+}
+
+.article-content ul {
+  @apply list-disc pl-6 mb-5;
+}
+
+.article-content ol {
+  @apply list-decimal pl-6 mb-5;
+}
+
+.article-content li {
+  @apply mb-2;
+}
+
+.article-content blockquote {
+  @apply pl-4 border-l-4 border-base-300 italic my-6 text-base-content/80;
+}
+
+.article-content pre {
+  @apply p-4 rounded-lg mb-6 overflow-x-auto;
+}
+
+.article-content code {
+  @apply font-mono text-sm;
+}
+
+.article-content img {
+  @apply rounded-lg my-6 mx-auto;
+}
+
+/* Support for mobile navigation/sidebar overlays */
+.mobile-overlay {
+  @apply fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40;
+}
+
+/* Support for code/syntax highlighting theme consistency */
+.dark pre {
+  @apply bg-slate-900;
+}
+
+pre {
+  @apply bg-slate-100 dark:bg-slate-900;
+} 

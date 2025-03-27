@@ -4,8 +4,8 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 
 import UiProvider from '@/providers/ui.provider'
 
-import Header from './header'
-import Footer from './footer'
+import Header from '@/app/header'
+import Footer from '@/components/footer'
 
 export const metadata: Metadata = {
   title: 'Minh\'s Space | Personal Blog',
@@ -41,21 +41,12 @@ export default function Layout({ children }: { children: ReactNode }) {
       </head>
       <body className="overflow-x-hidden">
         <UiProvider>
-          <main className="w-full min-h-dvh bg-base-100 flex flex-col gap-0 justify-center">
-            {/*<nav className="w-64">*/}
-            {/*  <Navbar />*/}
-            {/*</nav>*/}
-            <div className="flex-1 flex flex-col gap-0 justify-center">
-            <header className="w-full sticky top-0 z-10">
-              <Header />
-            </header>
-            <section className="w-full grow grid grid-cols-12 gap-0">
-              <div className="col-span-full">{children}</div>
-            </section>
-            <footer className="w-full">
-              <Footer />
-            </footer>
+          <main className="w-full min-h-dvh bg-base-100 flex flex-col">
+            <Header />
+            <div className="flex-1">
+              {children}
             </div>
+            <Footer />
           </main>
         </UiProvider>
       </body>

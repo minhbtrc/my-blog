@@ -4,8 +4,9 @@ import useSWR from 'swr'
 import ky from 'ky'
 
 import Link from 'next/link'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Calendar, ArrowRight } from 'lucide-react'
 import Tags from './tags'
+import { motion } from 'framer-motion'
 
 // Helper function to normalize API routes
 function normalizeApiRoute(route: string): string {
@@ -55,28 +56,76 @@ export function BlogCard({ route }: { route: string }) {
   const { date = new Date().toISOString(), tags = [], title = '', description = '' } = data ?? {};
 
   const linkRoute = normalizeLinkRoute(route);
+  const formattedDate = dayjs(date).format('MMM DD, YYYY');
 
   return (
-    <Link
-      className="w-full grid grid-cols-6 gap-4 py-16 border-t border-base-300 cursor-pointer relative group"
-      href={`/blog/${linkRoute}`}
+    <motion.div
+      whileHover={{ 
+        scale: 1.01,
+        backgroundColor: 'rgba(var(--color-base-100), 0.8)' 
+      }}
+      className="w-full rounded-xl border border-base-300/20 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
     >
-      <div className="col-span-full sm:col-span-1 sm:mt-1 flex flex-col gap-3">
-        <p className="text-xs opacity-60">
-          {dayjs(date).format('DD MMMM, YYYY')}
-        </p>
-        <Tags value={tags} readOnly />
-      </div>
-      <h2 className="col-span-full sm:col-span-2 font-semibold tracking-tight sm:-mt-1">
-        {title}
-      </h2>
-      <p className="col-span-full sm:col-span-3 text-sm opacity-60">
-        {description}
-      </p>
-      <button className="btn btn-circle btn-outline btn-sm absolute bottom-4 left-0 hidden transition-all group-hover:flex">
-        <ArrowUpRight className="w-4 h-4" />
-      </button>
-    </Link>
+      <Link
+        className="w-full block p-6"
+        href={`/blog/${linkRoute}`}
+      >
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-base-content/60">
+              <Calendar className="w-3.5 h-3.5" />
+              <p className="text-xs font-medium">
+                {formattedDate}
+              </p>
+            </div>
+            
+            {tags && tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {tags.slice(0, 3).map((tag, i) => (
+                  <span 
+                    key={i} 
+                    className="px-2.5 py-1 bg-base-200 rounded-full text-xs text-base-content/70 hover:bg-base-300 transition-colors"
+                  >
+                    {tag}
+                  </span>
+                ))}
+                {tags.length > 3 && (
+                  <span className="px-2.5 py-1 bg-base-200 rounded-full text-xs text-base-content/70">
+                    +{tags.length - 3}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+          
+          <div>
+            <h2 className="font-bold tracking-tight text-xl group-hover:text-blue-600 dark:group-hover:text-blue-400 mb-2">
+              {title}
+            </h2>
+            <p className="text-base text-base-content/70 line-clamp-2">
+              {description}
+            </p>
+          </div>
+          
+          <div className="flex justify-between items-center mt-2">
+            <motion.div 
+              className="flex items-center gap-1 text-primary text-sm font-medium"
+              whileHover={{ x: 3 }}
+            >
+              Read post
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </motion.div>
+            
+            <motion.div
+              whileHover={{ rotate: 45 }}
+              className="text-base-content/40 hover:text-primary transition-colors"
+            >
+              <ArrowUpRight className="w-5 h-5" />
+            </motion.div>
+          </div>
+        </div>
+      </Link>
+    </motion.div>
   )
 }
 
