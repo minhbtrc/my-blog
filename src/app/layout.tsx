@@ -231,24 +231,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} flex flex-col min-h-screen ${mounted && resolvedTheme === 'dark' ? 'code-bg-dark' : 'code-bg-light'} text-slate-800 dark:text-slate-200 antialiased theme-transition`}>
-        {/* Code-like background */}
-        <div className="code-bubbles">
-          {[...Array(25)].map((_, i) => (
-            <div 
-              key={i}
-              className="code-bubble"
-              style={{
-                width: `${Math.random() * 100 + 30}px`,
-                height: `${Math.random() * 100 + 30}px`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDuration: `${Math.random() * 40 + 25}s`,
-                animationDelay: `${Math.random() * 10}s`,
-                opacity: Math.random() * 0.4 + 0.3,
-              }}
-            />
-          ))}
-        </div>
+        {/* Code-like background is now handled by the route group layouts */}
         
         {/* Light particles effect (only in dark mode) */}
         {mounted && resolvedTheme === 'dark' && (

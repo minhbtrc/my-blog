@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { table } from '@/db'
+import PageContainer from '@/components/page-container'
 
 export async function generateMetadata(): Promise<Metadata> {
   const pathname = headers().get('x-forwarded-pathname') || ''
@@ -23,6 +24,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <div className="w-full flex flex-row justify-center">{children}</div>
+    <PageContainer 
+      maxWidth="full" 
+      flexDirection="col" 
+      justifyContent="center" 
+      withPadding={false}
+      className="min-h-screen"
+    >
+      {children}
+    </PageContainer>
   )
 }

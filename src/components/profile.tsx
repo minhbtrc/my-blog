@@ -62,7 +62,7 @@ export default function Profile() {
             <div className="w-24 h-24 rounded-full overflow-hidden shadow-md ring-1 ring-slate-300 dark:ring-slate-600">
               <Image 
                 src="/new_profile.png" 
-                alt="Minh BTC" 
+                alt="MinhBTC" 
                 width={96} 
                 height={96}
                 className="w-full h-full object-cover"
@@ -76,7 +76,7 @@ export default function Profile() {
           
           {/* Name */}
           <h2 className="text-2xl font-bold mb-1 text-slate-800 dark:text-slate-200">
-            Minh BTC
+            MinhBTC
           </h2>
           
           {/* Title and description */}

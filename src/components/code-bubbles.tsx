@@ -14,16 +14,20 @@ export default function CodeBubbles() {
   const [bubbles, setBubbles] = useState<BubbleProps[]>([])
 
   useEffect(() => {
-    const newBubbles = Array.from({ length: 15 }).map(() => ({
+    // Create a variety of bubbles with different sizes and positions
+    const newBubbles = Array.from({ length: 20 }).map(() => ({
       size: Math.random() * 100 + 50,
       left: Math.random() * 100,
-      animationDuration: Math.random() * 15 + 10,
-      delay: Math.random() * -20,
-      opacity: Math.random() * 0.5 + 0.1
+      animationDuration: Math.random() * 20 + 15, // 15-35s duration
+      delay: Math.random() * -30,                // Staggered start
+      opacity: Math.random() * 0.3 + 0.1         // Subtle opacity
     }))
     setBubbles(newBubbles)
+    
+    // Clean up function not needed since we're only setting state once
   }, [])
 
+  // Don't render anything until bubbles are created
   if (bubbles.length === 0) return null
 
   return (

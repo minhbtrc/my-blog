@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react'
 import PageContainer from '@/components/page-container'
 
-export default function AboutLayout({
+export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode
