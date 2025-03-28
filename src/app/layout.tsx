@@ -5,7 +5,7 @@ import { ThemeProvider } from 'next-themes'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3 } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3, Terminal, GithubIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import clsx from 'clsx'
@@ -119,12 +119,29 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={`${inter.className} ${robotoMono.variable} ${firaCode.variable} ${oswald.variable}`}
+      data-theme="dark"
     >
       <head>
         <title>Minh&apos;s Space | Personal Blog</title>
         <meta name="description" content="minhbtc blog - I write about technology, share my knowledge, talk about life perspectives, history, stories, trips,..." />
       </head>
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
+      <body className={`${inter.className} flex flex-col min-h-screen bg-[#0B1120] text-slate-200`}>
+        {/* Code matrix background effect */}
+        <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03]">
+          <div className="absolute inset-0 bg-[url('/images/code-pattern.svg')] bg-repeat" />
+        </div>
+        
+        {/* Vertical code lines decoration */}
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-10">
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div 
+              key={i} 
+              className="absolute top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/0 via-blue-500/30 to-blue-500/0"
+              style={{ left: `${i * 5}%` }}
+            />
+          ))}
+        </div>
+        
         {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
           <div className="hidden">
             <ReactPlayer
@@ -140,13 +157,13 @@ export default function RootLayout({
           </div>
         )}
         
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NextProgressBar height="3px" color="rgba(var(--color-primary))" />
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <NextProgressBar height="3px" color="rgba(56, 189, 248, 0.8)" />
           <MotionConfig reducedMotion="user">
             {/* Sticky Navigation Bar */}
             <header 
               className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-                scrolled ? 'bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-md' : 'bg-transparent'
+                scrolled ? 'bg-[#0B1120]/90 backdrop-blur-md shadow-md shadow-blue-900/10' : 'bg-transparent'
               }`}
             >
               {mounted && (
@@ -155,11 +172,14 @@ export default function RootLayout({
                     {/* Logo */}
                     <Link href="/" className="flex items-center space-x-2">
                       <motion.div 
-                        className="font-mono text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent"
+                        className="font-mono text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400"
                         whileHover={{ scale: 1.05 }}
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                       >
-                        minh.btc<span className="animate-pulse">_</span>
+                        <span className="flex items-center gap-1">
+                          <Terminal className="w-5 h-5 text-cyan-400/70" />
+                          minh.btc<span className="animate-pulse text-cyan-400">_</span>
+                        </span>
                       </motion.div>
                     </Link>
                     
@@ -169,17 +189,19 @@ export default function RootLayout({
                         <Link 
                           key={link.path} 
                           href={link.path}
-                          className={`relative px-4 py-2 inline-flex items-center space-x-2 font-medium text-sm ${
+                          className={`relative px-4 py-2 inline-flex items-center space-x-2 font-mono text-sm ${
                             pathname === link.path 
-                              ? 'text-blue-600 dark:text-sky-400' 
-                              : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100'
+                              ? 'text-cyan-400' 
+                              : 'text-slate-300 hover:text-cyan-300'
                           } transition-colors duration-200`}
                         >
-                          <span className="hidden lg:inline-flex">{link.icon}</span>
-                          <span>{link.label}</span>
+                          <span className="inline-flex">{link.icon}</span>
+                          <span>
+                            {pathname === link.path ? `${link.label}()` : link.label}
+                          </span>
                           {pathname === link.path && (
                             <motion.span 
-                              className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-500 dark:bg-sky-400 rounded-full"
+                              className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500/0 via-cyan-500/70 to-cyan-500/0 rounded-full"
                               layoutId="navbar-indicator"
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
@@ -189,114 +211,140 @@ export default function RootLayout({
                         </Link>
                       ))}
                       
+                      {/* GitHub Link */}
+                      <a 
+                        href="https://github.com/minhbtrc"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative px-4 py-2 inline-flex items-center space-x-2 font-mono text-sm text-slate-300 hover:text-cyan-300 transition-colors duration-200"
+                      >
+                        <GithubIcon className="w-4 h-4" />
+                      </a>
+                      
                       {/* Listen Button for music */}
                       {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
                         <button 
-                          className="ml-2 p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors relative group"
+                          className="ml-2 p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all relative group"
                           aria-label={isPlaying ? "Pause music" : "Play music"}
                           onClick={toggleMusic}
                         >
                           <Disc3 
                             className={clsx(
-                              'w-5 h-5 text-blue-400',
-                              {
-                                'animate-[spin_3s_linear_infinite]': isPlaying && hasInteracted,
-                                '[animation-play-state:paused]': !isPlaying || !hasInteracted,
-                              },
+                              "w-4 h-4",
+                              isPlaying && "animate-[spin_6s_linear_infinite]"
                             )}
                           />
-                          
-                          {!hasInteracted && (
-                            <span className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 text-xs bg-slate-700 dark:bg-slate-800 px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white">
-                              Click to enable music
-                            </span>
-                          )}
                         </button>
                       )}
                       
-                      {/* Theme Toggle */}
-                      {/* <ThemeToggle /> */}
+                      {/* Theme Toggle Button */}
+                      <ThemeToggle />
                     </nav>
                     
-                    {/* Mobile Menu Button & Controls */}
-                    <div className="md:hidden flex items-center space-x-2">
-                      {/* Listen Button for music (mobile) */}
+                    {/* Mobile Navigation Trigger */}
+                    <div className="flex items-center md:hidden">
                       {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
                         <button 
-                          className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors relative group"
+                          className="mr-2 p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all"
                           aria-label={isPlaying ? "Pause music" : "Play music"}
                           onClick={toggleMusic}
                         >
                           <Disc3 
                             className={clsx(
-                              'w-4 h-4 text-blue-400',
-                              {
-                                'animate-[spin_3s_linear_infinite]': isPlaying && hasInteracted,
-                                '[animation-play-state:paused]': !isPlaying || !hasInteracted,
-                              },
+                              "w-4 h-4",
+                              isPlaying && "animate-[spin_6s_linear_infinite]"
                             )}
                           />
-                          
-                          {!hasInteracted && (
-                            <span className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 text-xs bg-slate-700 dark:bg-slate-800 px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white z-10">
-                              Click to enable music
-                            </span>
-                          )}
                         </button>
                       )}
                       
-                      {/* Theme Toggle */}
-                      <ThemeToggle isMobile={true} />
-                      
-                      {/* Menu Button */}
-                      <button 
-                        className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+                      <button
+                        onClick={() => setMobileMenuOpen(true)}
+                        className="p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all"
+                        aria-label="Open main menu"
                       >
-                        {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        <Menu className="w-5 h-5" />
                       </button>
                     </div>
+                    
+                    {/* Mobile Menu */}
+                    <AnimatePresence>
+                      {mobileMenuOpen && (
+                        <motion.div
+                          className="fixed inset-0 z-50 lg:hidden bg-[#0B1120]/90 backdrop-blur-md"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <div className="fixed inset-0 overflow-hidden">
+                            <div className="absolute inset-0 overflow-hidden">
+                              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                                <motion.div
+                                  className="pointer-events-auto w-screen max-w-md"
+                                  initial={{ x: "100%" }}
+                                  animate={{ x: 0 }}
+                                  exit={{ x: "100%" }}
+                                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                                >
+                                  <div className="flex h-full flex-col overflow-y-auto bg-[#0e1628] shadow-xl border-l border-blue-900/30">
+                                    <div className="px-4 py-6 sm:px-6">
+                                      <div className="flex items-center justify-between">
+                                        <div className="font-mono text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+                                          <Terminal className="w-5 h-5 text-cyan-400/70 inline-block mr-1" />
+                                          minh.btc<span className="animate-pulse text-cyan-400">_</span>
+                                        </div>
+                                        <button
+                                          type="button"
+                                          className="rounded-md p-2 bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all"
+                                          onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                          <span className="sr-only">Close panel</span>
+                                          <X className="h-5 w-5" aria-hidden="true" />
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                                      <nav className="flex flex-col space-y-2">
+                                        {navLinks.map((link) => (
+                                          <Link
+                                            key={link.path}
+                                            href={link.path}
+                                            className={`py-3 px-4 rounded-md font-mono flex items-center space-x-3 ${
+                                              pathname === link.path
+                                                ? 'text-cyan-400 bg-slate-800/70 border border-blue-900/30'
+                                                : 'text-slate-300 hover:bg-slate-800/40 hover:text-cyan-300'
+                                            }`}
+                                            onClick={() => setMobileMenuOpen(false)}
+                                          >
+                                            <span>{link.icon}</span>
+                                            <span>
+                                              {pathname === link.path ? `${link.label}()` : link.label}
+                                            </span>
+                                          </Link>
+                                        ))}
+                                        
+                                        <div className="flex items-center pt-4 mt-4 border-t border-blue-900/20">
+                                          <ThemeToggle isMobile />
+                                        </div>
+                                      </nav>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               )}
-              
-              {/* Mobile Navigation */}
-              <AnimatePresence>
-                {mobileMenuOpen && mounted && (
-                  <motion.div 
-                    className="md:hidden"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="px-4 pt-2 pb-4 space-y-1 bg-white dark:bg-slate-900 shadow-lg border-t border-slate-200 dark:border-slate-800">
-                      {navLinks.map((link) => (
-                        <Link 
-                          key={link.path} 
-                          href={link.path}
-                          className={`block px-3 py-2 rounded-lg ${
-                            pathname === link.path 
-                              ? 'bg-blue-50 dark:bg-sky-900/30 text-blue-600 dark:text-sky-400' 
-                              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
-                          } transition-colors duration-200 flex items-center space-x-2`}
-                        >
-                          {link.icon}
-                          <span>{link.label}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </header>
             
-            {/* Main Content with padding for the fixed header */}
-            <main className="relative pt-20 mt-0 flex-grow">
-              {children}
-            </main>
-
+            {/* Main Content */}
+            <main className="flex-grow pt-24 z-10 relative">{children}</main>
+            
             {/* Footer */}
             <Footer />
           </MotionConfig>
@@ -306,27 +354,41 @@ export default function RootLayout({
   )
 }
 
-// Theme Toggle Button Component
 function ThemeToggle({ isMobile = false }: { isMobile?: boolean }) {
   const { resolvedTheme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const mounted = typeof window !== 'undefined'
   
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-  
-  if (!mounted) return null
+  if (!mounted) {
+    return (
+      <button 
+        className={`p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all ${
+          isMobile ? 'w-full justify-center text-sm' : ''
+        }`}
+        aria-label="Toggle dark mode"
+      >
+        <Moon className="h-4 w-4" />
+      </button>
+    )
+  }
   
   return (
     <button
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-      className={`${isMobile ? 'p-2' : 'ml-1 p-2'} rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors`}
-      aria-label={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      className={`p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all flex items-center ${
+        isMobile ? 'w-full justify-center text-sm gap-2' : ''
+      }`}
+      aria-label="Toggle dark mode"
     >
       {resolvedTheme === 'dark' ? (
-        <Moon className="w-4 h-4" />
+        <>
+          <Sun className="h-4 w-4" />
+          {isMobile && <span className="font-mono">theme.light()</span>}
+        </>
       ) : (
-        <Sun className="w-4 h-4" />
+        <>
+          <Moon className="h-4 w-4" />
+          {isMobile && <span className="font-mono">theme.dark()</span>}
+        </>
       )}
     </button>
   )

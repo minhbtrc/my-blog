@@ -121,25 +121,25 @@ export default function Tags({
     <div className={`w-full ${className}`}>
       {showTitle && (
         <div className="flex items-center justify-between mb-2">
-          <div className="text-sm font-semibold flex items-center gap-1 text-slate-300">
+          <div className="text-sm font-mono font-semibold flex items-center gap-1.5 text-cyan-400/70">
             <TagIcon className="w-4 h-4" />
-            Tags
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">tags[]</span>
           </div>
           
           {showToggle && sortedTags.length > limit && (
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-xs flex items-center text-slate-400 hover:text-slate-300"
+              className="text-xs flex items-center text-slate-400 hover:text-cyan-300 font-mono"
             >
               {expanded ? (
                 <>
                   <ChevronUp className="w-3 h-3 mr-1" />
-                  Show less
+                  <span className="text-slate-400">collapse()</span>
                 </>
               ) : (
                 <>
                   <ChevronDown className="w-3 h-3 mr-1" />
-                  Show all ({sortedTags.length})
+                  <span className="text-slate-400">showAll({sortedTags.length})</span>
                 </>
               )}
             </button>
@@ -148,7 +148,7 @@ export default function Tags({
       )}
       
       {tags.length === 0 && showNoTagsMessage ? (
-        <div className="text-sm text-slate-500 italic">No tags available</div>
+        <div className="text-sm text-slate-500 italic font-mono">{/* No tags available */}</div>
       ) : (
         <div className="flex flex-wrap gap-2">
           <AnimatePresence>
@@ -165,9 +165,9 @@ export default function Tags({
                 >
                   <Link
                     href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs hover:bg-slate-700 transition-colors cursor-pointer"
+                    className="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-800/70 border border-blue-900/30 text-slate-300 text-xs hover:bg-slate-800 hover:border-blue-800/40 transition-all cursor-pointer font-mono"
                   >
-                    <span className="mr-1 w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                    <span className="mr-1.5 w-1.5 h-1.5 rounded-full bg-cyan-500/70"></span>
                     {tag}
                   </Link>
                 </motion.div>
@@ -176,11 +176,11 @@ export default function Tags({
                   key={tag}
                   onClick={() => handleTagClick(tag)}
                   className={`
-                    inline-flex items-center px-2.5 py-1 rounded-full text-xs transition-colors
+                    inline-flex items-center px-2.5 py-1 rounded-md text-xs transition-all font-mono
                     ${
                       isSelected
-                        ? 'bg-indigo-900/60 text-indigo-300 border border-indigo-800/50 hover:bg-indigo-800/60'
-                        : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:bg-slate-700/60 hover:text-slate-300'
+                        ? 'bg-blue-900/30 text-cyan-300 border border-blue-800/40 hover:bg-blue-800/30 shadow-sm shadow-blue-900/10'
+                        : 'bg-slate-800/60 text-slate-400 border border-slate-700/50 hover:bg-slate-700/60 hover:text-slate-300 hover:border-slate-600/60'
                     }
                   `}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -190,7 +190,7 @@ export default function Tags({
                 >
                   <span 
                     className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                      isSelected ? 'bg-indigo-400' : 'bg-slate-600'
+                      isSelected ? 'bg-cyan-400' : 'bg-slate-600'
                     }`}
                   ></span>
                   {tag}
@@ -223,14 +223,14 @@ function TagItem({
       className="inline-flex items-center"
     >
       {readOnly ? (
-        <span className="tech-tag">
+        <span className="tech-tag font-mono text-cyan-300 bg-slate-800/70 border border-blue-900/30 px-2 py-0.5 rounded-md text-xs inline-flex items-center">
           {tagIcon}
           <span>{tag}</span>
         </span>
       ) : (
         <Link
           href={href}
-          className="tech-tag"
+          className="tech-tag font-mono text-cyan-300 bg-slate-800/70 border border-blue-900/30 px-2 py-0.5 rounded-md text-xs hover:bg-slate-800 hover:border-blue-800/40 transition-all inline-flex items-center"
         >
           {tagIcon}
           <span>{tag}</span>
