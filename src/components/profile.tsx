@@ -53,7 +53,7 @@ function SkillTag({ label, color, description }: SkillTagProps) {
 
 export default function Profile() {
   return (
-    <div className="bg-white/90 dark:bg-slate-800/80 shadow-md border border-slate-200/50 dark:border-slate-700/30 rounded-xl overflow-hidden backdrop-blur-sm">
+    <div className="bg-white/95 dark:bg-slate-800/30 backdrop-blur-sm shadow-md border border-slate-200/50 dark:border-blue-900/20 rounded-xl overflow-hidden">
       <div className="p-6">
         {/* Profile header */}
         <div className="flex flex-col items-center text-center">
@@ -61,7 +61,7 @@ export default function Profile() {
           <div className="relative mb-4">
             <div className="w-24 h-24 rounded-full overflow-hidden shadow-md ring-1 ring-slate-300 dark:ring-slate-600">
               <Image 
-                src="/profile.jpeg" 
+                src="/new_profile.png" 
                 alt="Minh BTC" 
                 width={96} 
                 height={96}

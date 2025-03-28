@@ -13,10 +13,18 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
-      { "argsIgnorePattern": "^_" }
+      { "varsIgnorePattern": "^_", "argsIgnorePattern": "^_" }
     ],
     "@next/next/no-page-custom-font": "off",
     "@next/next/no-img-element": "off",
     "react/jsx-no-comment-textnodes": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/app/page.tsx"],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ]
 }

@@ -1,0 +1,392 @@
+"use client";
+
+import { useState, useEffect, useRef } from "react";
+import { Search, X } from "lucide-react";
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useDebounce } from 'use-debounce';
+import Link from 'next/link';
+
+// ClientOnly component to avoid hydration issues
+function ClientOnly({ children, fallback = null }) {
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  return isMounted ? children : fallback;
+}
+
+// Fallback blog data for testing
+const FALLBACK_BLOGS = [
+  {
+    route: "/blog/langchain-chatbot",
+    title: "Building a Privacy-First AI Chatbot with LangChain",
+    description: "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and...",
+    date: "2023-07-15",
+    readingTime: "8 min read",
+    tags: ["ai", "langchain", "privacy", "development"],
+  },
+  {
+    route: 'blog/vector-embeddings',
+    title: 'Vector Embeddings: The Foundation of Modern NLP',
+    description: 'Dive deep into vector embeddings and understand how they enable advanced natural language processing and semantic search capabilities.',
+    date: '2023-08-22',
+    readingTime: '12 min read',
+    tags: ['nlp', 'embeddings', 'ai'],
+  },
+  {
+    route: 'blog/ai-privacy',
+    title: 'Balancing AI Capabilities with User Privacy',
+    description: 'Exploring the tension between advancing AI capabilities and maintaining strong user privacy protections in modern applications.',
+    date: '2023-09-05',
+    readingTime: '10 min read',
+    tags: ['ai', 'privacy', 'ethics'],
+  }
+];
+
+function BlogPageContent() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [blogs, setBlogs] = useState([]);
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [tags, setTags] = useState([]);
+  
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const hasMounted = useRef(false);
+  
+  // Extract selected tags from URL
+  const selectedTagFromUrl = searchParams.get('tag');
+  const [selectedTags, setSelectedTags] = useState(
+    selectedTagFromUrl ? [selectedTagFromUrl] : []
+  );
+
+  useEffect(() => {
+    hasMounted.current = true;
+    loadBlogData();
+  }, []);
+
+  // Load blog data from API or use fallback
+  async function loadBlogData() {
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/blog");
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data && Array.isArray(data) && data.length > 0) {
+        // Direct array of route URLs
+        const transformedBlogs = await Promise.all(data.map(async (route) => {
+          try {
+            const blogData = await fetch(`/api${route.startsWith('/') ? route : `/${route}`}`).then(res => res.json());
+            return {
+              route,
+              title: blogData.title || "Untitled Post",
+              description: blogData.description || "No description provided",
+              date: blogData.date || new Date().toISOString(),
+              readingTime: blogData.readingTime || `${Math.max(1, Math.ceil((blogData.description || '').split(' ').length / 200))} min read`,
+              tags: blogData.tags || [],
+            };
+          } catch (err) {
+            console.error(`Failed to load blog data for ${route}:`, err);
+            return {
+              route,
+              title: "Untitled Post",
+              description: "Failed to load content",
+              date: new Date().toISOString(),
+              readingTime: "N/A",
+              tags: [],
+            };
+          }
+        }));
+        
+        setBlogs(transformedBlogs);
+        
+        // Extract all unique tags
+        const allTags = [];
+        transformedBlogs.forEach(blog => {
+          if (blog.tags && Array.isArray(blog.tags)) {
+            blog.tags.forEach(tag => {
+              if (!allTags.includes(tag)) {
+                allTags.push(tag);
+              }
+            });
+          }
+        });
+        
+        setTags(allTags);
+      } else {
+        console.warn("Using fallback blog data");
+        setBlogs(FALLBACK_BLOGS);
+        
+        // Extract tags from fallback blogs
+        const fallbackTags = [];
+        FALLBACK_BLOGS.forEach(blog => {
+          if (blog.tags && Array.isArray(blog.tags)) {
+            blog.tags.forEach(tag => {
+              if (!fallbackTags.includes(tag)) {
+                fallbackTags.push(tag);
+              }
+            });
+          }
+        });
+        setTags(fallbackTags);
+      }
+    } catch (error) {
+      console.error("Failed to load blogs:", error);
+      setBlogs(FALLBACK_BLOGS); // Use fallback data on error
+      
+      // Extract tags from fallback blogs on error
+      const fallbackTags = [];
+      FALLBACK_BLOGS.forEach(blog => {
+        if (blog.tags && Array.isArray(blog.tags)) {
+          blog.tags.forEach(tag => {
+            if (!fallbackTags.includes(tag)) {
+              fallbackTags.push(tag);
+            }
+          });
+        }
+      });
+      setTags(fallbackTags);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // Update URL when tags change
+  useEffect(() => {
+    if (!hasMounted.current) return;
+    
+    if (selectedTags.length > 0) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('tag', selectedTags[0]); 
+      router.push(`/blog?${params.toString()}`);
+    } else if (selectedTagFromUrl) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('tag');
+      router.push(`/blog?${params.toString()}`);
+    }
+  }, [selectedTags, router, searchParams, selectedTagFromUrl]);
+  
+  // Filter blogs based on selected tags and search query
+  useEffect(() => {
+    const filtered = blogs.filter(blog => {
+      const matchesTag = selectedTags.length === 0 || 
+        (blog.tags && blog.tags.some(tag => selectedTags.includes(tag)));
+      
+      const matchesSearch = !searchTerm || 
+        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (blog.description && blog.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (blog.tags && blog.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())));
+      
+      return matchesTag && matchesSearch;
+    });
+
+    // Sort by date - newest first
+    const sortedResults = [...filtered].sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB - dateA;
+    });
+    
+    setFilteredResults(sortedResults);
+  }, [blogs, selectedTags, searchTerm]);
+
+  // Handle tag selection
+  const handleTagSelect = (tag) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter(t => t !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+  
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedTags([]);
+  };
+  
+  // Clear all filters and search
+  const clearAll = () => {
+    setSearchTerm('');
+    setSelectedTags([]);
+  };
+  
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-12">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Blog</h1>
+        <p className="text-gray-600 dark:text-gray-300">
+          Thoughts on AI, development, and technology
+        </p>
+      </header>
+      
+      {/* Search section */}
+      <div className="mb-8">
+        <div className="relative max-w-md">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="Search posts..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 pr-10 py-2 w-full border border-gray-300 dark:border-gray-700 rounded-md"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+            >
+              <X className="h-4 w-4 text-gray-400" />
+            </button>
+          )}
+        </div>
+      </div>
+      
+      <div className="flex flex-col md:flex-row gap-8">
+        {/* Sidebar with filters */}
+        <div className="w-full md:w-64 shrink-0">
+          <div className="p-4 border border-gray-200 dark:border-gray-800 rounded-md">
+            <h2 className="text-lg font-medium mb-4">// Filters</h2>
+            
+            <div className="mb-4">
+              <h3 className="text-sm font-medium mb-2">Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {tags.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => handleTagSelect(tag)}
+                    className={`px-2 py-1 text-xs rounded-md ${
+                      selectedTags.includes(tag) 
+                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 border border-blue-200 dark:border-blue-800' 
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200 border border-gray-200 dark:border-gray-700'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {selectedTags.length > 0 && (
+              <button
+                onClick={clearFilters}
+                className="text-sm text-blue-600 dark:text-blue-400 flex items-center"
+              >
+                <X className="h-3 w-3 mr-1" />
+                Clear filters
+              </button>
+            )}
+          </div>
+        </div>
+        
+        {/* Main blog listing */}
+        <div className="flex-1">
+          {/* Blog count */}
+          <div className="mb-6 flex items-center justify-between">
+            <div className="text-sm text-gray-600 dark:text-gray-300">
+              {filteredResults.length} {filteredResults.length === 1 ? 'article' : 'articles'} found
+            </div>
+            
+            {(searchTerm || selectedTags.length > 0) && (
+              <button
+                onClick={clearAll}
+                className="text-sm text-blue-600 dark:text-blue-400 flex items-center"
+              >
+                <X className="h-3 w-3 mr-1" />
+                Clear all
+              </button>
+            )}
+          </div>
+          
+          {/* Loading state */}
+          {isLoading && (
+            <div className="text-center py-12">
+              <div className="inline-block h-6 w-6 border-2 border-t-transparent border-blue-600 rounded-full animate-spin mb-2"></div>
+              <p className="text-gray-600 dark:text-gray-400">Loading posts...</p>
+            </div>
+          )}
+          
+          {/* No results state */}
+          {filteredResults.length === 0 && !isLoading && (
+            <div className="text-center py-12 border border-gray-200 dark:border-gray-800 rounded-md">
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                No posts found matching your criteria.
+              </p>
+              <button
+                onClick={clearAll}
+                className="text-blue-600 dark:text-blue-400 text-sm"
+              >
+                Clear filters
+              </button>
+            </div>
+          )}
+          
+          {/* Blog list */}
+          {!isLoading && filteredResults.length > 0 && (
+            <div className="space-y-6">
+              {filteredResults.map((blog) => (
+                <Link 
+                  href={blog.route}
+                  key={blog.route}
+                  className="block p-6 border border-gray-200 dark:border-gray-800 rounded-md hover:border-gray-300 dark:hover:border-gray-700"
+                >
+                  <div className="mb-2 flex flex-wrap gap-2">
+                    {blog.tags && blog.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-0.5 text-xs rounded-md bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleTagSelect(tag);
+                        }}
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <h2 className="text-xl font-bold mb-2">{blog.title}</h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">{blog.description}</p>
+                  <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <span>
+                      {new Date(blog.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </span>
+                    <span className="mx-2">•</span>
+                    <span>{blog.readingTime}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function BlogPage() {
+  return (
+    <ClientOnly fallback={
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <div className="h-96 flex items-center justify-center">
+          <div className="h-6 w-6 border-2 border-t-transparent border-gray-300 rounded-full animate-spin"></div>
+        </div>
+      </div>
+    }>
+      <BlogPageContent />
+    </ClientOnly>
+  );
+}

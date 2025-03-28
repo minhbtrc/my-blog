@@ -5,6 +5,9 @@ import { ArrowRight, Terminal, Play, Pause, ChevronRight, ChevronLeft, RefreshCw
 import ky from 'ky'
 import useSWR from 'swr'
 import { useState, useEffect, useRef } from 'react'
+import React from 'react'
+import { Code, Github, Linkedin, Mail } from 'lucide-react'
+import Image from 'next/image'
 
 import Profile from '@/components/profile'
 import Tags from '@/components/tags'
@@ -13,24 +16,49 @@ import Tags from '@/components/tags'
 const ParticleBackground = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-sky-50 to-indigo-50 dark:from-indigo-900/20 dark:via-blue-800/20 dark:to-teal-800/20" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(37,99,235,0.1),transparent)]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-white dark:from-slate-900 dark:via-slate-900 dark:to-slate-900" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(37,99,235,0.1),transparent)] dark:bg-[radial-gradient(circle_at_50%_25%,rgba(56,189,248,0.1),transparent)]" />
       
+      {/* Code-inspired floating elements */}
       {Array.from({ length: 30 }).map((_, i) => {
-        const size = Math.random() * 8 + 2;
+        // Create various sized particles with different shapes
+        const size = Math.random() * 12 + 3;
         const duration = Math.random() * 30 + 15;
         const initialX = Math.random() * 100;
         const initialY = Math.random() * 100;
         const targetX = Math.random() * 100;
         const targetY = Math.random() * 100;
         
+        // Create different shapes to represent code and tech elements
+        const shapes = [
+          "rounded-full", // dots (periods, commas)
+          "rounded-sm", // brackets, braces
+          "h-1.5 w-6", // underscores, dashes
+          "h-6 w-1.5", // pipes, vertical bars
+          "rounded-md rotate-45", // diamonds (special chars)
+          "rounded-md", // code blocks
+        ];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        
+        // Different colors for different tech domains
+        const colors = [
+          "bg-blue-500/15 dark:bg-blue-400/15", // Python
+          "bg-yellow-500/15 dark:bg-yellow-400/15", // JavaScript
+          "bg-green-500/15 dark:bg-green-400/15", // Node.js
+          "bg-purple-500/15 dark:bg-purple-400/15", // AI/ML
+          "bg-pink-500/15 dark:bg-pink-400/15", // React
+          "bg-teal-500/15 dark:bg-teal-400/15", // NextJS
+          "bg-orange-500/15 dark:bg-orange-400/15", // TensorFlow
+        ];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
         return (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-blue-500/10 dark:bg-sky-400/10"
+            className={`absolute ${shape} ${color}`}
             style={{
-              width: size,
-              height: size,
+              width: shape.includes('w-') ? undefined : size,
+              height: shape.includes('h-') ? undefined : size,
               top: `${initialY}%`,
               left: `${initialX}%`,
             }}
@@ -38,13 +66,48 @@ const ParticleBackground = () => {
               y: [`${initialY}%`, `${targetY}%`],
               x: [`${initialX}%`, `${targetX}%`],
               opacity: [Math.random() * 0.5 + 0.2, Math.random() * 0.3 + 0.1, Math.random() * 0.5 + 0.2],
+              rotate: shape.includes('rotate') ? [0, 180, 360] : undefined,
             }}
             transition={{
               duration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
+              rotate: { duration: duration * 1.5, repeat: Infinity, ease: "linear" }
             }}
           />
+        );
+      })}
+      
+      {/* Special code symbols */}
+      {Array.from({ length: 6 }).map((_, i) => {
+        const symbols = ["{ }", "( )", "[ ]", "< >", "// ", "/**/"];
+        const initialX = Math.random() * 100;
+        const initialY = Math.random() * 100;
+        const targetX = Math.random() * 100;
+        const targetY = Math.random() * 100;
+        const symbol = symbols[i % symbols.length];
+        
+        return (
+          <motion.div
+            key={`symbol-${i}`}
+            className="absolute text-blue-500/20 dark:text-cyan-400/20 font-mono text-lg font-bold"
+            style={{
+              top: `${initialY}%`,
+              left: `${initialX}%`,
+            }}
+            animate={{
+              y: [`${initialY}%`, `${targetY}%`],
+              x: [`${initialX}%`, `${targetX}%`],
+              opacity: [0.2, 0.1, 0.2],
+            }}
+            transition={{
+              duration: Math.random() * 30 + 20,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          >
+            {symbol}
+          </motion.div>
         );
       })}
     </div>
@@ -56,30 +119,63 @@ const codeSnippets = [
   {
     title: "LLM System Design",
     language: "python",
-    code: `from langchain.embeddings import VertexAIEmbeddings
+    code: `# AI System Design by Minh BTC
+# RAG Pipeline with In-Context Learning
+
+from langchain.embeddings import VertexAIEmbeddings
 from langchain.llms import VertexAI
 from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
 
 class RAGSystem:
     def __init__(self, documents, model="text-bison@002"):
+        # Initialize core components
         self.llm = VertexAI(model_name=model)
         self.embeddings = VertexAIEmbeddings()
         self.vectorstore = self._create_vectorstore(documents)
+        
+        # Configure retriever with Maximal Marginal Relevance
         self.retriever = self.vectorstore.as_retriever(
             search_type="mmr",
             search_kwargs={"k": 5, "fetch_k": 10}
         )
-        self.qa_chain = self._setup_qa_chain()
         
+        # Create QA chain with custom prompt template
+        self.qa_chain = self._setup_qa_chain()
+    
     def _create_vectorstore(self, documents):
+        # Process documents and create vector embeddings
+        print("Indexing documents...")
         return Chroma.from_documents(
             documents=documents,
             embedding=self.embeddings
         )
     
+    def _setup_qa_chain(self):
+        # Custom prompt with context injection
+        template = """
+        Answer the question based only on the following context:
+        {context}
+        
+        Question: {query}
+        
+        Answer:"""
+        
+        # Create chain with source attribution
+        return RetrievalQA.from_chain_type(
+            llm=self.llm,
+            chain_type="stuff",
+            retriever=self.retriever,
+            return_source_documents=True,
+            chain_type_kwargs={"prompt": template}
+        )
+    
     def answer_question(self, question):
+        # Process query and generate response
+        print(f"Processing query: {question}")
         result = self.qa_chain({"query": question})
+        
+        # Return formatted response with sources
         return {
             "answer": result["result"],
             "sources": [doc.metadata for doc in result["source_documents"]]
@@ -88,79 +184,115 @@ class RAGSystem:
   {
     title: "AI Conversation Demo",
     language: "terminal",
-    code: `::: COFFEE FUELED AI DEMO :::
+    code: `::: MINH BUI TRAN CONG | AI ENGINEER :::
 
-[MINH@SYSTEM] ~ $ python coffee_ai.py
-Loading AI model... Done.
-Initializing knowledge bases... Done.
-Brewing coffee... ☕ Done!
+minh@ai-lab:~$ ./about-me.sh
 
-AI> Hello! I'm an AI assistant built by Minh. 
-    How can I help you today?
+[INFO] Initializing profile data...
+[INFO] Loading experiences...
+[INFO] Starting self-introduction sequence...
 
-USER> What can you tell me about RAG systems?
+// ====================================
+// Personal Information
+// ====================================
+const profile = {
+  name: "Minh Bui Tran Cong",
+  role: "AI Engineer",
+  location: "Ho Chi Minh City, Vietnam",
+  focus: ["LLMs", "NLP", "RAG", "Multimodal AI"],
+  languages: ["Python", "TypeScript", "JavaScript"],
+  frameworks: ["PyTorch", "LangChain", "Transformers", "React", "Next.js"],
+  hobbies: ["Reading tech papers", "Football", "Coffee brewing"],
+  contact: "minh.btrc@gmail.com"
+};
 
-AI> Retrieval Augmented Generation (RAG) combines 
-retrieval systems with generative AI:
+// ====================================
+// Experience Summary
+// ====================================
+const experience = [
+  {
+    company: "FPT Software AI Center",
+    role: "AI Engineer",
+    period: "2024 - Present",
+    highlights: [
+      "Working with cutting-edge AI solutions",
+      "Developing Retrieval Augmented Generation systems",
+      "Optimizing LLMs for production environments"
+    ]
+  },
+  {
+    company: "SPARTAN",
+    role: "AI Engineer",
+    period: "2023 - 2024",
+    highlights: [
+      "Led PDF Parser module development",
+      "Implemented LLM-based data extraction",
+      "Created integrated data mining pipelines"
+    ]
+  }
+];
 
-1. Retrieves relevant documents
-2. Augments the prompt with this information
-3. Generates responses using retrieved context
+// ====================================
+// Education
+// ====================================
+const education = {
+  university: "Ho Chi Minh University of Technology",
+  degree: "Computer Science",
+  graduation: 2023,
+  specialization: "Artificial Intelligence"
+};
 
-This approach reduces hallucinations while 
-providing up-to-date information with factual 
-accuracy. Perfect for domain specialization!
+console.log("Always learning, always building!");
+console.log("Let's connect and build something amazing together.")
 
-USER> How does LoRA work for fine-tuning?
-
-AI> Low-Rank Adaptation (LoRA) is an efficient 
-fine-tuning technique that:
-
-1. Freezes pre-trained model weights
-2. Injects trainable rank decomposition matrices
-3. Only trains these small adapter matrices
-
-For a weight matrix W:
-W + ΔW = W + A×B (where rank r << full size)
-
-This reduces trainable parameters by ~10,000× 
-while allowing fine-tuning on consumer GPUs.
-
-Minh uses this to create specialized models 
-while consuming dangerous amounts of coffee!`
+minh@ai-lab:~$ _`
   },
   {
     title: "NLP Research Note",
     language: "markdown",
-    code: `# Contextual Re-ranking for RAG
+    code: `# Research Notes: Contextual Re-ranking for RAG
+## By Minh BTC | AI Engineer
 
 ## Key Innovation
+Our contextual re-ranking approach (CRAG) enhances traditional RAG systems through a two-stage retrieval architecture:
 
-Our CRAG system implements a two-stage retrieval:
+1. **Initial Retrieval:** Dense embedding similarity search using VertexAIEmbeddings to identify candidate documents
+   - Chunk size: 512 tokens with 128 token overlap
+   - Top-k sampling: 10 initial candidates
 
-1. **Initial Retrieval:** Dense embedding similarity 
-   search using VertexAIEmbeddings
+2. **Contextual Re-ranking:** Cross-encoder model evaluates documents considering:
+   - Query-document semantic relevance
+   - Conversation history context window
+   - Document freshness and authority metrics
+   - Text quality signals (coherence, informativeness)
 
-2. **Contextual Re-ranking:** Cross-encoder model that 
-   considers:
-   - Query-document relevance
-   - Conversation history context
-   - Document quality metrics
+3. **Adaptive Fusion:** Dynamic weighting between embedding similarity and re-ranking scores
+   - Learns optimal weighting based on query type
+   - Adapts to different domains automatically
 
-3. **Adaptive Fusion:** Dynamic weighting between 
-   embedding similarity and re-ranking scores
-
-## Results
+## Experimental Results
 
 | Metric | Base RAG | CRAG (Ours) |
 |--------|---------|------------|
 | NDCG@5 | 0.782   | **0.851**  |
 | Answer Accuracy | 0.814 | **0.876** |
 | Hallucination Rate | 0.156 | **0.087** |
+| Latency Increase | 0ms | +125ms |
+| Memory Usage | 1.0x | 1.3x |
 
-Written at 3am with my 4th coffee of the night.
-The caffeine definitely helped with the math.
-`
+## Next Steps
+- Fine-tune re-ranker on domain-specific data
+- Implement caching layer to reduce latency
+- Explore contrastive learning approaches
+- Test with Vietnamese language models
+
+## References
+- Fusion-in-Decoder: Zhao et al. (2023)
+- ColBERT re-ranking: Khattab et al. (2022)
+- Cross-encoder modeling: Hu et al. (2021)
+
+Revision: v0.4 (Working Draft)
+Last updated: Today @ 3:27 AM (after my 4th coffee)`
   }
 ];
 
@@ -231,9 +363,9 @@ const TerminalHero = () => {
     
     // Update terminal title
     const titles = [
-      "RAG System Implementation ☕",
-      "AI Conversation Demo 💬",
-      "NLP Research Note 📝"
+      "AI System Design",
+      "About Minh BTC",
+      "NLP Research Notes"
     ];
     setTerminalTitle(titles[nextIndex]);
     
@@ -460,242 +592,109 @@ Ready to begin advanced AI engineering session...
   const terminalClass = `terminal-window relative ${easterEggActive ? 'animate-bounce' : ''} ${isGlitching ? 'glitch' : ''}`;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      className="max-w-3xl"
-    >
-      <h1 className="font-bold text-4xl md:text-5xl lg:text-6xl tracking-tight mb-6">
-        <div className="overflow-hidden">
-          <motion.span
-            initial={{ y: 90 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.8, ease: [0.43, 0.13, 0.23, 0.96] }}
-            className="inline-block text-slate-800 dark:text-slate-50"
+    <div className="relative z-0 mt-4">
+      {/* Terminal Header */}
+      <div className="flex items-center justify-between px-4 py-2 bg-white/95 dark:bg-slate-800/30 backdrop-blur-sm border border-slate-300/80 dark:border-blue-900/30 rounded-t-lg shadow-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-red-500"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        </div>
+        <div className="absolute left-0 right-0 flex justify-center pointer-events-none">
+          <div className="font-mono text-xs text-slate-700 dark:text-slate-400 bg-slate-100/70 dark:bg-slate-800/30 px-3 py-0.5 rounded-md backdrop-blur-sm">
+            {easterEggActive && isAiThinking ? "AI_THINKING.exe" : terminalTitle}
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={resetCurrentSnippet}
+            className="p-1 text-slate-500 hover:text-blue-700 dark:text-slate-400 dark:hover:text-cyan-400 transition-colors"
+            aria-label="Reset snippet"
           >
-            Yooooo
-          </motion.span>
+            <RefreshCw size={14} />
+          </button>
+          <button
+            onClick={togglePause}
+            className="p-1 text-slate-500 hover:text-blue-700 dark:text-slate-400 dark:hover:text-cyan-400 transition-colors"
+            aria-label={isPaused ? "Resume" : "Pause"}
+          >
+            {isPaused ? <Play size={14} /> : <Pause size={14} />}
+          </button>
         </div>
-      </h1>
-      
-      <motion.div
-        initial={{ width: 0 }}
-        animate={{ width: "35%" }}
-        transition={{ duration: 1.2, delay: 0.6, ease: "easeInOut" }}
-        className="h-1 bg-gradient-to-r from-[rgb(var(--color-accent))] to-[rgb(var(--color-accent-dark))] mb-8 rounded-full"
-      />
-      
-      <motion.div 
-        className={terminalClass}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.7 }}
-        whileHover={{ boxShadow: "0 20px 40px -15px rgba(0,0,0,0.3)" }}
+      </div>
+
+      {/* Terminal Body */}
+      <div
         onClick={handleTerminalClick}
+        className={`relative font-mono p-6 text-sm md:text-base overflow-hidden bg-white/95 dark:bg-slate-800/30 backdrop-blur-sm border border-t-0 border-slate-300/80 dark:border-blue-900/30 rounded-b-lg shadow-md h-[380px] transition-colors ${isGlitching ? 'glitch' : ''}`}
+        style={{ cursor: 'default' }}
       >
-        {/* Matrix code background for tech feel */}
-        <div className="matrix-code">
-          {renderMatrixCode()}
+        {/* Terminal Decorations - Path and Prompt */}
+        <div className="flex items-center mb-2 text-slate-700 dark:text-slate-400 text-sm">
+          <span className="text-blue-700 dark:text-cyan-400">minh@ai-lab</span>
+          <span className="text-slate-500 mx-1">:</span>
+          <span className="text-indigo-700 dark:text-blue-400">~/projects</span>
+          <span className="text-slate-500 mx-1">$</span>
         </div>
-        
-        {/* Terminal header */}
-        <div className="terminal-header">
-          <div className="flex gap-1.5">
-            <motion.div 
-              className="w-3 h-3 rounded-full bg-red-400 hover:bg-red-600 cursor-pointer"
-              whileHover={{ scale: 1.2 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                triggerGlitch();
-                setTerminalTitle("Neural connection aborted! ⚠️");
-                setTimeout(() => setTerminalTitle(
-                  ["RAG System Implementation ☕", "AI Conversation Demo 💬", "NLP Research Note 📝"][currentSnippetIndex]
-                ), 1500);
-              }}
-            />
-            <motion.div 
-              className="w-3 h-3 rounded-full bg-yellow-400 hover:bg-yellow-600 cursor-pointer"
-              whileHover={{ scale: 1.2 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                triggerGlitch();
-              }}
-            />
-            <motion.div 
-              className="w-3 h-3 rounded-full bg-green-400 hover:bg-green-600 cursor-pointer"
-              whileHover={{ scale: 1.2 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                // Cycle through snippets on green button click
-                goToNextSnippet();
-              }}
-            />
+
+        {/* Code Display Area */}
+        {easterEggActive ? (
+          renderMatrixCode()
+        ) : (
+          <div className="relative min-h-full">
+            <pre className={`text-slate-800 dark:text-slate-400 overflow-auto whitespace-pre ${currentSnippet.language === 'terminal' ? 'font-mono text-sm leading-relaxed' : ''}`}>
+              {typedText}
+            </pre>
           </div>
-          <div className="text-xs flex items-center gap-2">
-            <Terminal className="w-3.5 h-3.5" />
-            <motion.span
-              key={terminalTitle}
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              {terminalTitle}
-            </motion.span>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePause();
-              }}
-              className={`transition-colors ml-1 ${isPaused ? 'text-orange-500' : 'hover:text-[rgb(var(--color-accent))]'}`}
-              title={isPaused ? "Resume typing" : "Pause typing"}
-            >
-              {isPaused ? 
-                <span className="text-base font-bold text-orange-500">❚❚</span> : 
-                <span className="text-base">❙❙</span>}
-            </button>
-          </div>
-          <div className="terminal-controls">
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePause();
-              }}
-              className={`transition-colors ${isPaused ? 'text-orange-500' : 'hover:text-[rgb(var(--color-accent))]'}`}
-              title={isPaused ? "Resume typing" : "Pause typing"}
-            >
-              {isPaused ? 
-                <span className="text-xl font-bold text-orange-500">❚❚</span> : 
-                <span className="text-xl">❙❙</span>}
-            </button>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleAutoPlay();
-              }}
-              className={`hover:text-[rgb(var(--color-accent))] transition-colors ${!isAutoPlaying ? 'text-orange-500' : ''}`}
-              title={isAutoPlaying ? "Stop auto-play" : "Start auto-play"}
-            >
-              {isAutoPlaying ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
-            </button>
-            <button 
+        )}
+
+        {/* Terminal Bottom Controls */}
+        <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-3 border-t border-slate-200 dark:border-blue-900/30 bg-slate-50/95 dark:bg-slate-800/30 backdrop-blur-sm">
+          <div className="flex space-x-1">
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 goToPrevSnippet();
               }}
-              className="hover:text-[rgb(var(--color-accent))] transition-colors"
-              title="Previous snippet"
+              className="p-1.5 rounded-md text-slate-600 hover:text-blue-700 dark:text-slate-400 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition-colors"
+              aria-label="Previous snippet"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ChevronLeft size={16} />
             </button>
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 goToNextSnippet();
               }}
-              className="hover:text-[rgb(var(--color-accent))] transition-colors"
-              title="Next snippet"
+              className="p-1.5 rounded-md text-slate-600 hover:text-blue-700 dark:text-slate-400 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800/70 transition-colors"
+              aria-label="Next snippet"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight size={16} />
             </button>
-            <button 
+          </div>
+          
+          <div className="flex items-center">
+            <div className="text-xs font-mono text-slate-500 dark:text-slate-500 mr-2">
+              snippet {currentSnippetIndex + 1}/{codeSnippets.length}
+            </div>
+            <button
               onClick={(e) => {
                 e.stopPropagation();
-                resetCurrentSnippet();
+                toggleAutoPlay();
               }}
-              className="hover:text-[rgb(var(--color-accent))] transition-colors"
-              title="Restart current snippet"
+              className={`p-1.5 rounded-md ${
+                isAutoPlaying
+                  ? 'text-blue-700 dark:text-cyan-400 bg-blue-50 dark:bg-slate-800/70'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/70'
+              } transition-colors`}
+              aria-label={isAutoPlaying ? "Auto-play on" : "Auto-play off"}
             >
-              <RefreshCw className="w-3.5 h-3.5" />
+              <Play size={16} />
             </button>
           </div>
         </div>
-        
-        {/* Terminal body - MAKING IT SHORTER */}
-        <div className="terminal-body" style={{ height: '320px' }}>
-          <div className="terminal-line">
-            <span className="terminal-prompt">minh@coffee-engineer</span>:<span className="terminal-prompt-directory">~/projects/ai-systems</span>$ {
-              currentSnippet.language === 'python' ? 'cat rag_system.py' : 
-              currentSnippet.language === 'terminal' ? './coffee_ai.py' : 
-              currentSnippet.language === 'markdown' ? 'cat research_notes.md' :
-              'python run.py'
-            }
-          </div>
-          <div className="relative overflow-x-auto">
-            <pre className={`code-animated ${currentSnippet.language}`}>
-              <code>
-                {typedText}
-                {isAiThinking && (
-                  <motion.span 
-                    className="ai-thinking"
-                    animate={{ opacity: [0.2, 1, 0.2] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    ▋
-                  </motion.span>
-                )}
-                {!isAiThinking && <span className="terminal-cursor">▋</span>}
-              </code>
-            </pre>
-          </div>
-        </div>
-        
-        {/* Terminal footer with typing indicator */}
-        <div className="px-4 py-2 bg-[#1a1a1a] border-t border-[#334155] flex justify-between items-center text-xs">
-          <div className="text-slate-400 flex items-center">
-            <motion.div 
-              animate={{ 
-                scale: [1, 1.2, 1],
-                color: ["#64ffda", "#ff7edb", "#64ffda"]
-              }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-              className="mr-2"
-            >
-              {isPaused ? '☕' : '💻'}
-            </motion.div>
-            <span>{Math.floor((typedText.length / currentSnippet.code.length) * 100)}% | {currentSnippetIndex + 1}/{codeSnippets.length}</span>
-            {clickCount > 0 && clickCount < 5 && <span className="ml-2 text-xs opacity-50">Neural access: {5-clickCount} more clicks</span>}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <motion.span 
-              className="inline-block w-2 h-2 rounded-full"
-              animate={{ 
-                backgroundColor: isPaused ? 
-                  ['#FF4500', '#FFD700', '#FF4500'] : 
-                  'rgb(var(--color-accent))'
-              }}
-              transition={{ duration: 1, repeat: isPaused ? Infinity : 0 }}
-            />
-            <span className="text-[rgb(var(--color-accent))] font-semibold">Coffee-Powered Mode</span>
-          </div>
-        </div>
-      </motion.div>
-      
-      <motion.div 
-        className="flex flex-wrap gap-4 pt-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 1.1 }}
-      >
-        <Link href="/blog">
-          <motion.button
-            className="bg-slate-700 hover:bg-slate-800 text-white rounded-lg px-8 py-3 font-medium relative overflow-hidden group shadow-sm"
-            whileHover={{ scale: 1.05, boxShadow: "0 5px 15px rgba(15, 23, 42, 0.2)" }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span className="relative z-10">Explore Articles</span>
-            <motion.span 
-              className="absolute inset-0 bg-white/10 transform translate-x-full group-hover:translate-x-0 transition-transform duration-300"
-            />
-            <ArrowRight className="ml-2 inline-block w-5 h-5 relative z-10" />
-          </motion.button>
-        </Link>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
@@ -730,33 +729,42 @@ function HeroTags() {
 
 export default function Home() {
   return (
-    <main className="w-full flex flex-col flex-grow relative z-10">
-      {/* Hero Section with Enhanced Visuals */}
-      <section className="relative w-full flex-grow py-20 overflow-visible">
-        {/* Animated Background */}
-        <ParticleBackground />
-        
-        <div className="container relative z-20 mx-auto px-4 md:px-6 h-full flex flex-col">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start h-full">
-            {/* Main Content */}
-            <div className="lg:col-span-8 space-y-8">
-              <div className="flex flex-col space-y-6">
-                <TerminalHero />
-              </div>
-            </div>
-            
-            {/* Profile Card */}
-            <motion.div 
-              className="lg:col-span-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.5 }}
-            >
-              <Profile />
-            </motion.div>
-          </div>
+    <div className="w-full h-full max-w-full mx-auto relative z-10">
+      <main className="w-full flex flex-col flex-grow relative z-10">
+        {/* Page background with subtle pattern for light and dark modes */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          {/* Remove duplicate gradient background */}
+          {/* Add subtle grid pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] dark:bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)]"></div>
         </div>
-      </section>
-    </main>
+        
+        {/* Hero Section with Enhanced Visuals */}
+        <section className="relative w-full flex-grow pt-6 pb-20 overflow-visible bg-transparent">
+          {/* Animated Background */}
+          <ParticleBackground />
+          
+          <div className="container relative z-20 mx-auto px-4 md:px-6 h-full flex flex-col bg-transparent">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start h-full bg-transparent">
+              {/* Main Content */}
+              <div className="lg:col-span-8 space-y-8 bg-transparent">
+                <div className="flex flex-col space-y-6 bg-transparent">
+                  <TerminalHero />
+                </div>
+              </div>
+              
+              {/* Profile Card */}
+              <motion.div 
+                className="lg:col-span-4 bg-transparent"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+              >
+                <Profile />
+              </motion.div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
   )
 }
