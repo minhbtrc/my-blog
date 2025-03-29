@@ -1023,6 +1023,41 @@ export const dynamic = 'force-static';
 export const dynamicParams = false;
 export const revalidate = false;
 
+// Create a separate client component wrapper for the terminal
+interface TerminalDisplayProps {
+  currentSnippetIndex: number;
+  setCurrentSnippetIndex: (index: number) => void;
+  activeTab: number;
+  setActiveTab: (tab: number) => void;
+  isAutoPlaying: boolean;
+  setIsAutoPlaying: (value: boolean) => void;
+  isPaused: boolean;
+  setIsPaused: (value: boolean) => void;
+  terminalTabs: Array<{ name: string; icon: string; color: string }>;
+  codeSnippets: Array<{ title: string; language: string; code: string }>;
+}
+
+const TerminalDisplay = ({ 
+  currentSnippetIndex, 
+  setCurrentSnippetIndex, 
+  activeTab, 
+  setActiveTab, 
+  isAutoPlaying, 
+  setIsAutoPlaying, 
+  isPaused, 
+  setIsPaused,
+  terminalTabs,
+  codeSnippets
+}: TerminalDisplayProps) => {
+  return (
+    <div className="bg-slate-900 p-4 font-mono text-sm text-blue-300 rounded-lg m-3 h-64 overflow-y-auto">
+      <pre className="whitespace-pre-wrap">
+        {codeSnippets[currentSnippetIndex].code}
+      </pre>
+    </div>
+  );
+};
+
 export default function Home() {
   // Create the function to provide random fun facts
   const funFacts = [

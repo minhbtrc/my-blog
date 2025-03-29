@@ -7,6 +7,7 @@
     "dev": "concurrently --names DEV,LNT,MGR -c cyan,yellow,magenta 'yarn dev:watch' 'yarn lint:watch' 'yarn migrate:watch'",
     "dev:watch": "next dev --port 3000",
     "build": "yarn migrate && next build",
+    "vercel-build": "yarn migrate && next build",
     "deploy": "yarn migrate && yarn build && next start",
     "ci:build": "yarn migrate && yarn build",
     "start": "next start",
@@ -54,6 +55,8 @@
     "zustand": "^4.5.4"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/plugin-proposal-decorators": "^7.25.9",
     "@eslint/compat": "^1.1.0",
     "@gears-bot/rehype": "^1.2.1",
     "@jsdevtools/rehype-toc": "^3.0.2",
@@ -61,6 +64,7 @@
     "@mdx-js/react": "^3.0.1",
     "@next/eslint-plugin-next": "^15.2.4",
     "@next/mdx": "^15.2.4",
+    "@swc/plugin-transform-imports": "^7.0.0",
     "@tailwindcss/typography": "^0.5.13",
     "@types/lunr": "^2.3.7",
     "@types/mdx": "^2.0.13",
@@ -70,6 +74,7 @@
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "autoprefixer": "^10.4.19",
+    "babel-loader": "^10.0.0",
     "concurrently": "^8.2.2",
     "daisyui": "^4.12.10",
     "dotenv": "^16.4.5",

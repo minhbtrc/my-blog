@@ -13,6 +13,7 @@ const withMDX = createMDX({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: '.next',
+  output: 'standalone',
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   images: {
     unoptimized: true,
@@ -39,6 +40,24 @@ const nextConfig = {
   swcMinify: true,
   reactStrictMode: false,
   trailingSlash: false,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    
+    return config;
+  },
+  experimental: {
+    serverComponentsExternalPackages: [],
+  },
+  compiler: {
+    styledComponents: true,
+    // Enable TypeScript decorators
+    decorators: { version: '2023-05' },
+  },
 }
 
 export default withMDX(nextConfig)
