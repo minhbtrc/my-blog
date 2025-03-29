@@ -81,6 +81,8 @@ export default function AboutContent() {
             width={160}
             height={160}
             className="object-cover w-full h-full"
+            unoptimized
+            priority
           />
           {/* Code-like overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-800/20 dark:to-[#0e1628]/70 pointer-events-none"></div>

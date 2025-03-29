@@ -17,14 +17,6 @@ import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Fira_Code, Source_Code_Pro } from 'next/font/google'
-import { siteConfig } from '@/config/site'
-import Header from '@/app/header'
-import { PreloadResources } from '@/components/preload-resources'
-import { Analytics } from '@vercel/analytics/react'
-import { CommandMenuProvider } from '@/components/command-menu'
-import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin'
-import { extractRouterConfig } from 'uploadthing/server'
-import { ourFileRouter } from '@/app/api/uploadthing/core'
 
 // Import ReactPlayer dynamically to avoid SSR issues
 const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false })

@@ -12,9 +12,17 @@ const withMDX = createMDX({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: 'build',
+  distDir: '.next',
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   images: {
+    unoptimized: true,
+    domains: [
+      'avatars.githubusercontent.com',
+      'www.gravatar.com',
+      'github.com',
+      'raw.githubusercontent.com',
+      'cdn-lfs-us-1.hf.co'
+    ],
     remotePatterns: [
       {
         protocol: 'https',
@@ -30,6 +38,7 @@ const nextConfig = {
   },
   swcMinify: true,
   reactStrictMode: false,
+  trailingSlash: false,
 }
 
 export default withMDX(nextConfig)

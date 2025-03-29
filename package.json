@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "concurrently --names DEV,LNT,MGR -c cyan,yellow,magenta 'yarn dev:watch' 'yarn lint:watch' 'yarn migrate:watch'",
     "dev:watch": "next dev --port 3000",
-    "build": "next build",
+    "build": "yarn migrate && next build",
+    "deploy": "yarn migrate && yarn build && next start",
     "ci:build": "yarn migrate && yarn build",
     "start": "next start",
     "lint": "next lint",

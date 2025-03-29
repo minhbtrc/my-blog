@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "buildCommand": "yarn migrate && yarn build",
+  "framework": "nextjs",
+  "images": {
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "**"
+      }
+    ]
+  }
+} 

@@ -37,6 +37,8 @@ export default function Menu() {
             height={32}
             className="w-full h-full object-cover"
             style={{ borderRadius: '50%' }}
+            unoptimized
+            priority
           />
         </div>
       </PopoverButton>

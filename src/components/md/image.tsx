@@ -1,34 +1,40 @@
 'use client'
-import { type ComponentProps, useMemo } from 'react'
-import clsx from 'clsx'
-
+import { type ComponentProps, useState } from 'react'
+import { cn } from '@/lib/utils'
 import Zoom from 'react-medium-image-zoom'
-
 import 'react-medium-image-zoom/dist/styles.css'
 
 export type ImageProps = ComponentProps<'img'>
 
 export default function Image({
-  alt = '',
-  src: meta = '',
   className,
+  alt,
+  src,
+  width,
+  height,
   ...props
 }: ImageProps) {
-  const { src } = useMemo(() => {
-    if (typeof meta === 'string') return { src: meta }
-    return meta
-  }, [meta])
+  const [isLoaded, setIsLoaded] = useState(false)
+
   return (
-    <>
-      <Zoom wrapElement="span">
-        <img
-          className={clsx('mb-2 rounded-box', className)}
-          src={src}
-          alt={alt}
-          {...props}
-        />
-      </Zoom>
-      <span className="text-xs opa">{alt}</span>
-    </>
+    <Zoom>
+      <div className={cn('not-prose my-6', className)}>
+        <div className="overflow-hidden rounded-lg">
+          <img
+            className={cn(
+              'h-auto w-full transition-opacity',
+              isLoaded ? 'opacity-100' : 'opacity-0'
+            )}
+            alt={alt}
+            src={src}
+            width={width}
+            height={height}
+            loading="lazy"
+            onLoad={() => setIsLoaded(true)}
+            {...props}
+          />
+        </div>
+      </div>
+    </Zoom>
   )
 }

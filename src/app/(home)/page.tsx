@@ -1018,6 +1018,11 @@ function HeroTags() {
   )
 }
 
+// Add metadata for static generation
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+export const revalidate = false;
+
 export default function Home() {
   // Create the function to provide random fun facts
   const funFacts = [
@@ -1175,6 +1180,8 @@ export default function Home() {
                     <img 
                       src="/new_profile.png" 
                       alt="MinhBTC"
+                      width={112}
+                      height={112}
                       onError={(e) => {
                         // Fallback if image fails to load
                         e.currentTarget.src = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";

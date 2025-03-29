@@ -66,6 +66,8 @@ export default function Profile() {
                 width={96} 
                 height={96}
                 className="w-full h-full object-cover"
+                priority
+                unoptimized
               />
             </div>
             {/* Online indicator with coffee animation */}
