@@ -18,6 +18,15 @@ import { Input } from "@/components/ui/input";
 // Enhanced blog data with more examples
 const FALLBACK_BLOGS = [
   {
+    route: "/blog/building-blog-with-ai",
+    title: "How I Built My Blog with ChatGPT & Cursor — As an AI Engineer, Not a Frontend Dev",
+    description: "My journey building a modern, developer-centric blog using AI tools like Cursor and GPT-4o, despite having limited frontend experience.",
+    date: "2023-08-10",
+    readingTime: "6 min read",
+    tags: ["ai", "development", "cursor", "gpt4", "nextjs"],
+    featured: true
+  },
+  {
     route: "/blog/langchain-chatbot",
     title: "Building a Privacy-First AI Chatbot with LangChain",
     description: "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and enthusiasts in the AI space.",
