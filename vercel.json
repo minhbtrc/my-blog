@@ -3,6 +3,8 @@
   "buildCommand": "yarn migrate && yarn build",
   "framework": "nextjs",
   "images": {
+    "sizes": [16, 32, 64, 128, 256, 384, 512, 1024],
+    "domains": ["avatars.githubusercontent.com", "www.gravatar.com", "github.com", "raw.githubusercontent.com", "cdn-lfs-us-1.hf.co"],
     "remotePatterns": [
       {
         "protocol": "https",
