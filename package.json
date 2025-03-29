@@ -6,9 +6,7 @@
   "scripts": {
     "dev": "concurrently --names DEV,LNT,MGR -c cyan,yellow,magenta 'yarn dev:watch' 'yarn lint:watch' 'yarn migrate:watch'",
     "dev:watch": "next dev --port 3000",
-    "build": "yarn migrate && NEXT_SKIP_TYPECHECKING=1 next build",
-    "vercel-build": "yarn migrate && NEXT_SKIP_TYPECHECKING=1 NEXT_SKIP_SERIALIZABLE_CHECK=1 NODE_OPTIONS='--max-old-space-size=4096' next build",
-    "deploy": "yarn migrate && yarn build && next start",
+    "build": "next build",
     "ci:build": "yarn migrate && yarn build",
     "start": "next start",
     "lint": "next lint",

@@ -1,8 +1,7 @@
-import HomePageComponent from './(home)/page';
+import dynamicImport from 'next/dynamic';
+const HomePageComponent = dynamicImport(() => import('./(home)/page'), { ssr: false });
 
 export default HomePageComponent;
 
-// Force static generation
-export const dynamic = 'force-static';
-export const dynamicParams = false;
-export const revalidate = false;
+// Disable static generation to fix missing server file on Vercel
+export const dynamic = 'force-dynamic';
