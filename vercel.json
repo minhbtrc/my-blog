@@ -1,7 +1,11 @@
 {
   "version": 2,
   "buildCommand": "yarn vercel-build",
-  "framework": "nextjs",
+  "framework": {
+    "name": "nextjs",
+    "useRuntime": true
+  },
+  "public": true,
   "cleanUrls": true,
   "images": {
     "sizes": [16, 32, 64, 128, 256, 384, 512, 1024],
@@ -17,14 +21,18 @@
     "NEXT_SKIP_SERIALIZABLE_CHECK": "1",
     "NEXT_SKIP_TYPECHECKING": "1",
     "NEXT_TELEMETRY_DISABLED": "1",
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "NEXT_DISABLE_EXTRACTION": "1",
+    "DISABLE_CLIENT_REFERENCE_MANIFEST": "true"
   },
   "build": {
     "env": {
       "NEXT_SKIP_SERIALIZABLE_CHECK": "1",
       "NEXT_SKIP_TYPECHECKING": "1",
       "NEXT_TELEMETRY_DISABLED": "1",
-      "NODE_ENV": "production"
+      "NODE_ENV": "production",
+      "NEXT_DISABLE_EXTRACTION": "1",
+      "DISABLE_CLIENT_REFERENCE_MANIFEST": "true"
     }
   },
   "headers": [
@@ -36,6 +44,12 @@
           "value": "public, max-age=0, must-revalidate"
         }
       ]
+    }
+  ],
+  "routes": [
+    {
+      "src": "/app/(home)/page(.*)",
+      "status": 404
     }
   ],
   "github": {

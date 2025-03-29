@@ -7,7 +7,7 @@
     "dev": "concurrently --names DEV,LNT,MGR -c cyan,yellow,magenta 'yarn dev:watch' 'yarn lint:watch' 'yarn migrate:watch'",
     "dev:watch": "next dev --port 3000",
     "build": "next build",
-    "vercel-build": "NODE_ENV=production NODE_OPTIONS='--max_old_space_size=4096 --no-warnings' yarn migrate && yarn build",
+    "vercel-build": "rm -rf .next && DISABLE_CLIENT_REFERENCE_MANIFEST=true NEXT_DISABLE_EXTRACTION=1 NODE_ENV=production NODE_OPTIONS='--max_old_space_size=4096 --no-warnings' yarn migrate && DISABLE_CLIENT_REFERENCE_MANIFEST=true NEXT_DISABLE_EXTRACTION=1 yarn build",
     "ci:build": "yarn migrate && yarn build",
     "start": "next start",
     "lint": "next lint",

@@ -57,11 +57,12 @@ const nextConfig = {
       '@headlessui/react',
       'react-icons',
       'zustand'
-    ],
+    ]
   },
   compiler: {
     styledComponents: true,
   },
+  output: 'standalone',
 }
 
 export default withMDX(nextConfig)

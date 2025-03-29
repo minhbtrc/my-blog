@@ -71,48 +71,6 @@ const cardHover = {
   }
 };
 
-// COMPONENTS
-const BlogHeader = ({ title, subtitle, version }) => {
-  return (
-    <motion.div 
-      className="text-center mb-12"
-      initial="hidden"
-      animate="visible"
-      variants={fadeIn}
-    >
-      {/* Glassmorphic Title Card */}
-      <div className="inline-block relative p-6 rounded-xl backdrop-blur-lg border border-gray-200 dark:border-white/20 bg-white/70 dark:bg-slate-900/40 shadow-lg mb-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 to-purple-500/15 dark:from-blue-500/10 dark:to-purple-500/10 rounded-xl"></div>
-        <div className="flex items-center justify-center">
-          <Sparkles className="h-10 w-10 text-blue-600 dark:text-blue-400 mr-3 animate-sparkle" />
-          <h1 className="text-5xl sm:text-7xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-700 dark:from-blue-400 dark:to-cyan-400">
-            {title}<span className="text-blue-600 dark:text-cyan-400">()</span>
-          </h1>
-        </div>
-        
-        {/* Version Badge */}
-        <div className="absolute -top-2 -right-2 px-2 py-1 bg-blue-600 dark:bg-blue-700 text-white text-xs font-mono rounded shadow-md transform rotate-3 flex items-center gap-1">
-          <Code className="h-3 w-3" />
-          <span>{version}</span>
-        </div>
-      </div>
-      
-      {/* Terminal-style subtitle */}
-      <div className="font-mono text-base text-gray-700 dark:text-slate-300 max-w-3xl mx-auto flex items-center justify-center gap-2 bg-gray-800/95 dark:bg-slate-800/95 px-4 py-2.5 rounded-md border border-gray-700 dark:border-slate-700 shadow-sm text-green-400 mb-4">
-        <span className="text-green-400 font-bold">$</span>
-        <Typewriter
-          words={[subtitle]}
-          loop={false}
-          cursor={true}
-          cursorStyle='_'
-          typeSpeed={50}
-          delaySpeed={1000}
-        />
-      </div>
-    </motion.div>
-  );
-};
-
 const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery, setSearchQuery }) => {
   
   return (
