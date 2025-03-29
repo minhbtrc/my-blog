@@ -7,9 +7,7 @@ import useSWR from 'swr'
 import { useState, useEffect, useRef } from 'react'
 import React, { Fragment } from 'react'
 import { Code, Github, Linkedin, Mail } from 'lucide-react'
-import Image from 'next/image'
 
-import Profile from '@/components/profile'
 import Tags from '@/components/tags'
 
 // Animated Particle Component for Hero Background
