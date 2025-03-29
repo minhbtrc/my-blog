@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, MapPin, Send, Terminal, Code, MessageSquare, Sparkles, Coffee, Zap } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
+import { Button } from '@/components/ui/button'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -383,52 +384,30 @@ export default function ContactPage() {
                 )}
               </div>
               
-              <motion.button 
-                type="submit" 
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`w-full px-4 py-2 rounded-md font-mono shadow-sm relative overflow-hidden ${
-                  formStatus === 'submitting' 
-                    ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 dark:text-slate-300 cursor-wait border border-slate-400 dark:border-blue-900/20' 
-                    : 'bg-blue-700 hover:bg-blue-800 dark:bg-slate-800/80 dark:hover:bg-slate-800 border border-blue-800 dark:border-blue-900/30 text-white dark:text-cyan-400 dark:hover:text-cyan-300 hover:shadow dark:hover:border-blue-800/40 transition-all'
-                }`}
-                disabled={formStatus === 'submitting'}
-              >
-                {formStatus === 'idle' && (
-                  <span className="flex items-center justify-center">
-                    submit.form()
-                    <Send className="w-4 h-4 ml-2" />
-                  </span>
-                )}
-                
-                {formStatus === 'submitting' && (
-                  <span className="flex items-center justify-center">
-                    processing
-                    <span className="ml-1">
-                      <span className="inline-block w-1 h-1 bg-current rounded-full mx-0.5 animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                      <span className="inline-block w-1 h-1 bg-current rounded-full mx-0.5 animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                      <span className="inline-block w-1 h-1 bg-current rounded-full mx-0.5 animate-bounce" style={{ animationDelay: '300ms' }}></span>
+              <div className="mt-6">
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                  disabled={formStatus === 'submitting'}
+                >
+                  {formStatus === 'submitting' ? (
+                    <span className="flex items-center justify-center">
+                      <span className="mr-2">Sending</span>
+                      <span className="relative flex h-3 w-12">
+                        <span className="animate-ping absolute inline-flex h-full w-1 bg-white rounded-full opacity-75"></span>
+                        <span className="absolute inline-flex h-full w-1 bg-white rounded-full opacity-75" 
+                              style={{left: '25%', animationDelay: '0.15s'}}></span>
+                        <span className="absolute inline-flex h-full w-1 bg-white rounded-full opacity-75" 
+                              style={{left: '50%', animationDelay: '0.3s'}}></span>
+                        <span className="absolute inline-flex h-full w-1 bg-white rounded-full opacity-75" 
+                              style={{left: '75%', animationDelay: '0.45s'}}></span>
+                      </span>
                     </span>
-                  </span>
-                )}
-                
-                {formStatus === 'success' && (
-                  <motion.span 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center justify-center"
-                  >
-                    message.sent()
-                    <Zap className="w-4 h-4 ml-2 text-yellow-300 animate-pulse" />
-                  </motion.span>
-                )}
-                
-                {formStatus === 'error' && (
-                  <span className="flex items-center justify-center">
-                    error(retry)
-                  </span>
-                )}
-              </motion.button>
+                  ) : (
+                    <span>Let&apos;s Connect</span>
+                  )}
+                </Button>
+              </div>
               
               <AnimatePresence>
                 {formStatus === 'success' && (
@@ -467,7 +446,7 @@ export default function ContactPage() {
                   className="absolute -bottom-12 right-0 text-slate-500 dark:text-slate-400 text-xs font-mono flex items-center"
                 >
                   <Coffee className="w-3 h-3 mr-1" />
-                  <span>Let's connect over a virtual coffee chat!</span>
+                  <span>Let&apos;s connect over a virtual coffee chat!</span>
                 </motion.div>
               )}
             </form>

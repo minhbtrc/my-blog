@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { type ReactNode as _ReactNode } from 'react'
 import PageContainer from '@/components/page-container'
 
 export default function ContactLayout({

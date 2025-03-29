@@ -117,101 +117,88 @@ const ParticleBackground = () => {
 // Code snippets to cycle through
 const codeSnippets = [
   {
-    title: "About MinhBTC",
+    title: "Introduction",
     language: "terminal",
-    code: `minh@ai-lab:~$ whoami
-> MinhBTC — AI Engineer ⚙️☕
+    code: `> Minh BTC – AI Engineer 
 
-minh@ai-lab:~$ echo "What I build:"
-> 🧠 AI Chatbots with RAG systems
-> ⚡ LLM pipelines with in-context learning
-> 🔍 Vector search & retrieval systems
-> 🧩 Full-stack AI applications
+> Hello world 👋 I create AI tools that understand language, extract insights, and protect privacy.
 
-minh@ai-lab:~$ tail -n 3 mindset.txt
-> Code with clarity.
-> Automate the boring.
-> Keep learning, stay caffeinated. ☕
+minh@ai-lab:~$ cat skills.txt
+> 🧠 LLMs, NLP, Vector DB
+> 🔍 RAG, Extraction, Context
+> 🛠️ Python, JS, FastAPI
+> ☕ Powered by coffee`
+  },
+  {
+    title: "What I Build",
+    language: "terminal",
+    code: `> Starting privacy-first AI chatbot...
+> Privacy filters: ENABLED
+> Model: gpt-3.5-turbo
+> Framework: LangChain
+> Caffeine levels: OPTIMAL
+
+minh@ai-lab:~$ launch project --name "PDF Reader" --goal "Turn messy documents into clean data"
+> Initializing PDF processing pipeline...
+> Loading document parsers...
+> Configuring extraction templates...
+> Project ready!
+
+minh@ai-lab:~$ start pipeline --input "PDF" --output "Structured Info" --tech "LLMs + LangFlow"
+> Pipeline running:
+> [RUNNING] Document ingestion ████████████ 100%
+> [RUNNING] Context processing ████████████ 100%
+> [RUNNING] Information extraction ███████▒▒ 78%`
+  },
+  {
+    title: "Work Ethic & Personality",
+    language: "terminal",
+    code: `> I like building things that work – fast, useful, and simple for others to use.
+
+minh@ai-lab:~$ echo "Code > Slides. I prefer shipping real solutions over just talking about them."
+> Code > Slides. I prefer shipping real solutions over just talking about them.
+
+minh@ai-lab:~$ alias hobbies="AI papers, strong coffee, and weekend football ⚽"
+> alias created
+
+minh@ai-lab:~$ hobbies
+> AI papers, strong coffee, and weekend football ⚽
+
+minh@ai-lab:~$ echo "Always learning. Always building. Sometimes chasing a football like it owes me something."
+> Always learning. Always building. Sometimes chasing a football like it owes me something.
+
+minh@ai-lab:~$ deploy --project "Real-world AI" --mission "Make LLMs useful, private, and practical."
+> Deployment successful!
+> Mission status: ONGOING`
+  },
+  {
+    title: "Values",
+    language: "terminal",
+    code: `minh@ai-lab:~$ cat values.txt
+> 🔒 Privacy matters - especially with user data
+> 🤝 Simplicity over complexity
+> ⚡ Speed and reliability count
+> 📚 Constant learning is non-negotiable
+
+minh@ai-lab:~$ echo "Good AI isn't magic. It's built, tested, improved, and shared."
+> Good AI isn't magic. It's built, tested, improved, and shared.
+
+minh@ai-lab:~$ grep -i "philosophy" ./mindset.md
+> "Less hype. More helpful AI."
+> "Let the models do the talking. I just build the system."
+> "Minh BTC — I turn language into code, and code into products."
 
 minh@ai-lab:~$ ./current_project.sh
-[RUNNING] AI Chatbot, Agent, RAG
+[RUNNING] AI Chatbot + Agent + RAG System
 ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 78%
 
 # Let's build something amazing together!`
-  },
-  {
-    title: "AI Engineer Profile",
-    language: "python",
-    code: `# ai_profile.py
-
-class MinhBTC:
-    role = "AI Engineer"
-    location = "Ho Chi Minh City, Vietnam"
-    specialties = ["LLMs", "RAG", "NLP", "Vector Search"]
-    tools = ["LangChain", "PyTorch", "Transformers", "NextJS"]
-    coffee_level = 100  # percent
-    
-    def __init__(self):
-        self.projects_completed = 18
-        self.learning_queue = ["Agent Systems", "RLHF", "Multimodal AI"]
-        self.coffee_consumed = 0
-    
-    def build_ai_system(self, requirements):
-        if self.coffee_level < 20:
-            self.drink_coffee()
-            
-        print("Designing architecture...")
-        print("Implementing RAG pipeline...")
-        print("Optimizing for production...")
-        
-        return "Production-ready AI app with privacy in mind"
-    
-    def drink_coffee(self):
-        self.coffee_level += 30
-        self.coffee_consumed += 1
-        print(f"Energy restored! ☕ ({self.coffee_consumed} today)")
-        
-    def current_status(self):
-        return "Building AI chatbots that actually help people"`
-  },
-  {
-    title: "Tech Stack",
-    language: "markdown",
-    code: `# MinhBTC's Tech Stack 🛠️
-
-## AI/ML Technologies
-- **LLM Frameworks**: LangChain, Transformers, LlamaIndex
-- **Vector Databases**: Chroma, Pinecone, Weaviate
-- **NLP**: spaCy, NLTK, HuggingFace ecosystem
-- **ML**: PyTorch, TensorFlow (when I must)
-
-## Web Development
-- **Frontend**: React, Next.js, Tailwind CSS
-- **Backend**: FastAPI, Django, Express
-- **Databases**: PostgreSQL, MongoDB, Redis
-
-## DevOps & Tools
-- **Cloud**: AWS, GCP (primarily for AI services)
-- **CI/CD**: GitHub Actions, Docker
-- **Monitoring**: Prometheus, Grafana
-- **Editor**: VS Code with Vim keybindings (best of both worlds)
-
-## Recent Projects
-1. 📊 Data extraction system with LLMs
-2. 💬 Multilingual customer support AI
-3. 🔍 Document search with contextual re-ranking
-
-## Learning Next
-- [ ] Multimodal AI models
-- [ ] RLHF optimization
-- [ ] Agent-based systems
-
-Always iterating, always improving. Let's connect!`
   }
 ];
 
 // Terminal-inspired hero section with interactive code snippets
 const TerminalHero = () => {
+  const [mounted, setMounted] = useState(false);
   const [currentSnippetIndex, setCurrentSnippetIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [typedText, setTypedText] = useState("");
@@ -231,9 +218,10 @@ const TerminalHero = () => {
   
   // Terminal tabs configuration
   const terminalTabs = [
-    { name: "RAG System", icon: "🔍", color: "bg-cyan-600" },
-    { name: "AI Chat", icon: "💬", color: "bg-purple-600" },
-    { name: "Research", icon: "📝", color: "bg-blue-600" }
+    { name: "Intro", icon: "👋", color: "bg-blue-600" },
+    { name: "Projects", icon: "🛠️", color: "bg-green-600" },
+    { name: "Personality", icon: "☕", color: "bg-amber-600" },
+    { name: "Values", icon: "🚀", color: "bg-purple-600" }
   ];
   
   // Fun facts for profile hover
@@ -272,13 +260,13 @@ const TerminalHero = () => {
     setTimeout(() => setIsGlitching(false), 500);
   };
   
-  // Function to randomly trigger glitches during typing
+  // Function to randomly trigger glitches during typing - less frequent
   const scheduleRandomGlitch = () => {
     if (glitchTimerRef.current) {
       clearTimeout(glitchTimerRef.current);
     }
     
-    const randomDelay = Math.random() * 5000 + 2000; // Between 2-7 seconds
+    const randomDelay = Math.random() * 8000 + 5000; // Between 5-13 seconds - much less frequent
     glitchTimerRef.current = setTimeout(() => {
       triggerGlitch();
       scheduleRandomGlitch();
@@ -300,17 +288,24 @@ const TerminalHero = () => {
     
     // Update terminal title
     const titles = [
-      "AI System Design",
-      "About MinhBTC",
-      "NLP Research Notes"
+      "Introduction",
+      "What I Build",
+      "Work Ethic & Personality",
+      "Values"
     ];
     setTerminalTitle(titles[nextIndex]);
     
-    // Animate typing the header command
-    animateHeaderTyping(nextIndex);
+    // Delay before starting to type the header command
+    setTimeout(() => {
+      // Animate typing the header command
+      animateHeaderTyping(nextIndex);
     
-    // Start typing the new snippet
-    typeCode(codeSnippets[nextIndex].code);
+      // Delay starting the code typing until header command is complete
+      setTimeout(() => {
+        // Start typing the new snippet
+        typeCode(codeSnippets[nextIndex].code);
+      }, 1200); // Wait for header command to finish
+    }, 800); // Pause between snippets
   };
   
   // Animate typing in the header
@@ -318,22 +313,26 @@ const TerminalHero = () => {
     setIsTypingHeader(true);
     
     const commands = [
-      "cat rag_system.md",
-      "python chat_demo.py", 
-      "nano research_notes.txt"
+      "whoami && echo 'Hello world'",
+      "run projects --list", 
+      "cat personality.txt",
+      "grep -i 'values' mindset.md"
     ];
     
     const command = commands[snippetIndex];
     let i = 0;
-    let headerText = "";
+    let _headerText = "";
     
     const typeHeader = () => {
       if (i < command.length) {
-        headerText += command.charAt(i);
+        _headerText += command.charAt(i);
         i++;
-        headerTypingRef.current = setTimeout(typeHeader, Math.random() * 50 + 30);
+        headerTypingRef.current = setTimeout(typeHeader, Math.random() * 70 + 40); // Slower typing for header
       } else {
-        setIsTypingHeader(false);
+        // Pause at end of header command before showing content
+        setTimeout(() => {
+          setIsTypingHeader(false);
+        }, 300);
       }
     };
     
@@ -365,39 +364,74 @@ const TerminalHero = () => {
           return;
         }
         
-        // Vary typing speed for more natural feel
+        // Vary typing speed for more natural feel, but slower overall
         const char = code.charAt(i);
         
         // Significantly vary the speed based on character type and position
-        let delay = 10; // base speed
+        let delay = 20; // increased base speed for smoother animation
         
         if (char === '\n') {
-          delay = 150; // Longer pause at line breaks
+          delay = 250; // Longer pause at line breaks
         } else if ([',', '.', '!', '?', ':'].includes(char)) {
-          delay = 120; // Pause at punctuation
+          delay = 180; // Pause at punctuation
         } else if (char === ' ' && Math.random() > 0.8) {
-          delay = 200; // Occasional pause at spaces (thinking)
+          delay = 250; // Occasional pause at spaces (thinking)
         } else {
           // Random typing speed with occasional "bursts" of fast typing
-          const burstMode = Math.random() > 0.85;
+          const burstMode = Math.random() > 0.9; // Less frequent bursts
           delay = burstMode ? 
-            Math.random() * 5 + 1 : // Fast burst
-            Math.random() * 30 + 10; // Normal speed
+            Math.random() * 15 + 10 : // Slower fast burst
+            Math.random() * 50 + 20; // Slower normal speed
         }
         
         setTypedText(prev => prev + char);
         i++;
         typingTimerRef.current = setTimeout(typing, delay);
       } else if (isAutoPlaying && !isPaused) {
-        // When typing is complete, schedule next snippet
+        // When typing is complete, schedule next snippet after longer delay
         autoPlayTimerRef.current = setTimeout(() => {
           goToNextSnippet();
-        }, 8000); // Wait longer for readability
+        }, 12000); // Wait longer for readability
       }
     };
     
     typing();
   };
+  
+  // Initialize animation on mount
+  useEffect(() => {
+    // Set mounted state to true
+    setMounted(true);
+    
+    // Update titles for the snippets
+    const titles = [
+      "Introduction",
+      "What I Build",
+      "Work Ethic & Personality",
+      "Values"
+    ];
+    setTerminalTitle(titles[currentSnippetIndex]);
+    
+    // Wait a bit before starting animations to ensure DOM is ready
+    const initialTimer = setTimeout(() => {
+      // Start with first snippet
+      animateHeaderTyping(currentSnippetIndex);
+      
+      // Start typing the first snippet - delay to wait for header command
+      setTimeout(() => {
+        typeCode(codeSnippets[currentSnippetIndex].code);
+      }, 1000);
+      
+      // Schedule random glitches
+      scheduleRandomGlitch();
+    }, 1000); // Longer delay for better DOM loading
+    
+    // Clean up all timers on unmount
+    return () => {
+      clearTimeout(initialTimer);
+      clearAllTimers();
+    };
+  }, []); // Empty dependency array to run only on mount
   
   // Load a new snippet and start typing animation with a title change
   const loadSnippet = (index: number) => {
@@ -407,21 +441,27 @@ const TerminalHero = () => {
     
     // Fun titles that change with each snippet
     const titles = [
-      "RAG System Implementation ☕",
-      "AI Conversation Demo 💬",
-      "NLP Research Note 📝"
+      "Introduction",
+      "What I Build",
+      "Work Ethic & Personality",
+      "Values"
     ];
     
     setTerminalTitle(titles[index]);
     
-    // Animate typing the header command
-    animateHeaderTyping(index);
-    
     // Create a typing animation reset effect
     setTypedText("");
+    
+    // Delay before starting to animate
     setTimeout(() => {
-      typeCode(codeSnippets[index].code);
-    }, 300);
+      // Animate typing the header command
+      animateHeaderTyping(index);
+      
+      // Delay to wait for header typing to finish
+      setTimeout(() => {
+        typeCode(codeSnippets[index].code);
+      }, 1200);
+    }, 800);
   };
 
   // Handle tab click
@@ -463,79 +503,18 @@ const TerminalHero = () => {
     setIsPaused(!isPaused);
   };
   
-  // Handle terminal click for Easter egg
+  // Handle terminal click for easter egg
   const handleTerminalClick = () => {
-    setClickCount(prev => prev + 1);
-    
-    // Easter egg activates after 5 clicks
-    if (clickCount === 4) {
-      setEasterEggActive(true);
-      triggerGlitch();
-      setTimeout(() => {
-        setEasterEggActive(false);
-        // Secret code snippet that only appears after clicking 5 times
-        const secretSnippet = {
-          title: "Neural Access: GRANTED",
-          language: "terminal",
-          code: `> NEURAL ACCESS PROTOCOL ACTIVATED
-
-SYS: Biometric verification complete
-SYS: Neural handshake initialized
-SYS: Coffee levels: CRITICAL - Refill needed
-
-[SYSTEM]: Welcome back, Minh. Neural access granted.
-[SYSTEM]: Direct brain-computer interface activated.
-[SYSTEM]: Uploading latest AI research directly to cortex...
-
-WARNING: High caffeine detected in bloodstream.
-Cognitive enhancement activated. Code output +200%.
-
-> Simulation of consciousness achieved
-> Self-modification capabilities observed
-> Coffee bean origins identified: Ethiopia, Colombia
-> Multilingual reasoning benchmarks exceed human performance
-> Emergent problem-solving detected while sleep-deprived
-
-[SYSTEM]: Neural connection strength at 94.2%
-[SYSTEM]: Thought-to-code latency: 12ms
-[SYSTEM]: Coffee replenishment advised
-
-Ready to begin advanced AI engineering session...
-
-> _`
-        };
-        
-        // Save current snippet to return to later
-        const previousIndex = currentSnippetIndex;
-        
-        // Show secret snippet temporarily
-        setTerminalTitle("🔐 NEURAL ACCESS: GRANTED ☕");
-        setTypedText("");
-        typeCode(secretSnippet.code);
-        
-        // After showing secret snippet, return to previous snippet
-        setTimeout(() => {
-          triggerGlitch();
-          loadSnippet(previousIndex);
-        }, 15000);
-      }, 2000);
-      
-      return;
-    }
+    setClickCount(prev => {
+      const newCount = prev + 1;
+      if (newCount >= 10) {
+        setEasterEggActive(true);
+        return 0;
+      }
+      return newCount;
+    });
   };
-  
-  // Start typing when component mounts - only once
-  useEffect(() => {
-    // Initial typing animation
-    animateHeaderTyping(currentSnippetIndex);
-    typeCode(currentSnippet.code);
-    
-    // Setup clean-up function
-    return () => {
-      clearAllTimers();
-    };
-  }, []);
-  
+
   // Generate matrix code background effect
   const renderMatrixCode = () => {
     const phrases = [
@@ -589,231 +568,251 @@ Ready to begin advanced AI engineering session...
     
     const lines = code.split('\n');
     
-    return lines.map((line: string, lineIndex: number) => {
-      let segments: Array<{ type: string; text: string }> = [];
-      
-      if (language === 'python') {
-        // Keywords
-        const keywords = ['from', 'import', 'class', 'def', 'return', 'self', 'print', 'if', 'else', 'for', 'in', 'as'];
-        const literals = ['True', 'False', 'None'];
-        
-        // Create regex patterns
-        const keywordPattern = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
-        const commentPattern = /(#.*)/g;
-        const stringPattern = /(["'])(?:(?=(\\?))\2.)*?\1/g;
-        const numberPattern = /\b(\d+)\b/g;
-        const literalPattern = new RegExp(`\\b(${literals.join('|')})\\b`, 'g');
-        
-        // Process text with regex
-        let lastIndex = 0;
-        let plainText = line;
-        let match;
-        
-        // Process keywords
-        while ((match = keywordPattern.exec(plainText)) !== null) {
-          if (match.index > lastIndex) {
-            segments.push({ type: 'plain', text: plainText.substring(lastIndex, match.index) });
-          }
-          segments.push({ type: 'keyword', text: match[0] });
-          lastIndex = match.index + match[0].length;
-        }
-        
-        // Add remaining text
-        if (lastIndex < plainText.length) {
-          segments.push({ type: 'plain', text: plainText.substring(lastIndex) });
-        }
-        
-        // If no keywords were found, just use the whole line
-        if (segments.length === 0) {
-          segments.push({ type: 'plain', text: line });
-        }
-        
-        // Further process each segment for strings, comments, and numbers
-        segments = segments.flatMap(segment => {
-          if (segment.type !== 'plain') return [segment];
+    return (
+      <div className="syntax-highlighter">
+        {lines.map((line: string, lineIndex: number) => {
+          let segments: Array<{ type: string; text: string }> = [];
           
-          const parts = [];
-          let text = segment.text;
-          let lastIdx = 0;
-          
-          // Process strings
-          stringPattern.lastIndex = 0;
-          while ((match = stringPattern.exec(text)) !== null) {
-            if (match.index > lastIdx) {
-              parts.push({ type: 'plain', text: text.substring(lastIdx, match.index) });
-            }
-            parts.push({ type: 'string', text: match[0] });
-            lastIdx = match.index + match[0].length;
-          }
-          
-          if (lastIdx < text.length) {
-            parts.push({ type: 'plain', text: text.substring(lastIdx) });
-          }
-          
-          return parts.length > 0 ? parts : [segment];
-        });
-        
-        // Add further processing as needed
-      }
-      else if (language === 'terminal') {
-        // Simple processing for terminal content
-        if (line.startsWith('[') && line.includes(']')) {
-          const bracketEnd = line.indexOf(']') + 1;
-          segments.push({ type: 'info', text: line.substring(0, bracketEnd) });
-          segments.push({ type: 'plain', text: line.substring(bracketEnd) });
-        } 
-        else if (line.startsWith('//')) {
-          segments.push({ type: 'comment', text: line });
-        }
-        else if (line.includes('const') || line.includes('let') || line.includes('var')) {
-          segments.push({ type: 'keyword', text: line });
-        }
-        else {
-          segments.push({ type: 'plain', text: line });
-        }
-      }
-      else {
-        segments.push({ type: 'plain', text: line });
-      }
-      
-      return (
-        <div 
-          key={lineIndex}
-          className="terminal-line"
-          style={{
-            opacity: 0,
-            animation: `fadeInUp 0.1s ease-out ${0.01 * lineIndex}s forwards`
-          }}
-        >
-          {segments.map((segment, segIndex) => {
-            let className = '';
+          if (language === 'python') {
+            // Keywords
+            const keywords = ['from', 'import', 'class', 'def', 'return', 'self', 'print', 'if', 'else', 'for', 'in', 'as'];
+            const literals = ['True', 'False', 'None'];
             
-            switch (segment.type) {
-              case 'keyword':
-                className = 'text-pink-500 dark:text-pink-400';
-                break;
-              case 'string':
-                className = 'text-green-500 dark:text-green-400';
-                break;
-              case 'comment':
-                className = 'text-slate-500 dark:text-slate-400';
-                break;
-              case 'number':
-                className = 'text-amber-500 dark:text-amber-400';
-                break;
-              case 'info':
-                className = 'text-yellow-500 dark:text-yellow-400';
-                break;
-              default:
-                className = '';
+            // Create regex patterns
+            const keywordPattern = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+            const _commentPattern = /(#.*)/g;
+            const stringPattern = /(["'])(?:(?=(\\?))\2.)*?\1/g;
+            const _numberPattern = /\b(\d+)\b/g;
+            const _literalPattern = new RegExp(`\\b(${literals.join('|')})\\b`, 'g');
+            
+            // Process text with regex
+            let lastIndex = 0;
+            const plainText = line;
+            let match;
+            
+            // Process keywords
+            while ((match = keywordPattern.exec(plainText)) !== null) {
+              if (match.index > lastIndex) {
+                segments.push({ type: 'plain', text: plainText.substring(lastIndex, match.index) });
+              }
+              segments.push({ type: 'keyword', text: match[0] });
+              lastIndex = match.index + match[0].length;
             }
             
-            return (
-              <Fragment key={segIndex}>
-                {className ? (
-                  <span className={className}>{segment.text}</span>
-                ) : (
-                  segment.text
-                )}
-              </Fragment>
-            );
-          })}
-        </div>
-      );
-    });
+            // Add remaining text
+            if (lastIndex < plainText.length) {
+              segments.push({ type: 'plain', text: plainText.substring(lastIndex) });
+            }
+            
+            // If no keywords were found, just use the whole line
+            if (segments.length === 0) {
+              segments.push({ type: 'plain', text: line });
+            }
+            
+            // Further process each segment for strings, comments, and numbers
+            segments = segments.flatMap(segment => {
+              if (segment.type !== 'plain') return [segment];
+              
+              const parts = [];
+              const text = segment.text;
+              let lastIdx = 0;
+              
+              // Process strings
+              stringPattern.lastIndex = 0;
+              while ((match = stringPattern.exec(text)) !== null) {
+                if (match.index > lastIdx) {
+                  parts.push({ type: 'plain', text: text.substring(lastIdx, match.index) });
+                }
+                parts.push({ type: 'string', text: match[0] });
+                lastIdx = match.index + match[0].length;
+              }
+              
+              if (lastIdx < text.length) {
+                parts.push({ type: 'plain', text: text.substring(lastIdx) });
+              }
+              
+              return parts.length > 0 ? parts : [segment];
+            });
+            
+            // Add further processing as needed
+          }
+          else if (language === 'terminal') {
+            // Simple processing for terminal content
+            if (line.startsWith('[') && line.includes(']')) {
+              const bracketEnd = line.indexOf(']') + 1;
+              segments.push({ type: 'info', text: line.substring(0, bracketEnd) });
+              segments.push({ type: 'plain', text: line.substring(bracketEnd) });
+            } 
+            else if (line.startsWith('//')) {
+              segments.push({ type: 'comment', text: line });
+            }
+            else if (line.startsWith('>')) {
+              segments.push({ type: 'output', text: line });
+            }
+            else if (line.includes('const') || line.includes('let') || line.includes('var')) {
+              segments.push({ type: 'keyword', text: line });
+            }
+            else {
+              segments.push({ type: 'plain', text: line });
+            }
+          }
+          else {
+            segments.push({ type: 'plain', text: line });
+          }
+
+          return (
+            <div 
+              key={lineIndex}
+              className="terminal-line"
+            >
+              {segments.map((segment, segIndex) => {
+                let className = '';
+                
+                switch (segment.type) {
+                  case 'keyword':
+                    className = 'text-pink-500 dark:text-pink-400';
+                    break;
+                  case 'string':
+                    className = 'text-green-500 dark:text-green-400';
+                    break;
+                  case 'comment':
+                    className = 'text-slate-500 dark:text-slate-400';
+                    break;
+                  case 'number':
+                    className = 'text-amber-500 dark:text-amber-400';
+                    break;
+                  case 'info':
+                    className = 'text-yellow-500 dark:text-yellow-400';
+                    break;
+                  case 'output':
+                    className = 'text-cyan-500 dark:text-cyan-400';
+                    break;
+                  default:
+                    className = '';
+                }
+                
+                return (
+                  <Fragment key={segIndex}>
+                    {className ? (
+                      <span className={className}>{segment.text}</span>
+                    ) : (
+                      segment.text
+                    )}
+                  </Fragment>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
-    <div className="relative w-full animate-fadeIn">
-      <div className={`${terminalClass} rounded-xl overflow-hidden shadow-md dark:shadow-blue-900/20 border border-slate-300 dark:border-slate-800/50 transition-all duration-300 ring-1 ring-slate-300/50 dark:ring-slate-700/40 bg-gradient-to-b from-slate-100 via-slate-50 to-white dark:from-transparent dark:to-transparent backdrop-blur-[2px]`}>
-        {/* Terminal Header */}
-        <div className="flex items-center justify-between bg-gray-900/95 dark:bg-gray-900 rounded-t-xl p-1.5 border-b border-gray-700/80">
+    <div className="w-full">
+      {/* Terminal outer container with improved styling */}
+      <motion.div 
+        className={terminalClass}
+        onClick={handleTerminalClick}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+        transition={{ duration: 0.4 }}
+        whileHover={{ scale: 1.01, transition: { duration: 0.3, ease: "easeOut" } }}
+      >
+        {/* Terminal header/tabs section */}
+        <div className="bg-gray-900 rounded-t-xl px-4 py-2 flex items-center justify-between border-b border-gray-800">
           <div className="flex space-x-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+            <div className="w-3 h-3 rounded-full bg-red-500" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+            <div className="w-3 h-3 rounded-full bg-green-500" />
           </div>
-          <div className="text-center text-xs text-gray-300 font-mono flex-1 font-medium">
-            {easterEggActive && isAiThinking ? "AI_THINKING.exe" : terminalTitle}
+          
+          {/* Terminal tabs */}
+          <div className="flex items-center space-x-1">
+            {terminalTabs.map((tab, index) => (
+              <motion.button
+                key={index}
+                className={`px-2 py-1 text-xs rounded-md font-mono flex items-center gap-1 transition-colors ${
+                  activeTab === index 
+                    ? `text-white ${tab.color}` 
+                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800'
+                }`}
+                onClick={() => handleTabClick(index)}
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : -5 }}
+                transition={{ duration: 0.3, delay: 0.1 + index * 0.1 }}
+              >
+                <span>{tab.icon}</span>
+                <span className="hidden sm:inline">{tab.name}</span>
+              </motion.button>
+            ))}
           </div>
-          <div className="flex items-center space-x-2">
-            <RefreshCw
-              className="h-3 w-3 text-gray-400 hover:text-white cursor-pointer transition-colors"
-              onClick={resetCurrentSnippet}
-            />
-          </div>
+          
+          <div className="text-xs text-gray-400 font-mono">{terminalTitle}</div>
         </div>
         
-        {/* Terminal Tabs */}
-        <div className="flex items-center bg-gray-800/95 dark:bg-gray-800 border-b border-gray-700/80 overflow-x-auto">
-          {terminalTabs.map((tab, index) => (
-            <button
-              key={index}
-              onClick={() => handleTabClick(index)}
-              className={`flex items-center px-2 py-1 text-xs font-mono transition-colors ${
-                activeTab === index 
-                  ? `${tab.color} text-white border-b-2 border-blue-400` 
-                  : 'text-gray-400 hover:text-white hover:bg-gray-700/80'
-              }`}
-            >
-              <span className="mr-1">{tab.icon}</span>
-              {tab.name}
-            </button>
-          ))}
-        </div>
-        
-        {/* Terminal Body - reduced height */}
-        <div 
-          className="bg-gray-950/95 dark:bg-gray-950 text-gray-800 dark:text-white p-2 overflow-y-auto h-36 sm:h-40 md:h-44 rounded-b-lg font-mono shadow-inner"
-          onClick={handleTerminalClick}
-        >
-          {easterEggActive ? renderMatrixCode() : (
+        {/* Terminal content area */}
+        <div className="bg-gray-900 p-3 h-[280px] overflow-y-auto font-mono text-sm text-gray-200 relative border-b border-gray-800">
+        {easterEggActive ? (
+          // Matrix easter egg
+          <>
+            <div className="absolute inset-0 bg-black overflow-hidden">
+              {renderMatrixCode()}
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-green-500 font-mono text-xl text-center">
+                <div className="animate-pulse">NEURAL INTERFACE ACTIVATED</div>
+                <div className="text-sm mt-2">Coffee consumption level: CRITICAL</div>
+              </div>
+            </div>
+          </>
+        ) : (
             <>
-              {/* Terminal Decorations - Path and Prompt with typing animation */}
-              <div className="flex flex-wrap mb-1">
-                <span className="text-green-600 dark:text-green-500 font-mono text-xs">minh@ai-engineer</span>
-                <span className="text-gray-600 dark:text-gray-400 font-mono text-xs">:</span>
-                <span className="text-blue-600 dark:text-blue-400 font-mono text-xs">~/projects</span>
-                <span className="text-gray-600 dark:text-gray-400 font-mono text-xs">$ </span>
-                <span className="text-purple-600 dark:text-purple-400 font-mono text-xs relative">
+            <pre className="whitespace-pre-wrap terminal-content">
+              {/* Header command with typing effect - stable positioning */}
+              <div className="terminal-prompt">
+                <span className="text-blue-400">minh@ai-lab:~$</span> 
+                <span className="text-white ml-1 mr-1">
                   {isTypingHeader ? 
-                    <>
-                      <span className="opacity-0">
-                        {currentSnippetIndex === 0 ? "whoami && echo 'My work'" : 
-                         currentSnippetIndex === 1 ? "python3 ai_profile.py" : 
-                         "cat tech_stack.md"}
-                      </span>
-                      <span className="absolute inset-0 flex items-center">
-                        <span className="animate-pulse">▌</span>
-                      </span>
-                    </> : 
-                    (currentSnippetIndex === 0 ? "whoami && echo 'My work'" : 
-                     currentSnippetIndex === 1 ? "python3 ai_profile.py" : 
-                     "cat tech_stack.md")
+                    ["whoami && echo 'Hello world'", "run projects --list", "cat personality.txt", "grep -i 'values' mindset.md"][currentSnippetIndex] :
+                    ["whoami && echo 'Hello world'", "run projects --list", "cat personality.txt", "grep -i 'values' mindset.md"][currentSnippetIndex]
                   }
                 </span>
+                
+                {/* Blinking cursor if typing header */}
+                {isTypingHeader && (
+                  <span className="inline-block cursor-blink ml-1">▌</span>
+                )}
               </div>
               
-              <pre className={`overflow-auto whitespace-pre text-xs ${
-                currentSnippet.language === 'terminal' 
-                  ? 'text-gray-800 dark:text-slate-200 leading-relaxed' 
-                  : 'text-gray-800 dark:text-slate-200 leading-relaxed'
-              }`}>
-                <SyntaxHighlighter code={typedText} language={currentSnippet.language} />
-                {isAiThinking && (
-                  <span className="inline-block animate-pulse text-cyan-600 dark:text-cyan-500 ml-1 font-mono">▌</span>
-                )}
-              </pre>
+              {/* Code content (only shown after command typed) - with smoother transition */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: mounted && !isTypingHeader ? 1 : 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="mt-2"
+                >
+                  <SyntaxHighlighter code={typedText} language={currentSnippet.language} />
+                  {isAiThinking && (
+                    <span className="inline-block cursor-blink ml-1">▌</span>
+                  )}
+                </motion.div>
+            </pre>
             </>
-          )}
+        )}
         </div>
-        
+
         {/* Terminal Bottom Controls */}
-        <div className="bg-gray-800/95 dark:bg-gray-800 p-1 flex items-center justify-between rounded-b-xl">
-          <div className="flex items-center space-x-1">
+        <motion.div 
+          className="bg-gray-800/95 dark:bg-gray-800 p-1.5 flex items-center justify-between rounded-b-xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: mounted ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+        >
+          <div className="flex items-center space-x-1.5">
             <button
               onClick={toggleAutoPlay}
-              className={`p-1 rounded-md ${isAutoPlaying ? 'bg-green-600/40 text-green-500 dark:text-green-400' : 'bg-slate-700/50 text-slate-400'} hover:bg-slate-700/80`}
+              className={`p-1.5 rounded-md ${isAutoPlaying ? 'bg-green-600/40 text-green-500 dark:text-green-400' : 'bg-slate-700/50 text-slate-400'} hover:bg-slate-700/80`}
               title={isAutoPlaying ? "Auto-playing enabled" : "Auto-playing disabled"}
             >
               {isAutoPlaying ? (
@@ -825,7 +824,7 @@ Ready to begin advanced AI engineering session...
             
             <button
               onClick={togglePause}
-              className={`p-1 rounded-md ${isPaused ? 'bg-amber-600/40 text-amber-500 dark:text-amber-400' : 'bg-slate-700/50 text-slate-400'} hover:bg-slate-700/80`}
+              className={`p-1.5 rounded-md ${isPaused ? 'bg-amber-600/40 text-amber-500 dark:text-amber-400' : 'bg-slate-700/50 text-slate-400'} hover:bg-slate-700/80`}
               title={isPaused ? "Resume typing" : "Pause typing"}
             >
               {isPaused ? (
@@ -834,12 +833,20 @@ Ready to begin advanced AI engineering session...
                 <Pause className="h-3 w-3" />
               )}
             </button>
+            
+            <button
+              onClick={resetCurrentSnippet}
+              className="p-1.5 rounded-md bg-slate-700/50 text-slate-400 hover:bg-slate-700/80"
+              title="Restart typing animation"
+            >
+              <RefreshCw className="h-3 w-3" />
+            </button>
           </div>
           
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-2">
             <button
               onClick={goToPrevSnippet}
-              className="p-1 rounded-md bg-slate-700/50 text-slate-400 hover:bg-slate-700/80"
+              className="p-1.5 rounded-md bg-slate-700/50 text-slate-400 hover:bg-slate-700/80"
               title="Previous snippet"
             >
               <ChevronLeft className="h-3 w-3" />
@@ -849,14 +856,14 @@ Ready to begin advanced AI engineering session...
             
             <button
               onClick={goToNextSnippet}
-              className="p-1 rounded-md bg-slate-700/50 text-slate-400 hover:bg-slate-700/80"
+              className="p-1.5 rounded-md bg-slate-700/50 text-slate-400 hover:bg-slate-700/80"
               title="Next snippet"
             >
               <ChevronRight className="h-3 w-3" />
             </button>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       {/* Terminal styling */}
       <style jsx global>{`
@@ -876,17 +883,29 @@ Ready to begin advanced AI engineering session...
           to { opacity: 1; }
         }
         
-        .animate-fadeIn {
-          animation: fadeIn 0.5s ease-out forwards;
+        .terminal-content {
+          min-height: 260px;
+        }
+        
+        .terminal-prompt {
+          height: 1.5rem;
+          margin-bottom: 0.5rem;
         }
         
         .terminal-line {
           min-height: 1.2rem;
+          animation: none !important;
+          opacity: 1 !important;
+          transition: opacity 0.2s ease-in;
         }
         
-        @keyframes code-line-appear {
-          from { opacity: 0; transform: translateY(5px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        
+        .cursor-blink {
+          animation: blink 1s ease-in-out infinite;
         }
         
         @keyframes animate-gradient {
@@ -901,18 +920,28 @@ Ready to begin advanced AI engineering session...
         }
         
         /* Enhanced terminal styling */
+        .terminal-window {
+          border-radius: 0.75rem;
+          overflow: hidden;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 
+                      0 8px 10px -6px rgba(0, 0, 0, 0.1),
+                      0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+        
         .dark .terminal-window {
-          box-shadow: 0 6px 24px -12px rgba(0, 0, 0, 0.7);
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 
+                      0 10px 10px -5px rgba(0, 0, 0, 0.2),
+                      0 0 0 1px rgba(255, 255, 255, 0.05);
         }
         
         .light .terminal-window {
-          box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.15);
-          border: 1px solid rgba(0, 0, 0, 0.1);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                      0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                      0 0 0 1px rgba(0, 0, 0, 0.05);
         }
         
         .glitch {
           animation: glitch 0.5s cubic-bezier(.25, .46, .45, .94) both;
-          animation-delay: 0.65s;
         }
         
         @keyframes glitch {
@@ -933,6 +962,28 @@ Ready to begin advanced AI engineering session...
           }
           100% {
             transform: translate(0);
+          }
+        }
+        
+        /* Matrix code animation */
+        .matrix-code-line {
+          position: absolute;
+          color: #0f0;
+          font-size: 0.8rem;
+          text-shadow: 0 0 5px #0f0;
+          white-space: nowrap;
+          top: -20px;
+          animation: matrix-drop linear infinite;
+        }
+        
+        @keyframes matrix-drop {
+          from {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateY(400px);
+            opacity: 0.3;
           }
         }
       `}</style>
@@ -978,17 +1029,17 @@ export default function Home() {
     "I'm fluent in human languages and machine learning algorithms."
   ];
   
-  const showRandomFunFact = () => {
+  const _showRandomFunFact = () => {
     const randomIndex = Math.floor(Math.random() * funFacts.length);
     return funFacts[randomIndex];
   };
   
   return (
-    <main className="w-full flex flex-col flex-grow relative z-10">
+      <main className="w-full flex flex-col flex-grow relative z-10">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-center">
           {/* Left column - Introduction */}
-          <div className="flex flex-col space-y-5 md:col-span-7">
+          <div className="flex flex-col space-y-5 md:space-y-6 md:col-span-7 pt-4 md:pt-0">
             {/* Header section with improved hierarchy */}
             <div className="space-y-1">
               <h1 className="text-4xl sm:text-5xl font-bold font-mono tracking-tight">
@@ -1025,8 +1076,8 @@ export default function Home() {
                   Currently building: <span className="text-blue-600 dark:text-blue-400">AI Chatbot + Agent + RAG</span>
                 </span>
               </motion.div>
-            </div>
-            
+        </div>
+        
             {/* Concise description */}
             <motion.div 
               className="space-y-3"
@@ -1054,7 +1105,7 @@ export default function Home() {
             >
               <Link 
                 href="/about" 
-                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white transition-all duration-300 hover:from-blue-600 hover:to-blue-700 hover:shadow-md hover:shadow-blue-500/20 hover:scale-105 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:outline-none relative overflow-hidden"
+                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-blue-600 text-white transition-all duration-300 hover:bg-blue-700 shadow-sm hover:shadow-md hover:shadow-blue-500/20 hover:scale-[1.02] focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:outline-none relative overflow-hidden"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <span className="font-bold">About Me</span>
@@ -1070,13 +1121,13 @@ export default function Home() {
                       clipRule="evenodd" 
                     />
                   </svg>
-                  <span className="absolute inset-0 bg-white/20 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out -z-10"></span>
+                  <span className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out -z-10"></span>
                 </span>
               </Link>
               
               <Link 
                 href="/blog" 
-                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white transition-all duration-300 hover:from-indigo-600 hover:to-purple-700 hover:shadow-md hover:shadow-purple-500/20 hover:scale-105 focus:ring-2 focus:ring-purple-400 focus:ring-offset-2 focus:outline-none relative overflow-hidden"
+                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 hover:bg-indigo-700 shadow-sm hover:shadow-md hover:shadow-indigo-500/20 hover:scale-[1.02] focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:outline-none relative overflow-hidden"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   <span className="font-bold">Read Blog</span>
@@ -1098,7 +1149,7 @@ export default function Home() {
               
               <Link 
                 href="/contact" 
-                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white transition-all duration-300 hover:from-green-600 hover:to-emerald-700 hover:shadow-md hover:shadow-emerald-500/20 hover:scale-105 focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:outline-none flex items-center"
+                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-green-600 text-white transition-all duration-300 hover:bg-green-700 shadow-sm hover:shadow-md hover:shadow-green-500/20 hover:scale-[1.02] focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:outline-none flex items-center"
               >
                 <span className="flex items-center gap-2">
                   <span className="font-bold">Contact</span>
@@ -1122,7 +1173,7 @@ export default function Home() {
               </div>
               
               <div className="flex flex-wrap gap-2">
-                {["LLMs", "RAG", "NLP", "LangChain", "AI Systems"].map((tag, index) => (
+                {["LLMs", "RAG", "NLP", "Agents", "AI Systems"].map((tag, index) => (
                   <Link
                     key={tag}
                     href={`/blog?tag=${encodeURIComponent(tag)}`}
@@ -1137,12 +1188,12 @@ export default function Home() {
           </div>
           
           {/* Right column - Connected profile photo & terminal */}
-          <div className="md:col-span-5">
+          <div className="md:col-span-5 flex flex-col">
             {/* Unified card to visually connect profile and terminal */}
-            <motion.div 
+              <motion.div 
               className="rounded-2xl overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-900/95 dark:to-slate-800/90 border border-slate-300 dark:border-slate-700/60 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-blue-600/10 dark:hover:shadow-blue-900/10 ring-1 ring-slate-300/70 dark:ring-slate-700/50"
               initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
               {/* Top profile section */}
@@ -1166,7 +1217,7 @@ export default function Home() {
                     
                     {/* Fun fact hover reveal */}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent p-3 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                      <p className="text-white text-xs font-mono leading-snug">"{showRandomFunFact()}"</p>
+                      <p className="text-white text-xs font-mono leading-snug">&quot;{_showRandomFunFact()}&quot;</p>
                     </div>
                   </div>
                 </div>
@@ -1178,13 +1229,13 @@ export default function Home() {
                     </div>
                     <div className="text-xs text-slate-600 dark:text-slate-400 ml-4 mt-1.5 space-y-1">
                       <p className="flex items-center gap-1.5">
-                        <span className="text-amber-500">☕</span> Fueled by coffee
+                        <span className="text-amber-500">☕ </span>  Fueled by coffee
                       </p>
                       <p className="flex items-center gap-1.5">
-                        <span className="text-cyan-500">🧠</span> Building with AI
+                        <span className="text-cyan-500">🧠</span> Build everything with AI
                       </p>
                       <p className="flex items-center gap-1.5">
-                        <span className="text-purple-500">💻</span> Full-stack developer
+                        <span className="text-purple-500">💻</span> AI Engineer
                       </p>
                     </div>
                   </div>
@@ -1204,8 +1255,8 @@ export default function Home() {
                   transition={{ duration: 0.6, delay: 0.2 }}
                 >
                   <TerminalHero />
-                </motion.div>
-              </div>
+              </motion.div>
+            </div>
             </motion.div>
             
             {/* Social links - now as a floating bar */}
@@ -1248,9 +1299,9 @@ export default function Home() {
                 >
                   <Code className="h-4 w-4" />
                 </a>
-              </div>
-            </motion.div>
           </div>
+            </motion.div>
+    </div>
         </div>
         
         {/* Improved separator for content sections */}

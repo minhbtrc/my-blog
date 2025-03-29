@@ -5,7 +5,7 @@ import { ThemeProvider } from 'next-themes'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3, Terminal, GithubIcon } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import clsx from 'clsx'
@@ -15,9 +15,16 @@ import dynamic from 'next/dynamic'
 import { cn } from '@/lib/utils'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-
-// Import and configure fonts
+import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Fira_Code, Source_Code_Pro } from 'next/font/google'
+import { siteConfig } from '@/config/site'
+import Header from '@/app/header'
+import { PreloadResources } from '@/components/preload-resources'
+import { Analytics } from '@vercel/analytics/react'
+import { CommandMenuProvider } from '@/components/command-menu'
+import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin'
+import { extractRouterConfig } from 'uploadthing/server'
+import { ourFileRouter } from '@/app/api/uploadthing/core'
 
 // Import ReactPlayer dynamically to avoid SSR issues
 const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false })
@@ -313,7 +320,7 @@ export default function RootLayout({
                     ))}
                     
                     {/* Theme toggle */}
-                    <ThemeToggle />
+                    {/* <ThemeToggle /> */}
                     
                     {/* Music toggle */}
                     {process.env.NEXT_PUBLIC_LISTEN_URL && mounted && (
@@ -332,7 +339,7 @@ export default function RootLayout({
                   {/* Mobile Navigation Button */}
                   <div className="flex md:hidden gap-3">
                     {/* Theme toggle */}
-                    <ThemeToggle />
+                    {/* <ThemeToggle /> */}
                     
                     {/* Music toggle - mobile */}
                     {process.env.NEXT_PUBLIC_LISTEN_URL && mounted && (
@@ -457,7 +464,7 @@ function ThemeToggle({ isMobile = false }: { isMobile?: boolean }) {
   
   // Handle toggle with proper HTML class updates
   const toggleTheme = () => {
-    const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+    const newTheme = resolvedTheme === 'dark' ? 'dark' : 'dark'
     setTheme(newTheme)
     document.documentElement.classList.remove('dark', 'light')
     document.documentElement.classList.add(newTheme)

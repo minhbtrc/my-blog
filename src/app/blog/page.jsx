@@ -1,801 +1,687 @@
 "use client";
 
-import React, { Suspense, useState, useEffect, useRef, useCallback } from "react";
-import { useTheme } from 'next-themes'
-import { Search, X, Filter, Code, BookOpen, Tag, Clock, Calendar, ArrowRight, Hash, BookMarked } from "lucide-react";
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useDebounce } from 'use-debounce';
+import React, { 
+  Suspense, 
+  useState, 
+  useEffect, 
+  useRef,
+  useMemo 
+} from "react";
+import { motion } from "framer-motion";
+import { useTheme } from 'next-themes';
+import { Search, X, Filter, Code, BookOpen, Tag, Clock, Calendar, ArrowRight, Hash, BookMarked, Sparkles, TrendingUp, FileText, BrainCircuit, Terminal, Map } from "lucide-react";
 import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Typewriter } from "react-simple-typewriter";
 
-// Fallback blog data for testing
+// Enhanced blog data with more examples
 const FALLBACK_BLOGS = [
   {
     route: "/blog/langchain-chatbot",
     title: "Building a Privacy-First AI Chatbot with LangChain",
-    description: "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and...",
+    description: "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and enthusiasts in the AI space.",
     date: "2023-07-15",
     readingTime: "8 min read",
     tags: ["ai", "langchain", "privacy", "development"],
-  }
+    featured: true
+  },
 ];
 
+// Helper to format dates nicely
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+// Main blog page component with proper Suspense boundaries
 function BlogPageContent() {
-  const [searchTerm, setSearchTerm] = useState('');
+  const { resolvedTheme } = useTheme();
+  const [blogs] = useState(FALLBACK_BLOGS);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [blogs, setBlogs] = useState([]);
-  const [filteredResults, setFilteredResults] = useState([]);
-  const [tags, setTags] = useState([]);
-  const [showFilters, setShowFilters] = useState(false);
-  const { resolvedTheme: activeTheme } = useTheme();
+  const [scrolled, setScrolled] = useState(false);
+  const exploreSectionRef = useRef(null);
   
-  const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const hasMounted = useRef(false);
-  
-  // Extract selected tags from URL
-  const selectedTagFromUrl = searchParams.get('tag');
-  const [selectedTags, setSelectedTags] = useState(
-    selectedTagFromUrl ? [selectedTagFromUrl] : []
-  );
-
-  const popularTags = ["AI", "React", "Next.js", "TypeScript", "Machine Learning"];
-
-  // State for tag filter UI
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-  // Refs for animation elements
-  const heroRef = useRef(null);
-  const featuredRef = useRef(null);
-  const moreRef = useRef(null);
-
-  // Scroll animation
+  // Track scroll position for sticky tags
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-in');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const elements = [heroRef.current, featuredRef.current, moreRef.current];
-    elements.forEach((el) => {
-      if (el) observer.observe(el);
-    });
-
-    return () => {
-      elements.forEach((el) => {
-        if (el) observer.unobserve(el);
-      });
+    const handleScroll = () => {
+      if (!exploreSectionRef.current) return;
+      const exploreSectionPos = exploreSectionRef.current.getBoundingClientRect().top;
+      setScrolled(exploreSectionPos < 0);
     };
-  }, [isLoading, filteredResults]);
-
-  useEffect(() => {
-    hasMounted.current = true;
-    loadBlogData();
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Load blog data from API or use fallback
-  async function loadBlogData() {
-    try {
-      setIsLoading(true);
-      const response = await fetch("/api/blog");
-      
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data && Array.isArray(data) && data.length > 0) {
-        // Direct array of route URLs
-        const transformedBlogs = await Promise.all(data.map(async (route) => {
-          try {
-            const blogData = await fetch(`/api${route.startsWith('/') ? route : `/${route}`}`).then(res => res.json());
-            return {
-              route,
-              title: blogData.title || "Untitled Post",
-              description: blogData.description || "No description provided",
-              date: blogData.date || new Date().toISOString(),
-              readingTime: blogData.readingTime || `${Math.max(1, Math.ceil((blogData.description || '').split(' ').length / 200))} min read`,
-              tags: blogData.tags || [],
-            };
-          } catch (err) {
-            console.error(`Failed to load blog data for ${route}:`, err);
-            return {
-              route,
-              title: "Untitled Post",
-              description: "Failed to load content",
-              date: new Date().toISOString(),
-              readingTime: "N/A",
-              tags: [],
-            };
-          }
-        }));
-        
-        setBlogs(transformedBlogs);
-        
-        // Extract all unique tags
-        const allTags = [];
-        transformedBlogs.forEach(blog => {
-          if (blog.tags && Array.isArray(blog.tags)) {
-            blog.tags.forEach(tag => {
-              if (!allTags.includes(tag)) {
-                allTags.push(tag);
-              }
-            });
-          }
-        });
-        
-        setTags(allTags);
-      } else {
-        console.warn("Using fallback blog data");
-        setBlogs(FALLBACK_BLOGS);
-        
-        // Extract tags from fallback blogs
-        const fallbackTags = [];
-        FALLBACK_BLOGS.forEach(blog => {
-          if (blog.tags && Array.isArray(blog.tags)) {
-            blog.tags.forEach(tag => {
-              if (!fallbackTags.includes(tag)) {
-                fallbackTags.push(tag);
-              }
-            });
-          }
-        });
-        setTags(fallbackTags);
-      }
-    } catch (error) {
-      console.error("Failed to load blogs:", error);
-      setBlogs(FALLBACK_BLOGS); // Use fallback data on error
-      
-      // Extract tags from fallback blogs on error
-      const fallbackTags = [];
-      FALLBACK_BLOGS.forEach(blog => {
-        if (blog.tags && Array.isArray(blog.tags)) {
-          blog.tags.forEach(tag => {
-            if (!fallbackTags.includes(tag)) {
-              fallbackTags.push(tag);
-            }
-          });
-        }
-      });
-      setTags(fallbackTags);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  // Update URL when tags change
-  useEffect(() => {
-    if (!hasMounted.current) return;
+  // Popular tags derived from all blog posts
+  const popularTags = useMemo(() => {
+    const allTags = blogs.flatMap(blog => blog.tags || []);
+    const tagCounts = allTags.reduce((acc, tag) => {
+      acc[tag] = (acc[tag] || 0) + 1;
+      return acc;
+    }, {});
     
-    if (selectedTags.length > 0) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('tag', selectedTags[0]); 
-      router.push(`/blog?${params.toString()}`);
-    } else if (selectedTagFromUrl) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete('tag');
-      router.push(`/blog?${params.toString()}`);
-    }
-  }, [selectedTags, router, searchParams, selectedTagFromUrl]);
+    return Object.entries(tagCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([tag]) => tag);
+  }, [blogs]);
   
-  // Filter blogs based on selected tags and search query
   useEffect(() => {
-    const filtered = blogs.filter(blog => {
-      const matchesTag = selectedTags.length === 0 || 
-        (blog.tags && blog.tags.some(tag => selectedTags.includes(tag)));
-      
-      const matchesSearch = !searchTerm || 
-        blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (blog.description && blog.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (blog.tags && blog.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())));
-      
-      return matchesTag && matchesSearch;
-    });
-
-    // Sort by date - newest first
-    const sortedResults = [...filtered].sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return dateB - dateA;
-    });
+    // Simulate loading data from API
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 600);
     
-    setFilteredResults(sortedResults);
-  }, [blogs, selectedTags, searchTerm]);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle tag selection
-  const handleTagSelect = (tag) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter(t => t !== tag));
+  const handleTagClick = (tag) => {
+    setSelectedTags(prevTags => {
+      if (prevTags.includes(tag)) {
+        return prevTags.filter(t => t !== tag);
     } else {
-      setSelectedTags([...selectedTags, tag]);
-    }
-  };
-  
-  // Clear all filters
-  const clearFilters = () => {
-    setSearchTerm('');
-    setSelectedTags([]);
-  };
-  
-  // Get featured post (most recent)
-  const featuredPost = filteredResults.length > 0 ? filteredResults[0] : null;
-  const remainingPosts = filteredResults.length > 1 ? filteredResults.slice(1) : [];
-  
-  // Format date nicely
-  const formatDate = (dateString) => {
-    try {
-      return new Date(dateString).toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      });
-    } catch (e) {
-      return dateString;
-    }
-  };
-  
-  // Add JavaScript for sticky tag bar behavior
-  useEffect(() => {
-    const stickyTagBar = document.getElementById('sticky-tag-bar');
-    
-    const handleScroll = () => {
-      if (window.scrollY > 250) {
-        stickyTagBar.classList.remove('-translate-y-full', 'opacity-0');
-        stickyTagBar.classList.add('translate-y-0', 'opacity-100');
-      } else {
-        stickyTagBar.classList.add('-translate-y-full', 'opacity-0');
-        stickyTagBar.classList.remove('translate-y-0', 'opacity-100');
+        return [...prevTags, tag];
       }
-    };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
+    });
+  };
+  
+  // Filter blogs based on selected tags
+  const filteredBlogs = useMemo(() => {
+    return blogs.filter(blog => {
+      // Match selected tags (if any)
+      return selectedTags.length === 0 || 
+        selectedTags.some(tag => blog.tags?.includes(tag));
+    });
+  }, [blogs, selectedTags]);
+  
+  // Separate featured posts from regular posts
+  const featuredPosts = useMemo(() => 
+    filteredBlogs.filter(blog => blog.featured),
+    [filteredBlogs]
+  );
+  
+  const regularPosts = useMemo(() => 
+    filteredBlogs.filter(blog => !blog.featured),
+    [filteredBlogs]
+  );
+  
   return (
-    <div className="w-full min-h-screen">
-      {/* Hero Section with animation and personality */}
-      <div className="relative bg-gradient-to-b from-blue-100 to-white dark:from-slate-900 dark:to-slate-800 py-8 md:py-12 border-b border-slate-200/80 dark:border-blue-900/30 overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.08),transparent)] dark:bg-[radial-gradient(circle_at_30%_20%,rgba(30,64,175,0.15),transparent)]"></div>
-          {Array.from({ length: 20 }).map((_, i) => {
-            const size = Math.random() * 4 + 1;
-            const duration = Math.random() * 15 + 10;
-            const delay = Math.random() * 5;
+    <div className="bg-gray-900 dark:bg-slate-900 min-h-screen w-full overflow-hidden">
+      {/* Hero section with enhanced styling */}
+      <div className="relative overflow-hidden">
+        {/* Background gradients - improved for light mode */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-950 dark:from-blue-900/20 dark:to-purple-900/20"></div>
+        
+        {/* Animated code particles */}
+        <div className="absolute top-20 left-10 w-64 h-64 bg-blue-200/30 dark:bg-blue-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-10 right-10 w-80 h-80 bg-purple-200/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow-delayed"></div>
+        
+        {/* Code symbols floating in background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 dark:opacity-25">
+          {Array.from({ length: 10 }).map((_, i) => {
+            const symbols = ["{}", "[]", "()", "</>", "=>", "&&", "||", "//", "/**/", "..."];
+            const size = Math.random() * 20 + 10;
             const initialX = Math.random() * 100;
             const initialY = Math.random() * 100;
+            
             return (
-              <div
+              <motion.div
                 key={i}
-                className="absolute rounded-full bg-blue-500/5 dark:bg-blue-400/10"
+                className="absolute text-blue-600 dark:text-blue-400 font-mono text-lg"
                 style={{
-                  width: size,
-                  height: size,
                   top: `${initialY}%`,
                   left: `${initialX}%`,
-                  animation: `float ${duration}s infinite ease-in-out ${delay}s`
+                  fontSize: size
                 }}
-              ></div>
+                animate={{
+                  y: [0, Math.random() * 30 - 15],
+                  opacity: [0.3, 0.8, 0.3],
+                  rotate: [0, Math.random() * 40 - 20]
+                }}
+                transition={{
+                  duration: Math.random() * 7 + 5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                {symbols[i % symbols.length]}
+              </motion.div>
             );
           })}
         </div>
         
-        <div className="max-w-5xl mx-auto px-4 relative z-10">
-          <div className="flex flex-col items-center">
-            {/* Animated Title with better light mode contrast */}
-            <div className="w-full text-center mb-6 md:mb-8">
-              <div className="mb-3 h-0.5 w-16 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto"></div>
-              <h1 className="font-mono font-bold text-4xl md:text-5xl mb-3 animate-fade-in-up bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500 dark:from-blue-400 dark:to-cyan-300">
-                blog.minh()
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400 text-sm md:text-base mt-3 max-w-2xl mx-auto animate-fade-in">
-                // Personal insights on AI, LLMs, privacy, and dev
-              </p>
-              <p className="text-slate-700 dark:text-slate-300 text-sm md:text-lg mt-3 max-w-2xl mx-auto font-light animate-fade-in-delayed">
-                Exploring the cutting edge of AI with code-first storytelling.
-              </p>
+        <div className="max-w-4xl mx-auto px-4 pt-10 sm:pt-16 relative z-10">
+          <motion.div 
+            className="text-center mb-8 sm:mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {/* Glassmorphic Title Card */}
+            <div className="inline-block relative p-4 rounded-xl backdrop-blur-lg border border-gray-200 dark:border-white/20 bg-white/70 dark:bg-slate-900/40 shadow-lg mb-3">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/15 to-purple-500/15 dark:from-blue-500/10 dark:to-purple-500/10 rounded-xl"></div>
+              <div className="flex items-center justify-center">
+                <Sparkles className="h-7 w-7 text-blue-600 dark:text-blue-400 mr-3 animate-sparkle" />
+                <h1 className="text-4xl sm:text-5xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-700 dark:from-blue-400 dark:to-cyan-400">
+                  ✨ BLOG.MINH<span className="text-blue-600 dark:text-cyan-400">()</span>
+                </h1>
+              </div>
               
-              {/* Tag navigation */}
-              <div className="mt-6 flex flex-wrap justify-center gap-2 animate-fade-in-up-delayed">
-                <span className="text-xs text-blue-300 dark:text-blue-300 font-mono mr-2 self-center">Explore:</span>
-                {tags.slice(0, 6).map(tag => (
-                  <button
-                    key={`hero-${tag}`}
-                    onClick={() => handleTagSelect(tag)}
-                    className={`px-2.5 py-1 text-xs rounded-md shadow-sm transition-all duration-300 transform hover:scale-105 ${
-                      selectedTags.includes(tag)
-                        ? 'bg-blue-600 text-white border border-blue-500 hover:bg-blue-700 hover:shadow-md hover:shadow-blue-600/20'
-                        : 'bg-slate-800/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border border-slate-300/50 dark:border-slate-700/70 hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-blue-300/60 dark:hover:border-blue-900/60'
-                    }`}
-                  >
-                    <span className="relative">
-                      #{tag}
-                      <span className={`absolute inset-x-0 bottom-0 h-0.5 transform scale-x-0 transition-transform duration-300 ${selectedTags.includes(tag) ? 'bg-white/40' : 'bg-blue-400/40'} group-hover:scale-x-100`}></span>
-                    </span>
-                  </button>
-                ))}
+              {/* Version Badge */}
+              <div className="absolute -top-2 -right-2 px-2 py-1 bg-blue-600 dark:bg-blue-700 text-white text-xs font-mono rounded shadow-md transform rotate-3 flex items-center gap-1">
+                <Code className="h-3 w-3" />
+                <span>v0.2.1-alpha</span>
               </div>
             </div>
             
-            {/* Enhanced Search Bar */}
-            <div className="w-full max-w-xl relative z-10 animate-fade-in-delayed">
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1 group">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Search className="h-4 w-4 text-blue-500/70 dark:text-blue-400 transition-colors duration-200" />
+            {/* Terminal-style subtitle */}
+            <div className="font-mono text-sm text-gray-700 dark:text-slate-300 flex items-center justify-center gap-2 bg-gray-800/95 dark:bg-slate-800/95 px-3 py-1.5 rounded-md border border-gray-700 dark:border-slate-700 shadow-sm text-green-400">
+              <span className="text-green-400 font-bold">$</span>
+              <Typewriter
+                words={['// Exploring the edge of AI with code-first storytelling']}
+                loop={false}
+                cursor={true}
+                cursorStyle='_'
+                typeSpeed={50}
+                delaySpeed={1000}
+              />
+            </div>
+            
+            {/* Floating thought bubble */}
+            <motion.div 
+              className="mt-4 px-3 py-1.5 bg-gray-800 dark:bg-blue-900/30 text-blue-300 dark:text-blue-300 text-xs font-mono rounded-lg inline-flex items-center border border-gray-700 dark:border-blue-800"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 1.2, duration: 0.4 }}
+            >
+              <Code className="h-3.5 w-3.5 mr-1.5" />
+              <span>This blog auto-updates as I learn</span>
+            </motion.div>
+          </motion.div>
+          
+          <motion.div 
+            className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="relative w-full">
+              <div className="relative group">
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-lg blur-lg -z-10"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+                <div className="bg-white/60 dark:bg-slate-800/60 backdrop-blur-md p-1 rounded-lg shadow-sm border border-gray-200/50 dark:border-slate-700/50 flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                    </div>
+                    <Input
+                      type="text"
+                      placeholder="Search articles... (Ctrl+K)"
+                      className="w-full py-2.5 pl-10 pr-12 bg-gray-800/80 dark:bg-slate-800/80 border-0 rounded-md text-sm transition-all duration-300 focus:border-blue-400 dark:focus:border-cyan-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 shadow-inner font-mono text-gray-300"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                      <kbd className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium bg-gray-700 dark:bg-slate-700 px-1.5 py-0.5 rounded border border-gray-600 dark:border-slate-600 text-gray-300 dark:text-gray-400">
+                        <span className="text-xs">⌘</span>K
+                      </kbd>
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Search posts..."
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="w-full p-3 pl-10 rounded-lg border border-slate-300 dark:border-blue-900/40 bg-white/90 dark:bg-slate-800/80 text-slate-800 dark:text-gray-200 placeholder-slate-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 dark:focus:border-blue-500 transition-all shadow-sm hover:shadow-md focus:shadow-lg dark:shadow-blue-900/10 hover:dark:shadow-blue-900/20"
-                  />
-                  {searchTerm && (
-                    <button
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-gray-200 transition-colors duration-200"
-                      onClick={() => setSearchTerm('')}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-                <button 
-                  onClick={() => setShowFilters(!showFilters)}
-                  className={`p-3 rounded-lg border shadow-lg shadow-blue-900/10 ${selectedTags.length > 0 ? 'border-blue-500 text-blue-400 bg-blue-900/30' : 'border-blue-900/40 text-gray-300 bg-slate-800/80'} hover:bg-slate-700 transition-all flex items-center`}
-                >
-                  <Filter className="h-4 w-4" />
-                </button>
-              </div>
-              
-              {/* Filter dropdown */}
-              {showFilters && (
-                <div className="absolute mt-2 w-full bg-slate-800/95 border border-blue-900/30 rounded-lg shadow-xl backdrop-blur-sm p-4 z-20 animate-fade-in">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="text-sm font-medium text-slate-300 flex items-center gap-1.5">
-                      <Tag className="h-3 w-3 text-blue-400" />
-                      Filter by Tags
-                    </h3>
+                  
+                  <motion.button
+                    onClick={() => setFilterOpen(!filterOpen)}
+                    whileTap={{ scale: 0.95 }}
+                    className={`px-3 py-2.5 rounded-md flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md ${
+                      filterOpen 
+                        ? 'bg-blue-900/60 dark:bg-blue-900/30 text-blue-400 dark:text-blue-400 ring-2 ring-blue-800 dark:ring-blue-900'
+                        : 'bg-gray-800/90 dark:bg-slate-700/90 text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-blue-900/20 hover:text-blue-400 dark:hover:text-blue-400'
+                    } border border-gray-700 dark:border-slate-700/80 font-mono`}
+                  >
+                    <Filter className={`h-4 w-4 mr-2 transition-transform duration-300 ${filterOpen ? 'rotate-180' : ''}`} />
+                    <span className="text-sm font-medium">filter</span>
                     {selectedTags.length > 0 && (
-                      <button
-                        onClick={clearFilters}
-                        className="text-xs text-blue-400 hover:text-blue-300"
+                      <motion.span 
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white"
                       >
-                        Clear all
-                      </button>
+                        {selectedTags.length}
+                      </motion.span>
                     )}
-                  </div>
-                  <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-900/40 scrollbar-track-slate-900/20 pr-1">
-                    {tags.map(tag => (
-                      <button
-                        key={tag}
-                        onClick={() => handleTagSelect(tag)}
-                        className={`px-2 py-1 text-xs rounded-md flex items-center gap-1 transition-all ${
-                          selectedTags.includes(tag)
-                            ? 'bg-blue-600/50 text-blue-200 border border-blue-500/60'
-                            : 'bg-slate-800/70 text-slate-300 border border-slate-700 hover:bg-slate-700/70 hover:border-blue-900/40'
-                        }`}
-                      >
-                        <Hash className="h-2.5 w-2.5" />
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      {/* Add CSS for animations */}
-      <style jsx global>{`
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        @keyframes fade-in-delayed {
-          0% { opacity: 0; }
-          50% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-        
-        @keyframes fade-in-up-delayed {
-          0% { 
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          50% { 
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          100% { 
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
-        
-        /* Hide scrollbar but maintain functionality */
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        
-        /* Animation for scroll reveal */
-        .animate-in {
-          opacity: 1 !important;
-          transform: translateY(0) !important;
-        }
-      `}</style>
-      
-      {/* Main content */}
-      <div className="max-w-5xl mx-auto px-4 pt-6 pb-12">
-        {/* Stats and filters display */}
-        {!isLoading && (
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <BookOpen className="w-4 h-4 mr-2 text-slate-400" />
-              <span className="text-xs text-slate-400 font-mono">
-                {filteredResults.length} {filteredResults.length === 1 ? 'article' : 'articles'} found
-              </span>
-            </div>
-            
-            {/* Active tag display */}
-            {selectedTags.length > 0 && (
-              <div className="flex items-center gap-2">
-                <div className="flex flex-wrap gap-1">
-                  {selectedTags.map(tag => (
-                    <span 
-                      key={tag}
-                      className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-blue-900/30 text-blue-300 border border-blue-900/40"
-                    >
-                      {tag}
-                      <button 
-                        onClick={() => handleTagSelect(tag)}
-                        className="ml-1.5 text-blue-300 hover:text-blue-100"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  ))}
+                  </motion.button>
                 </div>
               </div>
-            )}
-          </div>
-        )}
-        
-        {/* Loading state */}
-        {isLoading && (
-          <div className="w-full flex items-center justify-center py-10">
-            <div className="flex flex-col items-center">
-              <div className="relative w-10 h-10 mb-3">
-                <div className="absolute top-0 left-0 right-0 bottom-0 border-2 border-blue-900/30 rounded-full"></div>
-                <div className="absolute top-0 left-0 right-0 bottom-0 border-2 border-transparent border-t-blue-500 rounded-full animate-spin"></div>
-              </div>
-              <p className="text-slate-400 font-mono text-xs">Loading articles...</p>
             </div>
-          </div>
-        )}
-        
-        {/* No results state */}
-        {filteredResults.length === 0 && !isLoading && (
-          <div className="w-full rounded-lg bg-slate-800/50 border border-blue-900/20 p-8 text-center my-8">
-            <div className="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center bg-slate-700/50">
-              <Search className="h-6 w-6 text-slate-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-200 mb-2">No articles found</h3>
-            <p className="text-slate-400 mb-4 text-sm">
-              No posts match your current search criteria.
-            </p>
-            <button
-              onClick={clearFilters}
-              className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-colors"
-            >
-              Clear filters
-            </button>
-          </div>
-        )}
-        
-        {/* Blog content with featured post */}
-        {!isLoading && filteredResults.length > 0 && (
-          <div className="space-y-12 animate-fade-in">
-            {/* Featured post */}
-            {featuredPost && (
-              <div ref={featuredRef} className="opacity-0 translate-y-4 transition-all duration-700">
-                <div className="relative flex items-center mb-4">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 mr-2 animate-pulse"></div>
-                  <span className="text-sm font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400 font-mono">Featured Post</span>
-                </div>
-                
-                <Link href={featuredPost.route} className="block group">
-                  <article className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800/80 dark:to-slate-900/90 border border-slate-200 dark:border-blue-900/30 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01] shadow-lg shadow-slate-200/50 dark:shadow-blue-900/10">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-                      {/* Left side - Feature image and content */}
-                      <div className="relative lg:col-span-5 h-64 lg:h-auto border-b lg:border-b-0 lg:border-r border-blue-900/20 overflow-hidden group-hover:brightness-105 transition-all">
-                        <div className="absolute inset-0 bg-gradient-to-br from-sky-600 to-purple-800 opacity-90"></div>
-                        <div className="absolute inset-0 flex flex-col justify-center p-6 text-white z-10">
-                          <div className="flex flex-wrap gap-1.5 mb-4">
-                            {featuredPost.tags && featuredPost.tags.map(tag => (
-                              <span 
-                                key={`featured-${tag}`}
-                                className="inline-block px-2 py-0.5 text-xs bg-white/20 rounded shadow-sm"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                          <h2 className="text-xl lg:text-2xl font-bold mb-3 font-mono tracking-tight group-hover:translate-x-0.5 transition-transform">{featuredPost.title}</h2>
-                          <p className="text-white/90 text-sm line-clamp-3 mb-5">{featuredPost.description}</p>
-                          <div className="mt-auto flex items-center justify-between text-xs text-white/80">
-                            <span className="flex items-center">
-                              <Calendar className="h-3 w-3 mr-1.5" />
-                              {formatDate(featuredPost.date)}
-                            </span>
-                            <span className="flex items-center">
-                              <Clock className="h-3 w-3 mr-1.5" />
-                              {featuredPost.readingTime}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Right side - Code preview */}
-                      <div className="lg:col-span-7 p-6">
-                        <div className="bg-slate-900/90 rounded-lg overflow-hidden shadow-inner mb-4 border border-slate-800/80">
-                          <div className="flex items-center justify-between bg-slate-800/70 px-4 py-2 text-slate-400 text-xs border-b border-slate-700/50">
-                            <div className="flex space-x-1.5">
-                              <div className="w-2.5 h-2.5 rounded-full bg-red-400"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
-                              <div className="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-                            </div>
-                            <span className="font-mono">blog-preview.js</span>
-                          </div>
-                          
-                          <div className="p-4 font-mono text-sm overflow-hidden">
-                            {/* Code lines with animation */}
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_0.2s_forwards] text-slate-300">
-                              <span className="text-blue-400">import</span> {" "}
-                              &#123; article &#125; <span className="text-blue-400">from</span> <span className="text-green-400">'@blog/content'</span>;
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_0.4s_forwards] text-slate-300">
-                              <span className="text-blue-400">import</span> {" "}
-                              &#123; Minh &#125; <span className="text-blue-400">from</span> <span className="text-green-400">'@ai/engineer'</span>;
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_0.6s_forwards] text-slate-300"></div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_0.8s_forwards] text-slate-300">
-                              <span className="text-purple-400">function</span> <span className="text-yellow-400">FeaturedBlogPost</span>() &#123;
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_1.0s_forwards] text-slate-300">
-                              &nbsp;&nbsp;<span className="text-slate-500">// Latest insights on {featuredPost.tags && featuredPost.tags[0]}</span>
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_1.2s_forwards] text-slate-300">
-                              &nbsp;&nbsp;<span className="text-blue-400">return</span> (
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_1.4s_forwards] text-slate-300">
-                              &nbsp;&nbsp;&nbsp;&nbsp;&lt;<span className="text-green-400">Article</span>&gt;
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_1.6s_forwards] text-slate-300">
-                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span className="text-green-400">Title</span>&gt;<span className="text-orange-400">"{featuredPost.title.substring(0, 25)}..."</span>&lt;/<span className="text-green-400">Title</span>&gt;
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_1.8s_forwards] text-slate-300">
-                              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span className="text-green-400">Author</span>&gt;<span className="text-orange-400">MinhBTC</span>&lt;/<span className="text-green-400">Author</span>&gt;
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_2.0s_forwards] text-slate-300">
-                              &nbsp;&nbsp;&nbsp;&nbsp;&lt;/<span className="text-green-400">Article</span>&gt;
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_2.2s_forwards] text-slate-300">
-                              &nbsp;&nbsp;);
-                            </div>
-                            <div className="code-line opacity-0 animate-[code-line-appear_0.3s_2.4s_forwards] text-slate-300">
-                              &#125;
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex justify-end">
-                          <span className="inline-flex items-center text-blue-400 group-hover:text-blue-300 font-mono border border-blue-500/30 px-3 py-1 rounded group-hover:border-blue-400/50 transition-all">
-                            read_article()
-                            <ArrowRight className="h-3.5 w-3.5 ml-2 group-hover:translate-x-1 transition-transform" />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </article>
-                </Link>
-              </div>
-            )}
-            
-            {/* More articles */}
-            <div ref={moreRef} className="mt-16 opacity-0 translate-y-4 transition-all duration-700">
-              <div className="mb-6">
-                <h2 className="text-xl font-bold mb-2">More Articles</h2>
-                <div className="h-1 w-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded"></div>
-              </div>
-
-              {filteredResults.length > 1 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredResults
-                    .filter(post => post.route !== featuredPost?.route)
-                    .map((post) => (
-                      <Link key={post.route} href={post.route} className="group">
-                        <article className="h-full bg-slate-800/50 border border-slate-700/30 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col">
-                          <div className="p-5 flex flex-col flex-grow">
-                            <div className="flex flex-wrap gap-1 mb-3">
-                              {post.tags && post.tags.map(tag => (
-                                <span 
-                                  key={`${post.route}-${tag}`}
-                                  className="inline-block px-1.5 py-0.5 text-xs bg-slate-700/80 text-slate-300 rounded group-hover:bg-blue-900/30 group-hover:text-blue-200 transition-colors"
-                                >
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                            <h3 className="text-lg font-bold mb-2 font-mono group-hover:text-blue-300 transition-colors">{post.title}</h3>
-                            <p className="text-slate-400 text-sm flex-grow line-clamp-3 mb-4">{post.description}</p>
-                            <div className="mt-auto flex justify-between items-center text-xs text-slate-500">
-                              <span className="flex items-center">
-                                <Calendar className="h-3 w-3 mr-1.5" />
-                                {formatDate(post.date)}
-                              </span>
-                              <span className="flex items-center">
-                                <Clock className="h-3 w-3 mr-1.5" />
-                                {post.readingTime}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          {/* Animated line at bottom */}
-                          <div className="h-1 w-0 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:w-full transition-all duration-500"></div>
-                        </article>
-                      </Link>
-                    ))}
-                </div>
-              ) : (
-                <div className="relative bg-slate-800/30 border border-slate-700/30 rounded-lg p-8 text-center animate-fade-in">
-                  <div className="flex justify-center mb-4">
-                    <BookMarked className="h-12 w-12 text-blue-400 opacity-80" />
-                  </div>
-                  <h3 className="text-lg font-bold mb-2 font-mono">More posts coming soon</h3>
-                  <p className="text-slate-400 max-w-lg mx-auto mb-6">
-                    I'm working on more content about AI engineering, LLMs, and front-end development.
-                    Check back soon for new articles!
-                  </p>
-                  
-                  <div className="mt-8">
-                    <h4 className="text-sm font-medium mb-3 text-slate-300">Browse by popular tags</h4>
-                    <div className="flex flex-wrap justify-center gap-2">
-                      {popularTags.map(tag => (
-                        <button
-                          key={`suggest-${tag}`}
-                          onClick={() => handleTagSelect(tag)}
-                          className="px-3 py-1.5 text-sm rounded-full bg-blue-900/30 text-blue-300 hover:bg-blue-800/40 transition-colors border border-blue-800/50"
-                        >
-                          {tag}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  {/* Background decorations */}
-                  <div className="absolute -bottom-3 -right-3 w-24 h-24 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-full blur-xl"></div>
-                  <div className="absolute -top-3 -left-3 w-16 h-16 bg-gradient-to-br from-blue-600/10 to-purple-600/10 rounded-full blur-lg"></div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Floating tag filters */}
-        {!isLoading && filteredResults.length > 0 && (
-          <div className="fixed bottom-6 right-6 z-40">
-            <button 
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white p-3 rounded-full flex items-center justify-center shadow-lg hover:shadow-blue-500/20 transition-all transform hover:scale-105"
-              aria-label="Filter by tags"
-            >
-              <Hash className="h-5 w-5" />
-            </button>
-            
-            <div 
-              className={`absolute right-0 bottom-16 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl p-4 w-60 transition-all duration-300 
-                ${isFilterOpen ? 'translate-y-0 opacity-100 visible' : '-translate-y-4 opacity-0 invisible'}`}
-            >
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-2 font-mono">Filter by tags</p>
-              <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
-                {tags.map(tag => (
-                  <button
-                    key={`float-${tag}`}
-                    onClick={() => handleTagSelect(tag)}
-                    className={`px-2 py-1.5 text-xs rounded-md w-full text-left transition-colors flex items-center gap-2
-                      ${selectedTags.includes(tag) 
-                        ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-800' 
-                        : 'hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-300 border border-transparent'
-                      }`}
+          </motion.div>
+          
+          {filterOpen && (
+            <div className="mt-4 p-5 bg-gray-800/95 dark:bg-slate-800/80 border border-gray-700 dark:border-slate-700/80 rounded-lg shadow-lg backdrop-blur-sm animate-in fade-in-50 duration-300 text-gray-300">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-gray-300 dark:text-slate-300 flex items-center font-mono">
+                  <Tag className="h-4 w-4 mr-2 text-blue-400" />
+                  <span className="text-green-400 dark:text-green-400 mr-1.5 font-bold">$</span>
+                  filter --tags
+                </h3>
+                {selectedTags.length > 0 && (
+                  <button 
+                    onClick={() => setSelectedTags([])}
+                    className="text-xs text-blue-400 hover:text-blue-300 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-all flex items-center font-mono"
                   >
-                    <span className={`w-2 h-2 rounded-full ${selectedTags.includes(tag) ? 'bg-blue-500 dark:bg-blue-400' : 'bg-slate-400 dark:bg-slate-500'}`}></span>
-                    {tag}
+                    <X className="h-3 w-3 mr-1" />
+                    clear
                   </button>
-                ))}
+                )}
               </div>
-              {selectedTags.length > 0 && (
-                <button 
-                  onClick={clearFilters}
-                  className="mt-3 w-full text-xs py-1.5 px-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-700 rounded transition-colors flex items-center justify-center gap-1 hover:bg-slate-50 dark:hover:bg-slate-800"
-                >
-                  <X className="h-3 w-3" />
-                  Clear filters
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Now add a sticky tag bar that appears when scrolling */}
-        <div id="sticky-tag-bar" className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-b border-slate-200/80 dark:border-slate-800/80 py-2 transform translate-y-0 transition-all duration-300 opacity-0 -translate-y-full">
-          <div className="max-w-5xl mx-auto px-4 flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Filter:</span>
-              <div className="flex flex-wrap gap-1.5 overflow-x-auto max-w-[50vw] pb-1 hide-scrollbar">
-                {tags.slice(0, 8).map(tag => (
-                  <button
-                    key={`sticky-${tag}`}
-                    onClick={() => handleTagSelect(tag)}
-                    className={`px-2 py-0.5 text-xs rounded-full transition-all duration-200 ${
-                      selectedTags.includes(tag)
-                        ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
-                        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700/70'
+              <div className="flex flex-wrap gap-2 mt-3">
+                {popularTags.map((tag) => (
+                  <Badge 
+                    key={tag} 
+                    variant={selectedTags.includes(tag) ? "default" : "secondary"} 
+                    className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
+                      selectedTags.includes(tag) 
+                        ? 'bg-blue-900/60 dark:bg-blue-900/40 text-blue-300 dark:text-blue-300 border border-blue-800 dark:border-blue-800/60 shadow-sm' 
+                        : 'bg-gray-700 dark:bg-slate-700 text-gray-300 dark:text-gray-300 hover:bg-gray-600 dark:hover:bg-slate-600 border border-gray-600 dark:border-slate-600'
                     }`}
+                    onClick={() => handleTagClick(tag)}
                   >
-                    #{tag}
-                  </button>
+                    <Hash className="h-3 w-3 mr-1" />
+                    {tag}
+                  </Badge>
                 ))}
               </div>
             </div>
-            <button
-              onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}
-              className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors flex items-center gap-1"
-            >
-              <span>Top</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </div>
+          )}
         </div>
       </div>
+
+      {/* Sticky tag bar */}
+      <div 
+        className={`fixed top-16 left-0 right-0 z-20 bg-gray-900/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-gray-700 dark:border-slate-800 shadow-sm py-2 px-4 transition-all duration-300 transform ${
+          scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        }`}
+      >
+        <div className="max-w-4xl mx-auto flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar">
+          <div className="flex items-center bg-gray-800 dark:bg-slate-800/60 px-2 py-1 rounded-md border border-gray-700 dark:border-slate-700 mr-1 shadow-sm">
+            <span className="text-green-400 dark:text-green-400 font-mono text-xs mr-1.5 font-bold">$</span>
+            <span className="text-sm font-medium text-gray-300 dark:text-slate-400 whitespace-nowrap font-mono">explore</span>
+          </div>
+          
+          {popularTags.map((tag) => (
+            <Badge 
+              key={tag} 
+              variant={selectedTags.includes(tag) ? "default" : "secondary"} 
+              className={`cursor-pointer transition-all hover:scale-105 whitespace-nowrap ${
+                selectedTags.includes(tag) 
+                  ? 'bg-blue-900/60 dark:bg-blue-900/40 text-blue-300 dark:text-blue-300 border border-blue-800 dark:border-blue-800/60' 
+                  : 'bg-gray-700 dark:bg-slate-700 text-gray-300 dark:text-gray-300 hover:bg-gray-600 dark:hover:bg-slate-600 border border-gray-600 dark:border-slate-600'
+              }`}
+              onClick={() => handleTagClick(tag)}
+            >
+              <Hash className="h-3 w-3 mr-1" />
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      </div>
+      
+      <div className="max-w-4xl mx-auto px-4 mt-12 pb-20">
+        {/* Tag section reference for scroll detection */}
+        <div ref={exploreSectionRef}></div>
+        
+        {/* Category tabs for organizing content */}
+        <div className="mb-8 overflow-x-auto pb-2 hide-scrollbar">
+          <div className="flex items-center border rounded-md bg-gray-800 dark:bg-slate-800/40 border-gray-700 dark:border-slate-700 p-1 overflow-hidden shadow-sm">
+            <motion.button
+              className="px-4 py-2 text-gray-300 dark:text-slate-300 font-medium rounded-md bg-gray-900 dark:bg-slate-700/60 shadow-sm border border-gray-700 dark:border-slate-600 font-mono"
+              whileHover={{ backgroundColor: "rgba(17, 24, 39, 1)" }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex items-center">
+                <FileText className="h-4 w-4 mr-2 text-blue-400 dark:text-blue-400" />
+                <span className="text-green-400 dark:text-green-400 mr-1">$</span>
+                <span>all-posts</span>
+              </div>
+            </motion.button>
+            
+            <motion.button
+              className="px-4 py-2 text-gray-400 dark:text-slate-400 font-medium rounded-md hover:bg-gray-700 dark:hover:bg-slate-700/40 font-mono"
+              whileHover={{ backgroundColor: "rgba(55, 65, 81, 1)" }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex items-center">
+                <BrainCircuit className="h-4 w-4 mr-2 text-gray-400 dark:text-slate-500" />
+                <span className="text-gray-400 dark:text-gray-500 mr-1">$</span>
+                <span>ai-logs</span>
+              </div>
+            </motion.button>
+            
+            <motion.button
+              className="px-4 py-2 text-gray-400 dark:text-slate-400 font-medium rounded-md hover:bg-gray-700 dark:hover:bg-slate-700/40 font-mono"
+              whileHover={{ backgroundColor: "rgba(55, 65, 81, 1)" }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex items-center">
+                <Terminal className="h-4 w-4 mr-2 text-gray-400 dark:text-slate-500" />
+                <span className="text-gray-400 dark:text-gray-500 mr-1">$</span>
+                <span>debug-notes</span>
+              </div>
+            </motion.button>
+            
+            <motion.button
+              className="px-4 py-2 text-gray-400 dark:text-slate-400 font-medium rounded-md hover:bg-gray-700 dark:hover:bg-slate-700/40 font-mono"
+              whileHover={{ backgroundColor: "rgba(55, 65, 81, 1)" }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <div className="flex items-center">
+                <Map className="h-4 w-4 mr-2 text-gray-400 dark:text-slate-500" />
+                <span className="text-gray-400 dark:text-gray-500 mr-1">$</span>
+                <span>field-notes</span>
+              </div>
+            </motion.button>
+          </div>
+        </div>
+        
+        {/* Display content based on loading state */}
+        {isLoading ? (
+          <LoadingState />
+        ) : filteredBlogs.length === 0 ? (
+          <EmptyState onClear={() => setSelectedTags([])} />
+        ) : (
+          <BlogContent 
+            featuredPosts={featuredPosts} 
+            regularPosts={regularPosts} 
+          />
+        )}
+      </div>
+      
+      {/* Enhanced floating action button */}
+      <motion.button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className={`fixed bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 text-white shadow-lg flex items-center justify-center transform transition-all duration-300 ${
+          scrolled ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-90'
+        }`}
+        whileHover={{ 
+          scale: 1.1,
+          boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.5)"
+        }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <div className="relative">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-up">
+            <path d="m18 15-6-6-6 6"/>
+          </svg>
+          
+          <motion.div 
+            className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          />
+        </div>
+      </motion.button>
     </div>
   );
 }
 
-export default BlogPageContent; 
+// Loading skeleton component
+function LoadingState() {
+  return (
+    <div className="space-y-8">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="bg-white dark:bg-slate-800 rounded-lg p-6 animate-pulse">
+          <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-1/4 mb-4"></div>
+          <div className="h-8 bg-gray-200 dark:bg-slate-700 rounded w-3/4 mb-4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-full mb-2"></div>
+          <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-2/3"></div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Empty state when no posts match filters
+function EmptyState({ onClear }) {
+  return (
+    <div className="bg-white dark:bg-slate-800/90 border border-gray-700 dark:border-slate-700 rounded-lg p-10 text-center animate-fade-in">
+      <Search className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+      <h3 className="text-xl font-bold text-gray-100 dark:text-white mb-2">No posts found</h3>
+      <p className="text-gray-300 dark:text-gray-400 mb-6 max-w-md mx-auto">
+        We couldn't find any posts matching your criteria. Try adjusting your filters.
+      </p>
+      <Button 
+        onClick={onClear}
+        className="bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        Clear all filters
+      </Button>
+    </div>
+  );
+}
+
+// Blog content with featured and regular posts
+function BlogContent({ featuredPosts, regularPosts }) {
+  return (
+    <>
+      {/* Results count */}
+      <div className="mb-8 flex items-center">
+        <div className="bg-gray-800 dark:bg-blue-900/20 text-gray-300 dark:text-blue-300 px-3 py-1.5 rounded-md text-sm font-medium flex items-center border border-gray-700 dark:border-blue-800/30 font-mono shadow-sm">
+          <span className="text-green-400 dark:text-green-400 mr-1.5 font-bold">$</span>
+          <span className="mr-1.5">find</span>
+          <BookMarked className="h-4 w-4 mr-2 text-blue-400 dark:text-blue-400" />
+          <span className="text-blue-400 dark:text-blue-400">{featuredPosts.length + regularPosts.length}</span>
+          <span className="ml-1 text-gray-300">{featuredPosts.length + regularPosts.length === 1 ? 'article' : 'articles'}</span>
+        </div>
+      </div>
+      
+      {/* Featured posts */}
+      {featuredPosts.length > 0 && (
+        <div className="mb-16 animate-fade-in">
+          <div className="flex items-center mb-6">
+            <TrendingUp className="h-5 w-5 text-blue-500 dark:text-blue-400 mr-2" />
+            <h2 className="text-2xl font-bold text-gray-100 dark:text-slate-100">
+              Featured Posts
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-1 gap-8">
+            {featuredPosts.map((blog, index) => (
+              <motion.div 
+                key={blog.route || blog.slug}
+                className="relative overflow-hidden card border-l-4 border-l-blue-500 dark:border-l-blue-600 border-t border-r border-b border-gray-200 dark:border-slate-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 animate-fade-in hover:translate-y-[-2px]"
+                style={{ animationDelay: `${index * 150}ms` }}
+                whileHover={{ 
+                  boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" 
+                }}
+              >
+                {/* Terminal-inspired header */}
+                <div className="bg-gray-800 dark:bg-slate-800/80 border-b border-gray-700 dark:border-slate-700 py-2 px-4 flex items-center justify-between shadow-sm">
+                  <div className="flex items-center space-x-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500 ring-1 ring-red-700 dark:ring-red-700 shadow-sm"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500 ring-1 ring-yellow-700 dark:ring-yellow-700 shadow-sm"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500 ring-1 ring-green-700 dark:ring-green-700 shadow-sm"></div>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-xs font-mono text-gray-300 dark:text-gray-400 mr-2 bg-gray-700/80 dark:bg-slate-700/70 px-2 py-0.5 rounded shadow-inner">~/blog/featured</span>
+                    <motion.div 
+                      className="px-2 py-0.5 bg-blue-500/90 text-white text-xs font-medium rounded flex items-center shadow-sm"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      <span>Featured</span>
+                    </motion.div>
+                  </div>
+                </div>
+                
+                {/* Content with glassmorphism */}
+                <div className="p-6 bg-gray-950/95 dark:bg-slate-800/95 backdrop-blur-sm transition-colors duration-300 relative z-10">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center text-xs text-gray-300 dark:text-slate-400 mb-3 space-x-4">
+                        <span className="flex items-center">
+                          <Calendar className="h-3.5 w-3.5 mr-1" />
+                          {formatDate(blog.date)}
+                        </span>
+                        <span className="flex items-center">
+                          <Clock className="h-3.5 w-3.5 mr-1" />
+                          {blog.readingTime}
+                        </span>
+                      </div>
+                      
+                      <h2 className="text-xl sm:text-2xl font-bold text-gray-100 dark:text-slate-100 mb-3 group-hover:text-blue-400 dark:group-hover:text-blue-400 transition-colors">
+                        {blog.title}
+                      </h2>
+                    </div>
+                  </div>
+                  
+                  <div className="pl-3 border-l-2 border-blue-800 dark:border-blue-800 mb-4">
+                    <p className="text-gray-300 dark:text-slate-400">
+                      {blog.description}
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {blog.tags && blog.tags.slice(0, 3).map((tag) => (
+                      <span 
+                        key={tag}
+                        className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md bg-blue-900/40 dark:bg-blue-900/20 text-blue-300 dark:text-blue-300 transition-colors border border-blue-800/60 dark:border-blue-800/30"
+                      >
+                        <Hash className="h-3 w-3 mr-1" />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center text-sm font-mono text-gray-300 dark:text-gray-400 bg-gray-800 dark:bg-slate-700/30 px-2 py-1 rounded-md border border-gray-700 dark:border-slate-700">
+                      <span className="text-green-400 dark:text-green-400 font-bold">$</span>
+                      <span className="ml-1">/read-article</span>
+                    </div>
+                    
+                    <Link 
+                      href={blog.route || `/blog/${blog.slug}`}
+                      className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors group-hover:underline"
+                    >
+                      <span>Read article</span>
+                      <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+                    </Link>
+                  </div>
+                  
+                  {/* Terminal status line */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gray-800 dark:bg-slate-700/30 border-t border-gray-700 dark:border-slate-700 py-1 px-3 flex items-center justify-between text-[10px] font-mono text-gray-300 dark:text-gray-400">
+                    <div className="flex items-center">
+                      <div className="w-2 h-2 rounded-full bg-green-500 mr-1.5 shadow-sm"></div>
+                      <span>Ready</span>
+                    </div>
+                    <span>{Math.floor(Math.random() * 1000) + 100} lines</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {/* Regular posts - also enhance with card styling */}
+      {regularPosts.length > 0 && (
+        <div className="animate-fade-in" style={{ animationDelay: `${featuredPosts.length > 0 ? 200 : 0}ms` }}>
+          <div className="flex items-center mb-6">
+            <BookOpen className="h-5 w-5 text-blue-500 dark:text-blue-400 mr-2" />
+            <h2 className="text-2xl font-bold text-gray-100 dark:text-slate-100">
+              {featuredPosts.length > 0 ? 'All Articles' : 'Articles'}
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-2 gap-6">
+            {regularPosts.map((blog, index) => (
+            <Link
+                key={blog.route || blog.slug}
+                href={blog.route || `/blog/${blog.slug}`}
+                className="group relative bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-gray-200 dark:border-slate-700 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 animate-fade-in block hover:translate-y-[-2px] hover:border-blue-300 dark:hover:border-blue-600/50"
+                style={{ animationDelay: `${(index * 100) + 200}ms` }}
+              >
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-violet-500 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-100/10 to-violet-100/10 dark:from-blue-900/5 dark:to-violet-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                {/* Mini terminal header */}
+                <div className="flex items-center justify-between bg-gray-800 dark:bg-slate-700/30 border-b border-gray-700 dark:border-slate-700 px-3 py-1">
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 rounded-full bg-red-400 ring-1 ring-red-700 dark:ring-red-700 shadow-sm"></div>
+                    <div className="w-2 h-2 rounded-full bg-yellow-400 ring-1 ring-yellow-700 dark:ring-yellow-700 shadow-sm"></div>
+                    <div className="w-2 h-2 rounded-full bg-green-400 ring-1 ring-green-700 dark:ring-green-700 shadow-sm"></div>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-[10px] font-mono text-gray-300 dark:text-gray-400 bg-gray-700 dark:bg-slate-600/50 px-1.5 py-0.5 rounded shadow-inner">~/blog</span>
+                  </div>
+                </div>
+                
+                <div className="p-5 relative z-10 bg-gray-950/95 dark:bg-slate-800/95">
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {blog.tags && blog.tags.slice(0, 3).map((tag) => (
+                      <span 
+                        key={tag}
+                        className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md bg-blue-900/40 dark:bg-blue-900/20 text-blue-300 dark:text-blue-300 transition-colors border border-blue-800/60 dark:border-blue-800/30"
+                      >
+                        <Hash className="h-3 w-3 mr-1" />
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  <h2 className="text-lg font-bold text-gray-100 dark:text-slate-100 mb-2 group-hover:text-blue-400 dark:group-hover:text-blue-400 transition-colors">
+                    {blog.title}
+                  </h2>
+                  
+                  <p className="text-gray-300 dark:text-slate-400 mb-4 text-sm line-clamp-2">
+                    {blog.description}
+                  </p>
+                  
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-700 dark:border-slate-700/50">
+                    <div className="flex items-center text-xs text-gray-300 dark:text-slate-500">
+                      <div className="flex items-center mr-4">
+                        <Calendar className="h-3.5 w-3.5 mr-1" />
+                        <span>{formatDate(blog.date)}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="h-3.5 w-3.5 mr-1" />
+                        <span>{blog.readingTime}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <span className="text-[10px] font-mono text-gray-300 dark:text-gray-400 mr-2 hidden group-hover:inline-flex">
+                        <span className="text-green-400 dark:text-green-400 font-bold mr-1">$</span>cat
+                      </span>
+                      <span className="text-blue-400 dark:text-blue-400 text-sm font-medium flex items-center">
+                        Read
+                        <ArrowRight className="h-3.5 w-3.5 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+            </Link>
+          ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// Export with proper Suspense wrapper
+export default function BlogPage() {
+  return (
+    <Suspense fallback={<LoadingState />}>
+      <BlogPageContent />
+    </Suspense>
+  );
+} 
