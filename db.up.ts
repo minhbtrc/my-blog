@@ -61,20 +61,36 @@ function dreelize(root: string): ExtendedDree | null {
       const [image = ''] = images.map((image) => {
         try {
           const { url } = Object.assign({ url: '' }, image)
+          if (!url) return '';
+          
+          // Check if it's a valid URL
           if (isURL(url)) return url
-          const { dir } = parse(node.path)
-          const { name, ext } = parse(url)
-          const img = readFileSync(resolve(dir, url))
-          const hash = util
-            .createHash('xxhash64')
-            .update(img)
-            .digest('hex')
-            .toString()
-            .substring(0, 8)
-          const out = `/_next/static/media/${name}.${hash}${ext}`
-          return out
-        } catch {
-          return ''
+          
+          // Handle relative paths with extra safety
+          try {
+            const { dir } = parse(node.path)
+            const { name, ext } = parse(url)
+            if (!name || !ext) return '';
+            
+            const resolvedPath = resolve(dir, url);
+            if (!resolvedPath) return '';
+            
+            const img = readFileSync(resolvedPath)
+            const hash = util
+              .createHash('xxhash64')
+              .update(img)
+              .digest('hex')
+              .toString()
+              .substring(0, 8)
+            const out = `/_next/static/media/${name}.${hash}${ext}`
+            return out;
+          } catch (err) {
+            console.error('Error processing image path:', err);
+            return '';
+          }
+        } catch (err) {
+          console.error('Error in image mapping:', err);
+          return '';
         }
       })
       

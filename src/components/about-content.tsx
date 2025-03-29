@@ -65,7 +65,7 @@ export default function AboutContent() {
       variants={containerVariants}
     >
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
-      {/* Header */}
+        {/* Header */}
         <motion.div 
           className="flex flex-col md:flex-row gap-8 items-center md:items-start"
           variants={itemVariants}
@@ -81,8 +81,8 @@ export default function AboutContent() {
             width={160}
             height={160}
             className="object-cover w-full h-full"
-            unoptimized
-            priority
+            unoptimized={true}
+            priority={true}
           />
           {/* Code-like overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-800/20 dark:to-[#0e1628]/70 pointer-events-none"></div>
@@ -273,8 +273,8 @@ export default function AboutContent() {
                   </div>
                   <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-cyan-400 border border-blue-200 dark:border-blue-900/30 font-mono">
                     09/2024 - Present <span className="ml-1.5 w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-              </div>
-            </div>
+                  </div>
+                </div>
                 <ul className="list-disc list-outside ml-5 text-slate-700 dark:text-slate-300 font-light space-y-1.5">
                   <li>Working with AI solutions and technologies</li>
                 </ul>
@@ -307,21 +307,21 @@ export default function AboutContent() {
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
-            <div>
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 font-mono">AI.Engineer()</h3>
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 font-mono">AI.Engineer()</h3>
                     <p className="text-blue-700 dark:text-cyan-400 text-sm font-medium">SPARTAN</p>
-            </div>
+                  </div>
                   <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-cyan-400 border border-blue-200 dark:border-blue-900/30 font-mono">
                     10/2023 - 11/2024
-              </div>
-            </div>
+                  </div>
+                </div>
                 <ul className="list-disc list-outside ml-5 text-slate-700 dark:text-slate-300 font-light space-y-1.5">
                   <li>Led development of <span className="text-blue-700 dark:text-cyan-400 font-medium">PDF Parser</span> module, implementing advanced document parsing techniques</li>
                   <li>Leveraged <span className="text-blue-700 dark:text-cyan-400 font-medium">Large Language Models (LLMs)</span> to extract and format data from PDF files</li>
-                <li>Created a comprehensive pipeline for data mining services with seamless integration</li>
+                  <li>Created a comprehensive pipeline for data mining services with seamless integration</li>
                   <li>Developed an application with <span className="text-blue-700 dark:text-cyan-400 font-medium">Langflow</span> for drag-and-drop PDF parsing flow creation</li>
-                <li>Implemented and improved APIs for robust and scalable backend services</li>
-              </ul>
+                  <li>Implemented and improved APIs for robust and scalable backend services</li>
+                </ul>
                 
                 {/* Technologies used */}
                 <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700/30">
@@ -337,8 +337,8 @@ export default function AboutContent() {
                         {tech}
                       </motion.span>
                     ))}
-            </div>
-          </div>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
             
@@ -374,17 +374,17 @@ export default function AboutContent() {
                   </div>
                   <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-cyan-400 border border-blue-200 dark:border-blue-900/30 font-mono">
                     07/2021 - 10/2023
-              </div>
-            </div>
+                  </div>
+                </div>
                 <ul className="list-disc list-outside ml-5 text-slate-700 dark:text-slate-300 font-light space-y-1.5">
-                <li>Designed and implemented chatbot scenarios based on pre-defined scripts</li>
+                  <li>Designed and implemented chatbot scenarios based on pre-defined scripts</li>
                   <li>Researched and implemented <span className="text-blue-700 dark:text-cyan-400 font-medium">state-of-the-art</span> techniques for specific AI tasks</li>
                   <li>Developed question generation models using <span className="text-blue-700 dark:text-cyan-400 font-medium">BARTPho</span> and <span className="text-blue-700 dark:text-cyan-400 font-medium">Marian</span> architectures</li>
-                <li>Built sentiment analysis models to classify user messages</li>
+                  <li>Built sentiment analysis models to classify user messages</li>
                   <li>Fine-tuned LLM pretrained models using <span className="text-blue-700 dark:text-cyan-400 font-medium">SFT Trainer</span> and <span className="text-blue-700 dark:text-cyan-400 font-medium">LoRA</span></li>
                   <li>Optimized models with <span className="text-blue-700 dark:text-cyan-400 font-medium">ONNX</span> and <span className="text-blue-700 dark:text-cyan-400 font-medium">TorchScript</span> for improved inference time</li>
                   <li>Applied prompt engineering techniques and integrated <span className="text-blue-700 dark:text-cyan-400 font-medium">Langchain</span> for dynamic interactions</li>
-              </ul>
+                </ul>
                 
                 {/* Technologies used */}
                 <div className="mt-4 pt-3 border-t border-slate-200 dark:border-slate-700/30">
@@ -400,8 +400,8 @@ export default function AboutContent() {
                         {tech}
                       </motion.span>
                     ))}
-            </div>
-          </div>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
           </motion.div>
@@ -459,14 +459,14 @@ export default function AboutContent() {
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 font-mono">Bachelor.ComputerScience()</h3>
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 font-mono">Bachelor.ComputerScience()</h3>
                     <p className="text-blue-700 dark:text-cyan-400 text-sm font-medium">Ho Chi Minh University of Technology</p>
                   </div>
                   <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-cyan-400 border border-blue-200 dark:border-blue-900/30 font-mono">
                     08/2018 - 04/2023
-          </div>
-        </div>
+                  </div>
+                </div>
                 
                 {/* Topics studied */}
                 <div className="mt-3">
@@ -483,8 +483,8 @@ export default function AboutContent() {
                         {subject}
                       </motion.span>
                     ))}
-            </div>
-          </div>
+                  </div>
+                </div>
               </motion.div>
             </motion.div>
             
@@ -514,14 +514,14 @@ export default function AboutContent() {
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
-          <div>
-            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 font-mono">Mathematics.GiftedProgram()</h3>
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 font-mono">Mathematics.GiftedProgram()</h3>
                     <p className="text-blue-700 dark:text-cyan-400 text-sm font-medium">Hung Vuong High School for the Gifted</p>
                   </div>
                   <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-cyan-400 border border-blue-200 dark:border-blue-900/30 font-mono">
                     08/2015 - 08/2018
-          </div>
-        </div>
+                  </div>
+                </div>
                 
                 {/* Topics studied */}
                 <div className="mt-3">
@@ -545,7 +545,7 @@ export default function AboutContent() {
           </motion.div>
         </motion.section>
 
-      {/* Projects */}
+        {/* Projects */}
         <motion.section 
           className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md"
           variants={itemVariants}
@@ -818,73 +818,101 @@ export default function AboutContent() {
                 ))}
               </motion.div>
             </motion.div>
-            
-            <motion.div 
-              className="bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-blue-900/30 rounded-lg p-5 shadow-sm hover:shadow-md transition-all group"
-              variants={itemVariants}
-            >
-              <motion.h3 
-                className="text-lg font-semibold mb-4 text-slate-800 dark:text-slate-200 font-mono flex items-center gap-2 group-hover:text-blue-700 dark:group-hover:text-cyan-400 transition-colors"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: mounted ? 1.7 : 0 }}
-              >
-              <Award className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
-              certifications()
-              </motion.h3>
-              
-              <motion.ul 
-                className="space-y-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: mounted ? 1.8 : 0 }}
-              >
-                {[
-                  { 
-                    name: 'AI Agent Fundamentals',
-                    url: 'https://cdn-lfs-us-1.hf.co/repos/f2/34/f2344151f60f6027c436821dc61cf3f27a46435de57df8df50ad02b5acca7c07/ea6035c26ce22d5056a869f883823027473d3f7c823763d7e33666a36b2d2b9a?response-content-disposition=inline%3B+filename*%3DUTF-8%27%272025-03-02.png%3B+filename%3D%222025-03-02.png%22%3B&response-content-type=image%2Fpng&Expires=1743219142&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc0MzIxOTE0Mn19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2RuLWxmcy11cy0xLmhmLmNvL3JlcG9zL2YyLzM0L2YyMzQ0MTUxZjYwZjYwMjdjNDM2ODIxZGM2MWNmM2YyN2E0NjQzNWRlNTdkZjhkZjUwYWQwMmI1YWNjYTdjMDcvZWE2MDM1YzI2Y2UyMmQ1MDU2YTg2OWY4ODM4MjMwMjc0NzNkM2Y3YzgyMzc2M2Q3ZTMzNjY2YTM2YjJkMmI5YT9yZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPSomcmVzcG9uc2UtY29udGVudC10eXBlPSoifV19&Signature=DE1Di2xaVrjZsYf%7EJsym-WF86n0fHXK68JOn4de%7EdXF4zAfqvIpvMdfO7dd8%7EkERAD2V6I%7EyLPWCat%7E57bGncUjnt9FHrWI0AT0dDwmkKF8aUqUqBFt4aZYNIFR9pD7n4blD-ijiq%7ECJfTAlUMB%7EXqsrz9Imu4VNfIdhehMoS6EkNzNGRNoMShy5brxocegzh-dz9YTFRgircjTDCfWG0iJqZRJig%7EFBYR2%7EalI%7E1um-j1HL02hxP39b483bHiMVq8fnTw9-aC4bbDoSFjOvA5xsJITk0ZUbpe31KrilV%7ESxhhLU5gZa5z9Ab%7Eg-9SVUpooD3tzqccxsWhkmXeZLAQ__&Key-Pair-Id=K24J24Z295AEI9'
-                  },
-                  { 
-                    name: 'Develop Your AI Skills with Google Gemini and Google Cloud Platform',
-                    url: 'https://www.linkedin.com/learning/certificates/786f207a8154d5e7d9e82497fa26826c46243ad0009bbb044c795cb0fad9aabf'
-                  },
-                  { 
-                    name: 'Generative AI with Large Language Models',
-                    url: 'https://www.coursera.org/account/accomplishments/certificate/M8QJYLYC9FCD'
-                  },
-                  {
-                    name: 'Google Gemini for Developers',
-                    url: 'https://www.linkedin.com/learning/certificates/184dd13911e12c507705d3b1a40d2ac7b843bf700454512fbf7a2034243accf9'
-                  }
-                ].map((cert) => (
-                  <motion.li 
-                    key={cert.name} 
-                    className="flex items-center gap-2 font-mono text-sm text-slate-800 dark:text-slate-300"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: mounted ? 1.9 + (cert.name === 'TensorFlow Developer' ? 0.1 : cert.name === 'AWS Certified Cloud Practitioner' ? 0.2 : 0.3) : 0 }}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-blue-600 dark:bg-cyan-400"></div>
-                    <motion.a 
-                      href={cert.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: mounted ? 2.0 + (cert.name === 'TensorFlow Developer' ? 0.1 : cert.name === 'AWS Certified Cloud Practitioner' ? 0.2 : 0.3) : 0 }}
-                    >
-                      {cert.name}
-                    </motion.a>
-                    <div className="flex-grow border-b border-dashed border-slate-300 dark:border-slate-700 ml-2"></div>
-                    <div className="px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 rounded text-xs font-semibold">Verified</div>
-                  </motion.li>
-                ))}
-              </motion.ul>
-            </motion.div>
           </motion.div>
         </motion.section>
-            </div>
+
+        {/* Certifications */}
+        <section className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md">
+          <h2 className="text-2xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-blue-800 dark:text-cyan-400 font-mono flex items-center gap-2">
+            <Award className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
+            certifications()
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { 
+                name: 'AI Agents Fundamentals',
+                issuer: 'Hugging Face',
+                date: 'Mar 2025',
+                url: 'https://huggingface.co/datasets/agents-course/certificates/resolve/main/certificates/minhbtc/2025-03-02.png'
+              },
+              { 
+                name: 'Develop Your AI Skills with Google Gemini and Google Cloud Platform',
+                issuer: 'LinkedIn',
+                date: 'Dec 2024',
+                url: 'https://www.linkedin.com/learning/certificates/786f207a8154d5e7d9e82497fa26826c46243ad0009bbb044c795cb0fad9aabf'
+              },
+              { 
+                name: 'Google Gemini for Developers',
+                issuer: 'LinkedIn',
+                date: 'Dec 2024',
+                url: 'https://www.linkedin.com/learning/certificates/184dd13911e12c507705d3b1a40d2ac7b843bf700454512fbf7a2034243accf9'
+              },
+              { 
+                name: 'Generative AI Fundamentals',
+                issuer: 'Google Cloud Skills Boost',
+                date: 'Sep 2023',
+                url: 'https://www.cloudskillsboost.google/public_profiles/62daf634-c499-4c31-8ed2-bf1c0d6a9b15/badges/5406285'
+              },
+              { 
+                name: 'Introduction to Large Language Models',
+                issuer: 'Google Cloud Skills Boost',
+                date: 'Sep 2023',
+                url: 'https://www.cloudskillsboost.google/public_profiles/62daf634-c499-4c31-8ed2-bf1c0d6a9b15/badges/5393841'
+              },
+              { 
+                name: 'Generative AI with Large Language Models',
+                issuer: 'Coursera',
+                date: 'Aug 2023',
+                url: 'https://www.coursera.org/account/accomplishments/certificate/M8QJYLYC9FCD'
+              },
+              { 
+                name: 'LangChain & Vector Databases in Production',
+                issuer: 'Activeloop',
+                date: 'Aug 2023',
+                url: 'https://learn.activeloop.ai/certificates/snnl0bjoa4'
+              },
+              { 
+                name: 'Deep Neural Networks with PyTorch',
+                issuer: 'IBM',
+                date: 'Mar 2022',
+                url: 'https://www.credly.com/badges/1a28ac75-fe07-46c8-af42-d6c655cde21a'
+              },
+              { 
+                name: 'Natural Language Processing Specialization',
+                issuer: 'Coursera',
+                date: 'Mar 2022',
+                url: 'https://www.coursera.org/account/accomplishments/specialization/certificate/8JVX3M2H36T2'
+              }
+            ].map((cert, index) => (
+              <div 
+                key={`cert-${index}`}
+                className="bg-white dark:bg-slate-800/40 rounded-lg p-4 border border-slate-200 dark:border-slate-700/50 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-700/50 transition-all"
+              >
+                <a 
+                  href={cert.url || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <h4 className="font-semibold text-slate-800 dark:text-slate-200 mb-1 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">
+                    {cert.name}
+                  </h4>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-blue-600 dark:text-blue-400 font-mono">{cert.issuer}</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-mono text-xs">{cert.date}</span>
+                  </div>
+                  <div className="mt-2 text-right">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400">
+                      View Certificate
+                    </span>
+                  </div>
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
       
       {/* Page loading indicator */}
       <motion.div

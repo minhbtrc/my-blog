@@ -14,7 +14,6 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Typewriter } from "react-simple-typewriter";
 
 // Enhanced blog data with more examples
 const FALLBACK_BLOGS = [

@@ -23,11 +23,21 @@ export const delay = (ms: number): Promise<void> => {
  * Check url
  * @returns MacOS or not
  */
-export function isURL(url: string): boolean {
+export function isURL(str: string): boolean {
+  if (!str) return false;
   try {
-    return !!new URL(url)
-  } catch {
-    return false
+    // Check if it starts with a protocol
+    if (str.startsWith('http://') || str.startsWith('https://')) {
+      new URL(str);
+      return true;
+    }
+    // Check if it's a relative URL
+    if (str.startsWith('/')) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    return false;
   }
 }
 

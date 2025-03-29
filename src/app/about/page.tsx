@@ -1,9 +1,10 @@
-import dynamic from 'next/dynamic'
+import React from 'react';
+import AboutContent from '@/components/about-content';
 
-const AboutContent = dynamic(() => import('@/components/about-content'), {
-  ssr: true
-})
-
-export default function AboutPage() {
-  return <AboutContent />
+export default function About() {
+  return (
+    <div className="container mx-auto px-4 py-6">
+      <AboutContent />
+    </div>
+  );
 } 
