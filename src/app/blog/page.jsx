@@ -192,9 +192,9 @@ function BlogPageContent() {
                 cursorStyle='_'
                 typeSpeed={50}
                 delaySpeed={1000}
-              />
-            </div>
-            
+        />
+      </div>
+      
             {/* Floating thought bubble */}
             <motion.div 
               className="mt-4 px-3 py-1.5 bg-gray-800 dark:bg-blue-900/30 text-blue-300 dark:text-blue-300 text-xs font-mono rounded-lg inline-flex items-center border border-gray-700 dark:border-blue-800"
@@ -273,7 +273,7 @@ function BlogPageContent() {
                   filter --tags
                 </h3>
                 {selectedTags.length > 0 && (
-                  <button 
+                <button
                     onClick={() => setSelectedTags([])}
                     className="text-xs text-blue-400 hover:text-blue-300 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-all flex items-center font-mono"
                   >
@@ -285,19 +285,19 @@ function BlogPageContent() {
               <div className="flex flex-wrap gap-2 mt-3">
                 {popularTags.map((tag) => (
                   <Badge 
-                    key={tag} 
+                  key={tag}
                     variant={selectedTags.includes(tag) ? "default" : "secondary"} 
                     className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
-                      selectedTags.includes(tag) 
+                    selectedTags.includes(tag)
                         ? 'bg-blue-900/60 dark:bg-blue-900/40 text-blue-300 dark:text-blue-300 border border-blue-800 dark:border-blue-800/60 shadow-sm' 
                         : 'bg-gray-700 dark:bg-slate-700 text-gray-300 dark:text-gray-300 hover:bg-gray-600 dark:hover:bg-slate-600 border border-gray-600 dark:border-slate-600'
-                    }`}
+                  }`}
                     onClick={() => handleTagClick(tag)}
-                  >
+                >
                     <Hash className="h-3 w-3 mr-1" />
-                    {tag}
+                  {tag}
                   </Badge>
-                ))}
+              ))}
               </div>
             </div>
           )}
@@ -428,6 +428,116 @@ function BlogPageContent() {
           />
         </div>
       </motion.button>
+      
+      {/* Terminal-style footer */}
+      <footer className="border-t border-gray-800 mt-16 py-6 bg-gray-900/80 backdrop-blur-sm">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <motion.div 
+              className="flex flex-col items-center md:items-start mb-4 md:mb-0"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="text-sm font-mono flex items-center text-gray-400">
+                <span className="text-green-400 font-bold mr-1.5">$</span>
+                <motion.span
+                  initial={{ width: 0, opacity: 0 }}
+                  whileInView={{ width: "auto", opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="overflow-hidden"
+                >
+                  whoami
+                </motion.span>
+                <motion.span 
+                  animate={{ opacity: [1, 0, 1] }}
+                  transition={{ duration: 1, repeat: Infinity, repeatDelay: 0.5 }}
+                  className="text-gray-300 ml-1"
+                >
+                  _
+                </motion.span>
+              </div>
+              <motion.div 
+                className="mt-2 font-mono text-xs flex items-center text-gray-300"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+              >
+                <span className="bg-gray-800 px-3 py-1 rounded border border-gray-700 shadow-sm">
+                  minh@ai-engineer ~
+                </span>
+              </motion.div>
+            </motion.div>
+            
+            <div className="flex space-x-3">
+              <motion.div
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link href="https://github.com/minhbtc-99" className="text-gray-400 hover:text-gray-300 transition-colors">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-github"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                  </div>
+                </Link>
+              </motion.div>
+              
+              <motion.div
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link href="https://twitter.com/minhbtc_" className="text-gray-400 hover:text-gray-300 transition-colors">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-twitter"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                  </div>
+                </Link>
+              </motion.div>
+              
+              <motion.div
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link href="/rss" className="text-gray-400 hover:text-gray-300 transition-colors">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-rss"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+                  </div>
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+          
+          <motion.div 
+            className="mt-6 pt-4 border-t border-gray-800 flex flex-col items-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 1 }}
+          >
+            <div className="text-[10px] font-mono text-gray-500 flex items-center">
+              <span className="text-gray-400">exit_code=</span>
+              <motion.span 
+                className="text-green-400"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 1.2 }}
+              >
+                0
+              </motion.span> 
+              <span className="mx-1">•</span> 
+              <span className="text-blue-400">{new Date().getFullYear()}</span>
+            </div>
+            <motion.div 
+              className="mt-2 text-xs font-mono text-gray-500"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+            >
+              <span className="bg-gray-800 px-2 py-0.5 rounded text-[10px]">v0.2.1-alpha</span>
+            </motion.div>
+          </motion.div>
+        </div>
+      </footer>
     </div>
   );
 }
@@ -653,7 +763,7 @@ function BlogContent({ featuredPosts, regularPosts }) {
                       </div>
                       <div className="flex items-center">
                         <Clock className="h-3.5 w-3.5 mr-1" />
-                        <span>{blog.readingTime}</span>
+                    <span>{blog.readingTime}</span>
                       </div>
                     </div>
                     

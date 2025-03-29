@@ -215,9 +215,7 @@ export default function ContactPage() {
             <span>contact.connect()</span>
             <div className="typing-cursor"></div>
           </h1>
-          <p className="text-slate-700 dark:text-slate-400 max-w-xl mx-auto font-light">
-            Interested in discussing AI technologies, NLP solutions, or potential collaboration? I&apos;m always open to connecting with fellow AI enthusiasts and industry professionals.
-          </p>
+          
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

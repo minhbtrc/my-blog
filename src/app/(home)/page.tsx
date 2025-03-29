@@ -302,8 +302,8 @@ const TerminalHero = () => {
     
       // Delay starting the code typing until header command is complete
       setTimeout(() => {
-        // Start typing the new snippet
-        typeCode(codeSnippets[nextIndex].code);
+    // Start typing the new snippet
+    typeCode(codeSnippets[nextIndex].code);
       }, 1200); // Wait for header command to finish
     }, 800); // Pause between snippets
   };
@@ -459,7 +459,7 @@ const TerminalHero = () => {
       
       // Delay to wait for header typing to finish
       setTimeout(() => {
-        typeCode(codeSnippets[index].code);
+    typeCode(codeSnippets[index].code);
       }, 1200);
     }, 800);
   };
@@ -508,13 +508,13 @@ const TerminalHero = () => {
     setClickCount(prev => {
       const newCount = prev + 1;
       if (newCount >= 10) {
-        setEasterEggActive(true);
+      setEasterEggActive(true);
         return 0;
       }
       return newCount;
     });
   };
-
+  
   // Generate matrix code background effect
   const renderMatrixCode = () => {
     const phrases = [
@@ -567,8 +567,8 @@ const TerminalHero = () => {
     if (!code) return null;
     
     const lines = code.split('\n');
-    
-    return (
+
+  return (
       <div className="syntax-highlighter">
         {lines.map((line: string, lineIndex: number) => {
           let segments: Array<{ type: string; text: string }> = [];
@@ -701,7 +701,7 @@ const TerminalHero = () => {
                   </Fragment>
                 );
               })}
-            </div>
+        </div>
           );
         })}
       </div>
@@ -725,8 +725,8 @@ const TerminalHero = () => {
             <div className="w-3 h-3 rounded-full bg-red-500" />
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
             <div className="w-3 h-3 rounded-full bg-green-500" />
-          </div>
-          
+        </div>
+
           {/* Terminal tabs */}
           <div className="flex items-center space-x-1">
             {terminalTabs.map((tab, index) => (
@@ -783,7 +783,7 @@ const TerminalHero = () => {
                 {isTypingHeader && (
                   <span className="inline-block cursor-blink ml-1">▌</span>
                 )}
-              </div>
+          </div>
               
               {/* Code content (only shown after command typed) - with smoother transition */}
                 <motion.div
@@ -841,7 +841,7 @@ const TerminalHero = () => {
             >
               <RefreshCw className="h-3 w-3" />
             </button>
-          </div>
+            </div>
           
           <div className="flex items-center space-x-2">
             <button
