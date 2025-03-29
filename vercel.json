@@ -43,11 +43,8 @@
       ]
     }
   ],
-  "routes": [
-    {
-      "src": "/app/(home)/page(.*)",
-      "status": 404
-    }
+  "rewrites": [
+    { "source": "/app/(home)/page(.*)", "destination": "/404" }
   ],
   "github": {
     "silent": true
