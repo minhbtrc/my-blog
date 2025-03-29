@@ -1,10 +1,7 @@
 {
   "version": 2,
   "buildCommand": "yarn vercel-build",
-  "framework": {
-    "name": "nextjs",
-    "useRuntime": true
-  },
+  "framework": "nextjs",
   "public": true,
   "cleanUrls": true,
   "images": {
