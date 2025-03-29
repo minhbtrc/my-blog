@@ -5,16 +5,26 @@ import { ThemeProvider } from 'next-themes'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3, Terminal, GithubIcon } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import clsx from 'clsx'
 import Footer from '@/components/footer'
 import './globals.css'
 import dynamic from 'next/dynamic'
-
-// Import and configure fonts
-import { Inter, Roboto_Mono, Fira_Code, Oswald } from 'next/font/google'
+import { cn } from '@/lib/utils'
+import { Fragment } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import type { Metadata } from 'next'
+import { Inter, JetBrains_Mono, Fira_Code, Source_Code_Pro } from 'next/font/google'
+import { siteConfig } from '@/config/site'
+import Header from '@/app/header'
+import { PreloadResources } from '@/components/preload-resources'
+import { Analytics } from '@vercel/analytics/react'
+import { CommandMenuProvider } from '@/components/command-menu'
+import { NextSSRPlugin } from '@uploadthing/react/next-ssr-plugin'
+import { extractRouterConfig } from 'uploadthing/server'
+import { ourFileRouter } from '@/app/api/uploadthing/core'
 
 // Import ReactPlayer dynamically to avoid SSR issues
 const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false })
@@ -26,10 +36,11 @@ const inter = Inter({
 })
 
 // Define tech-focused fonts
-const robotoMono = Roboto_Mono({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-roboto-mono',
+  variable: '--font-jetbrains-mono',
+  weight: ['400', '500', '600', '700'],
 })
 
 const firaCode = Fira_Code({
@@ -38,10 +49,10 @@ const firaCode = Fira_Code({
   variable: '--font-fira-code',
 })
 
-const oswald = Oswald({
+const sourceCodePro = Source_Code_Pro({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-oswald',
+  variable: '--font-source-code-pro',
 })
 
 export default function RootLayout({
@@ -55,18 +66,32 @@ export default function RootLayout({
   const [hasInteracted, setHasInteracted] = useState(false)
   const playerRef = useRef(null)
   const pathname = usePathname()
+  const { resolvedTheme } = useTheme()
 
   // Track scroll position for sticky header
-  const [scrolled, setScrolled] = useState(false)
+  const [scrolled, setScrolled] = useState<string>("up")
+  const prevScrollY = useRef(0)
 
   useEffect(() => {
     setMounted(true)
     
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
+    // Update the HTML class based on the theme
+    if (resolvedTheme) {
+      document.documentElement.classList.remove('light', 'dark')
+      document.documentElement.classList.add(resolvedTheme)
     }
     
-    window.addEventListener('scroll', handleScroll)
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > 80) {
+        setScrolled(prevScrollY.current < currentScrollY ? "down" : "up")
+      } else {
+        setScrolled("up")
+      }
+      prevScrollY.current = currentScrollY
+    }
+    
+    window.addEventListener("scroll", handleScroll, { passive: true })
     
     // Check if user has previously interacted with the music
     const hasUserInteracted = localStorage.getItem('music-interaction')
@@ -90,12 +115,76 @@ export default function RootLayout({
     window.addEventListener('keydown', handleFirstInteraction)
     
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener("scroll", handleScroll)
       window.removeEventListener('click', handleFirstInteraction)
       window.removeEventListener('touchstart', handleFirstInteraction)
       window.removeEventListener('keydown', handleFirstInteraction)
     }
-  }, [])
+  }, [resolvedTheme])
+
+  // Matrix code rain effect
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const createMatrixCodeRain = () => {
+      const canvas = document.createElement('canvas');
+      canvas.className = 'matrix-code';
+      document.body.appendChild(canvas);
+      
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+      const fontSize = 14;
+      const columns = Math.floor(canvas.width / fontSize);
+      
+      const drops: number[] = [];
+      for (let i = 0; i < columns; i++) {
+        drops[i] = Math.random() * -100;
+      }
+      
+      const draw = () => {
+        if (!ctx) return;
+        ctx.fillStyle = resolvedTheme === 'dark' ? 'rgba(15, 23, 42, 0.05)' : 'rgba(240, 249, 255, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = resolvedTheme === 'dark' ? '#22d3ee' : '#3b82f6';
+        ctx.font = `${fontSize}px monospace`;
+        
+        for (let i = 0; i < drops.length; i++) {
+          const text = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
+            drops[i] = 0;
+          }
+          
+          drops[i]++;
+        }
+      };
+      
+      const matrixInterval = setInterval(draw, 45);
+      
+      const handleResize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      
+      window.addEventListener('resize', handleResize);
+      
+      return () => {
+        clearInterval(matrixInterval);
+        window.removeEventListener('resize', handleResize);
+        if (canvas.parentNode) {
+          canvas.parentNode.removeChild(canvas);
+        }
+      };
+    };
+    
+    const cleanup = createMatrixCodeRain();
+    return cleanup;
+  }, [mounted, resolvedTheme]);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -118,29 +207,58 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.className} ${robotoMono.variable} ${firaCode.variable} ${oswald.variable}`}
-      data-theme="dark"
+      className={`${inter.className} ${jetbrainsMono.variable} ${firaCode.variable} ${sourceCodePro.variable}`}
     >
       <head>
         <title>Minh&apos;s Space | Personal Blog</title>
         <meta name="description" content="minhbtc blog - I write about technology, share my knowledge, talk about life perspectives, history, stories, trips,..." />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function getThemePreference() {
+                  if (typeof window !== 'undefined' && window.localStorage) {
+                    const storedPrefs = window.localStorage.getItem('theme')
+                    if (storedPrefs) {
+                      return storedPrefs
+                    }
+                    const userMedia = window.matchMedia('(prefers-color-scheme: dark)')
+                    if (userMedia.matches) {
+                      return 'dark'
+                    }
+                  }
+                  return 'dark' // default theme
+                }
+                
+                const theme = getThemePreference()
+                document.documentElement.classList.add(theme)
+              })()
+            `,
+          }}
+        />
       </head>
-      <body className={`${inter.className} flex flex-col min-h-screen bg-[#0B1120] text-slate-200`}>
-        {/* Code matrix background effect */}
-        <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03]">
-          <div className="absolute inset-0 bg-[url('/images/code-pattern.svg')] bg-repeat" />
-        </div>
+      <body className={`${inter.className} flex flex-col min-h-screen ${mounted && resolvedTheme === 'dark' ? 'code-bg-dark' : 'code-bg-light'} text-slate-800 dark:text-slate-200 antialiased theme-transition`}>
+        {/* Code-like background is now handled by the route group layouts */}
         
-        {/* Vertical code lines decoration */}
-        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-10">
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div 
-              key={i} 
-              className="absolute top-0 bottom-0 w-px bg-gradient-to-b from-blue-500/0 via-blue-500/30 to-blue-500/0"
-              style={{ left: `${i * 5}%` }}
-            />
-          ))}
-        </div>
+        {/* Light particles effect (only in dark mode) */}
+        {mounted && resolvedTheme === 'dark' && (
+          <div className="light-particles">
+            {[...Array(15)].map((_, i) => (
+              <div 
+                key={i}
+                className="light-particle"
+                style={{
+                  width: `${Math.random() * 200 + 50}px`,
+                  height: `${Math.random() * 200 + 50}px`,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDuration: `${Math.random() * 30 + 15}s`,
+                  animationDelay: `${Math.random() * 5}s`,
+                }}
+              />
+            ))}
+          </div>
+        )}
         
         {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
           <div className="hidden">
@@ -157,196 +275,173 @@ export default function RootLayout({
           </div>
         )}
         
-        <ThemeProvider attribute="class" defaultTheme="dark">
-          <NextProgressBar height="3px" color="rgba(56, 189, 248, 0.8)" />
+        <ThemeProvider 
+          attribute="class" 
+          defaultTheme="dark" 
+          enableSystem={false}
+          disableTransitionOnChange
+        >
           <MotionConfig reducedMotion="user">
-            {/* Sticky Navigation Bar */}
-            <header 
-              className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-                scrolled ? 'bg-[#0B1120]/90 backdrop-blur-md shadow-md shadow-blue-900/10' : 'bg-transparent'
-              }`}
-            >
-              {mounted && (
-                <div className="container mx-auto px-4 md:px-6">
-                  <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center space-x-2">
-                      <motion.div 
-                        className="font-mono text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                      >
-                        <span className="flex items-center gap-1">
-                          <Terminal className="w-5 h-5 text-cyan-400/70" />
-                          minh.btc<span className="animate-pulse text-cyan-400">_</span>
-                        </span>
-                      </motion.div>
-                    </Link>
-                    
-                    {/* Desktop Navigation */}
-                    <nav className="hidden md:flex items-center space-x-1">
-                      {navLinks.map((link) => (
-                        <Link 
-                          key={link.path} 
-                          href={link.path}
-                          className={`relative px-4 py-2 inline-flex items-center space-x-2 font-mono text-sm ${
-                            pathname === link.path 
-                              ? 'text-cyan-400' 
-                              : 'text-slate-300 hover:text-cyan-300'
-                          } transition-colors duration-200`}
-                        >
-                          <span className="inline-flex">{link.icon}</span>
-                          <span>
-                            {pathname === link.path ? `${link.label}()` : link.label}
-                          </span>
-                          {pathname === link.path && (
-                            <motion.span 
-                              className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-cyan-500/0 via-cyan-500/70 to-cyan-500/0 rounded-full"
-                              layoutId="navbar-indicator"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ duration: 0.3 }}
-                            />
-                          )}
-                        </Link>
-                      ))}
-                      
-                      {/* GitHub Link */}
-                      <a 
-                        href="https://github.com/minhbtrc"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="relative px-4 py-2 inline-flex items-center space-x-2 font-mono text-sm text-slate-300 hover:text-cyan-300 transition-colors duration-200"
-                      >
-                        <GithubIcon className="w-4 h-4" />
-                      </a>
-                      
-                      {/* Listen Button for music */}
-                      {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
-                        <button 
-                          className="ml-2 p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all relative group"
-                          aria-label={isPlaying ? "Pause music" : "Play music"}
-                          onClick={toggleMusic}
-                        >
-                          <Disc3 
-                            className={clsx(
-                              "w-4 h-4",
-                              isPlaying && "animate-[spin_6s_linear_infinite]"
-                            )}
-                          />
-                        </button>
-                      )}
-                      
-                      {/* Theme Toggle Button */}
-                      <ThemeToggle />
-                    </nav>
-                    
-                    {/* Mobile Navigation Trigger */}
-                    <div className="flex items-center md:hidden">
-                      {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
-                        <button 
-                          className="mr-2 p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all"
-                          aria-label={isPlaying ? "Pause music" : "Play music"}
-                          onClick={toggleMusic}
-                        >
-                          <Disc3 
-                            className={clsx(
-                              "w-4 h-4",
-                              isPlaying && "animate-[spin_6s_linear_infinite]"
-                            )}
-                          />
-                        </button>
-                      )}
-                      
-                      <button
-                        onClick={() => setMobileMenuOpen(true)}
-                        className="p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all"
-                        aria-label="Open main menu"
-                      >
-                        <Menu className="w-5 h-5" />
-                      </button>
+            {/* Progress bar for page transitions */}
+            <NextProgressBar
+              height="3px"
+              color="rgb(59, 130, 246)"
+              options={{ showSpinner: false }}
+              shallowRouting
+            />
+            
+            {/* Header */}
+            <header className={`sticky top-0 w-full z-30 transition-all duration-300 ${scrolled === "down" ? "-translate-y-full" : "translate-y-0"} ${mounted ? "bg-white/95 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-slate-800/50 dark:shadow-blue-900/5" : ""}`}>
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-16">
+                  {/* Logo */}
+                  <Link href="/" className="text-xl font-bold text-blue-700 dark:text-cyan-400 flex items-center hover:text-blue-800 dark:hover:text-cyan-300 transition-colors">
+                    <div className="mr-2 w-8 h-8 rounded bg-gradient-to-br from-blue-700 to-indigo-700 dark:from-cyan-500 dark:to-blue-700 flex items-center justify-center text-white shadow-md">
+                      <Code className="w-5 h-5" />
                     </div>
+                    <span className="font-mono tracking-tight">minh.btc</span>
+                  </Link>
+                  
+                  {/* Desktop Navigation */}
+                  <nav className="hidden md:flex items-center space-x-6">
+                    {navLinks.map(link => (
+                      <Link
+                        key={link.path}
+                        href={link.path}
+                        className={`text-sm transition-colors font-mono hover:text-blue-700 dark:hover:text-cyan-300 flex items-center ${
+                          pathname === link.path 
+                            ? 'text-blue-700 dark:text-cyan-400' 
+                            : 'text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        {link.icon}
+                        <span className="ml-1">{link.label}</span>
+                      </Link>
+                    ))}
                     
-                    {/* Mobile Menu */}
-                    <AnimatePresence>
-                      {mobileMenuOpen && (
-                        <motion.div
-                          className="fixed inset-0 z-50 lg:hidden bg-[#0B1120]/90 backdrop-blur-md"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2 }}
+                    {/* Theme toggle */}
+                    {/* <ThemeToggle /> */}
+                    
+                    {/* Music toggle */}
+                    {process.env.NEXT_PUBLIC_LISTEN_URL && mounted && (
+                      <button 
+                        onClick={toggleMusic}
+                        className={`p-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-700/40 dark:hover:border-blue-800/40 transition-all flex items-center shadow-sm`}
+                        aria-label="Toggle music"
+                      >
+                        <Disc3 className={`h-4 w-4 ${isPlaying ? 'animate-spin' : ''}`} 
+                          style={{ animationDuration: '3s' }} 
+                        />
+                      </button>
+                    )}
+                  </nav>
+                  
+                  {/* Mobile Navigation Button */}
+                  <div className="flex md:hidden gap-3">
+                    {/* Theme toggle */}
+                    {/* <ThemeToggle /> */}
+                    
+                    {/* Music toggle - mobile */}
+                    {process.env.NEXT_PUBLIC_LISTEN_URL && mounted && (
+                      <button 
+                        onClick={toggleMusic}
+                        className={`p-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-700/40 dark:hover:border-blue-800/40 transition-all flex items-center shadow-sm`}
+                        aria-label="Toggle music"
+                      >
+                        <Disc3 className={`h-4 w-4 ${isPlaying ? 'animate-spin' : ''}`} 
+                          style={{ animationDuration: '3s' }} 
+                        />
+                      </button>
+                    )}
+                    
+                    <button
+                      onClick={() => setMobileMenuOpen(true)}
+                      className="p-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-700/40 dark:hover:border-blue-800/40 transition-all flex items-center shadow-sm"
+                    >
+                      <Menu className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Mobile menu, show/hide based on menu state */}
+              {mounted && (
+                <div className="md:hidden">
+                  <Transition.Root show={mobileMenuOpen} as={Fragment}>
+                    <Dialog as="div" className="relative z-50" onClose={setMobileMenuOpen}>
+                      <Transition.Child
+                        as={Fragment}
+                        enter="transition-opacity ease-linear duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity ease-linear duration-300"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                      >
+                        <div className="fixed inset-0 z-50 lg:hidden bg-slate-900/90 backdrop-blur-md" />
+                      </Transition.Child>
+
+                      <div className="fixed inset-0 z-50 flex">
+                        <Transition.Child
+                          as={Fragment}
+                          enter="transition ease-in-out duration-300 transform"
+                          enterFrom="-translate-x-full"
+                          enterTo="translate-x-0"
+                          leave="transition ease-in-out duration-300 transform"
+                          leaveFrom="translate-x-0"
+                          leaveTo="-translate-x-full"
                         >
-                          <div className="fixed inset-0 overflow-hidden">
-                            <div className="absolute inset-0 overflow-hidden">
-                              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                                <motion.div
-                                  className="pointer-events-auto w-screen max-w-md"
-                                  initial={{ x: "100%" }}
-                                  animate={{ x: 0 }}
-                                  exit={{ x: "100%" }}
-                                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                                >
-                                  <div className="flex h-full flex-col overflow-y-auto bg-[#0e1628] shadow-xl border-l border-blue-900/30">
-                                    <div className="px-4 py-6 sm:px-6">
-                                      <div className="flex items-center justify-between">
-                                        <div className="font-mono text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                                          <Terminal className="w-5 h-5 text-cyan-400/70 inline-block mr-1" />
-                                          minh.btc<span className="animate-pulse text-cyan-400">_</span>
-                                        </div>
-                                        <button
-                                          type="button"
-                                          className="rounded-md p-2 bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all"
-                                          onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                          <span className="sr-only">Close panel</span>
-                                          <X className="h-5 w-5" aria-hidden="true" />
-                                        </button>
-                                      </div>
-                                    </div>
-                                    <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                                      <nav className="flex flex-col space-y-2">
-                                        {navLinks.map((link) => (
-                                          <Link
-                                            key={link.path}
-                                            href={link.path}
-                                            className={`py-3 px-4 rounded-md font-mono flex items-center space-x-3 ${
-                                              pathname === link.path
-                                                ? 'text-cyan-400 bg-slate-800/70 border border-blue-900/30'
-                                                : 'text-slate-300 hover:bg-slate-800/40 hover:text-cyan-300'
-                                            }`}
-                                            onClick={() => setMobileMenuOpen(false)}
-                                          >
-                                            <span>{link.icon}</span>
-                                            <span>
-                                              {pathname === link.path ? `${link.label}()` : link.label}
-                                            </span>
-                                          </Link>
-                                        ))}
-                                        
-                                        <div className="flex items-center pt-4 mt-4 border-t border-blue-900/20">
-                                          <ThemeToggle isMobile />
-                                        </div>
-                                      </nav>
-                                    </div>
-                                  </div>
-                                </motion.div>
+                          <Dialog.Panel className="relative flex flex-col max-w-xs w-full bg-white dark:bg-slate-900 h-full overflow-y-auto pb-12 shadow-xl">
+                            <div className="px-4 pt-5 pb-2 flex">
+                              <button
+                                type="button"
+                                className="-m-2 p-2 rounded-md inline-flex items-center justify-center text-gray-400 dark:text-gray-500"
+                                onClick={() => setMobileMenuOpen(false)}
+                              >
+                                <span className="sr-only">Close menu</span>
+                                <X className="h-6 w-6" aria-hidden="true" />
+                              </button>
+                            </div>
+
+                            <div className="mt-8 px-4">
+                              <div className="space-y-6">
+                                {navLinks.map(link => (
+                                  <Link
+                                    key={link.path}
+                                    href={link.path}
+                                    className={`block text-lg transition-colors font-mono hover:text-blue-700 dark:hover:text-cyan-300 flex items-center ${
+                                      pathname === link.path 
+                                        ? 'text-blue-700 dark:text-cyan-400' 
+                                        : 'text-slate-700 dark:text-slate-300'
+                                    }`}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                  >
+                                    {link.icon}
+                                    <span className="ml-2">{link.label}</span>
+                                  </Link>
+                                ))}
+                                
+                                <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-800">
+                                  <ThemeToggle isMobile={true} />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                          </Dialog.Panel>
+                        </Transition.Child>
+                      </div>
+                    </Dialog>
+                  </Transition.Root>
                 </div>
               )}
             </header>
             
             {/* Main Content */}
-            <main className="flex-grow pt-24 z-10 relative">{children}</main>
+            <main className="flex-grow z-10 relative">{children}</main>
             
-            {/* Footer */}
-            <Footer />
+            {/* Footer - increase z-index to ensure it's above other elements */}
+            <div className="relative z-30">
+              <Footer />
+            </div>
           </MotionConfig>
         </ThemeProvider>
       </body>
@@ -358,10 +453,27 @@ function ThemeToggle({ isMobile = false }: { isMobile?: boolean }) {
   const { resolvedTheme, setTheme } = useTheme()
   const mounted = typeof window !== 'undefined'
   
+  // Ensure we're handling correctly on mount
+  useEffect(() => {
+    if (mounted) {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const currentTheme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light')
+      document.documentElement.classList.toggle('dark', currentTheme === 'dark')
+    }
+  }, [mounted])
+  
+  // Handle toggle with proper HTML class updates
+  const toggleTheme = () => {
+    const newTheme = resolvedTheme === 'dark' ? 'dark' : 'dark'
+    setTheme(newTheme)
+    document.documentElement.classList.remove('dark', 'light')
+    document.documentElement.classList.add(newTheme)
+  }
+  
   if (!mounted) {
     return (
       <button 
-        className={`p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all ${
+        className={`p-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 transition-all theme-transition ${
           isMobile ? 'w-full justify-center text-sm' : ''
         }`}
         aria-label="Toggle dark mode"
@@ -373,8 +485,12 @@ function ThemeToggle({ isMobile = false }: { isMobile?: boolean }) {
   
   return (
     <button
-      onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-      className={`p-2 rounded-md bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40 transition-all flex items-center ${
+      onClick={toggleTheme}
+      className={`p-2 rounded-md theme-transition ${
+        resolvedTheme === 'dark' 
+          ? 'bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40' 
+          : 'bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-700/40 dark:hover:border-blue-800/40'
+      } transition-all flex items-center shadow-sm ${
         isMobile ? 'w-full justify-center text-sm gap-2' : ''
       }`}
       aria-label="Toggle dark mode"

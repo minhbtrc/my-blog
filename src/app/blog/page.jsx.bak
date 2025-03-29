@@ -1,0 +1,22 @@
+"use client";
+
+import React, { Suspense } from "react";
+
+// Minimal blog page content
+function BlogPageContent() {
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Blog</h1>
+      <p>This is a simple blog page.</p>
+    </div>
+  );
+}
+
+// Export with proper Suspense wrapper
+export default function BlogPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BlogPageContent />
+    </Suspense>
+  );
+} 

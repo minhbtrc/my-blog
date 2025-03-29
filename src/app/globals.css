@@ -5,24 +5,30 @@
 /* Base Styling */
 @layer base {
   :root {
-    /* Light mode colors - more muted & professional palette */
-    --color-primary: 75 85 99; /* gray-600 */
-    --color-primary-dark: 55 65 81; /* gray-700 */
-    --color-secondary: 107 114 128; /* gray-500 */
-    --color-secondary-dark: 75 85 99; /* gray-600 */
-    --color-accent: 107 114 128; /* gray-500 */
-    --color-accent-dark: 75 85 99; /* gray-600 */
+    /* Light mode colors - sophisticated developer palette with better contrast */
+    --color-primary: 30 64 175; /* blue-800 - deeper blue for better contrast */
+    --color-primary-dark: 17 24 39; /* gray-900 - near black for high contrast */
+    --color-secondary: 3 105 161; /* sky-700 - deeper sky blue */
+    --color-secondary-dark: 7 89 133; /* sky-800 - darker for contrast */
+    --color-accent: 79 70 229; /* indigo-600 - vibrant but not overpowering */
+    --color-accent-dark: 67 56 202; /* indigo-700 - deeper accent */
     
-    /* Background & surface colors with consistent contrast */
-    --bg-light: 255 255 255; /* pure white */
-    --bg-surface: 248 250 252; /* slate-50 - very light gray with slight blue tint */
-    --text-primary: 15 23 42; /* slate-900 */
-    --text-secondary: 30 41 59; /* slate-800 */
-    --text-muted: 71 85 105; /* slate-600 */
+    /* Background & surface colors with sophisticated contrast */
+    --bg-color-light: #f0f9ff; /* Light blue tint */
+    --bg-color-dark: #0f172a; /* Dark slate blue */
+    --text-primary: 15 23 42; /* slate-900 - near black text */
+    --text-secondary: 30 41 59; /* slate-800 - deep slate for secondary text */
+    --text-muted: 51 65 85; /* slate-700 - visible muted text */
     
-    /* Refined border colors */
-    --border-light: 226 232 240; /* slate-200 */
-    --border-strong: 203 213 225; /* slate-300 */
+    /* Refined border colors with better definition */
+    --border-light: 209 213 219; /* gray-300 - neutral border */
+    --border-strong: 107 114 128; /* gray-500 - stronger border for emphasis */
+
+    --font-mono: var(--font-jetbrains-mono), var(--font-fira-code), var(--font-source-code-pro), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* Background pattern*/
+    --bg-pattern-light: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232563eb' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3Cg fill='%233b82f6' fill-opacity='0.05'%3E%3Cpath d='M22 30.5h2V42h-2zM18 34.5h10v2H18z'/%3E%3Cpath d='M30 20.5L40 15v3l-10 5.5v-3zM28 18L18 12.5v3L28 21v-3z' fill-rule='nonzero'/%3E%3Cpath d='M48 42c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm0-2c3.3 0 6-2.7 6-6s-2.7-6-6-6-6 2.7-6 6 2.7 6 6 6z' fill-rule='nonzero'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    --bg-pattern-dark: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235eead4' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3Cg fill='%2322d3ee' fill-opacity='0.04'%3E%3Cpath d='M22 30.5h2V42h-2zM18 34.5h10v2H18z'/%3E%3Cpath d='M30 20.5L40 15v3l-10 5.5v-3zM28 18L18 12.5v3L28 21v-3z' fill-rule='nonzero'/%3E%3Cpath d='M48 42c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm0-2c3.3 0 6-2.7 6-6s-2.7-6-6-6-6 2.7-6 6 2.7 6 6 6z' fill-rule='nonzero'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
   
   .dark {
@@ -35,8 +41,8 @@
     --color-accent-dark: 71 85 105; /* slate-600 */
     
     /* Background & surface colors */
-    --bg-light: 15 23 42; /* slate-900 */
-    --bg-surface: 30 41 59; /* slate-800 */
+    --bg-color-light: #94a3b8; /* slate-400 */
+    --bg-color-dark: #0f172a; /* slate-900 */
     --text-primary: 248 250 252; /* slate-50 */
     --text-secondary: 226 232 240; /* slate-200 */
     --text-muted: 148 163 184; /* slate-400 */
@@ -52,7 +58,11 @@
     position: relative;
     overflow-x: hidden;
     color: rgb(var(--text-primary));
-    background-color: rgb(var(--bg-light));
+  }
+  
+  /* Ensure consistent background across all pages */
+  body, main, section, div {
+    background-color: transparent;
   }
   
   html {
@@ -81,6 +91,203 @@
   
   ::-webkit-scrollbar-thumb {
     @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-slate-500/50 dark:hover:bg-slate-500/30 transition-colors;
+  }
+
+  /* NEW BACKGROUND STYLES */
+  /* Light mode code background */
+  .code-bg-light {
+    background-color: #f0f9ff;
+    background-image: 
+      linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+      radial-gradient(circle at 25px 25px, rgba(37, 99, 235, 0.05) 2%, transparent 0%),
+      radial-gradient(circle at 75px 75px, rgba(37, 99, 235, 0.025) 2%, transparent 0%);
+    background-size: 50px 50px, 50px 50px, 100px 100px, 100px 100px;
+    position: relative;
+    z-index: 0;
+  }
+  
+  /* Dark mode code background */
+  .code-bg-dark {
+    background-color: #0f172a;
+    background-image: 
+      linear-gradient(rgba(36, 180, 230, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(36, 180, 230, 0.04) 1px, transparent 1px),
+      radial-gradient(circle at 25px 25px, rgba(56, 189, 248, 0.05) 2%, transparent 0%),
+      radial-gradient(circle at 75px 75px, rgba(56, 189, 248, 0.025) 2%, transparent 0%);
+    background-size: 50px 50px, 50px 50px, 100px 100px, 100px 100px;
+    position: relative;
+    z-index: 0;
+  }
+
+  /* Add neon edge glow in dark mode */
+  .code-bg-dark::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(8, 145, 178, 0.1) 0%, transparent 40%);
+    z-index: -1;
+  }
+
+  /* 
+   * Code Bubbles Animation
+   * -----------------------
+   * These styles create subtle floating code-like elements in the background.
+   * The animation is controlled by 'bubbleFloat' keyframes.
+   * This effect is used in the PageContainer component across all page layouts.
+   */
+  .code-bubbles {
+    position: absolute;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    max-height: 100vh;
+  }
+
+  .code-bubble {
+    position: absolute;
+    background: rgba(6, 182, 212, 0.03);
+    border: 1px solid rgba(6, 182, 212, 0.05);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.02);
+    border-radius: 4px;
+    font-family: "JetBrains Mono", "Fira Code", monospace;
+    color: rgba(6, 182, 212, 0.3);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    opacity: 0;
+    animation: bubbleFloat 15s linear infinite;
+    bottom: -20px;
+  }
+
+  .light .code-bubble {
+    background: rgba(37, 99, 235, 0.03);
+    border: 1px solid rgba(37, 99, 235, 0.05);
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.02);
+    color: rgba(37, 99, 235, 0.3);
+  }
+
+  /* Code bubble content */
+  .code-bubble::before {
+    content: "{code}";
+    font-size: 10px;
+    opacity: 0.8;
+  }
+
+  .code-bubble:nth-child(2n)::before { content: "</>"; }
+  .code-bubble:nth-child(3n)::before { content: "=>"; }
+  .code-bubble:nth-child(4n)::before { content: "()"; }
+  .code-bubble:nth-child(5n)::before { content: "[]"; }
+  .code-bubble:nth-child(6n)::before { content: "{}"; }
+  .code-bubble:nth-child(7n)::before { content: "if()"; }
+  .code-bubble:nth-child(8n)::before { content: "const"; }
+  .code-bubble:nth-child(9n)::before { content: "import"; }
+  .code-bubble:nth-child(10n)::before { content: "export"; }
+
+  /* Bubble float animation */
+  @keyframes bubbleFloat {
+    0% {
+      transform: translateY(100vh) scale(1);
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-20vh) scale(0.8);
+      opacity: 0;
+    }
+  }
+
+  /* Add binary number background for extra tech vibe */
+  .code-bg-light::after,
+  .code-bg-dark::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.03'%3E%3Cpath d='M20 16v-3h-5v3H9v13h12V16h-1zm-9 10V20h6v6h-6z'/%3E%3Cpath d='M80 42v-3h-5v3h-6v13h12V42h-1zm-9 10V46h6v6h-6z'/%3E%3Cpath d='M50 16v-3h-5v3h-6v13h12V16h-1zm-9 10V20h6v6h-6z'/%3E%3Cpath d='M35 33v-3h-5v3h-6v13h12V33h-1zm-9 10V37h6v6h-6z'/%3E%3Cpath d='M65 33v-3h-5v3h-6v13h12V33h-1zm-9 10V37h6v6h-6z'/%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.5;
+    z-index: -2;
+    pointer-events: none;
+  }
+
+  .dark .code-bg-dark::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2322d3ee' fill-opacity='0.03'%3E%3Cpath d='M20 16v-3h-5v3H9v13h12V16h-1zm-9 10V20h6v6h-6z'/%3E%3Cpath d='M80 42v-3h-5v3h-6v13h12V42h-1zm-9 10V46h6v6h-6z'/%3E%3Cpath d='M50 16v-3h-5v3h-6v13h12V16h-1zm-9 10V20h6v6h-6z'/%3E%3Cpath d='M35 33v-3h-5v3h-6v13h12V33h-1zm-9 10V37h6v6h-6z'/%3E%3Cpath d='M65 33v-3h-5v3h-6v13h12V33h-1zm-9 10V37h6v6h-6z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Matrix code rain effect */
+  .matrix-code {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.03;
+  }
+
+  .dark .matrix-code {
+    opacity: 0.05;
+  }
+
+  .theme-transition {
+    transition: background-color 0.5s ease-in-out, color 0.3s ease-in-out;
+  }
+
+  /* Floating light particles for dark mode */
+  .light-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .light-particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(94, 234, 212, 0.3) 0%, rgba(94, 234, 212, 0) 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float-particle 25s infinite linear;
+  }
+
+  @keyframes float-particle {
+    0% {
+      transform: translateY(0) translateX(0) scale(1);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.2;
+    }
+    90% {
+      opacity: 0.1;
+    }
+    100% {
+      transform: translateY(-1000px) translateX(100px) scale(0.3);
+      opacity: 0;
+    }
   }
 }
 
@@ -139,18 +346,6 @@
     animation: gradient-shift 5s ease infinite;
   }
   
-  @keyframes gradient-shift {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-  
   /* Shine effect for cards */
   .animate-shine {
     position: relative;
@@ -174,15 +369,6 @@
     animation: shine 6s ease-in-out infinite;
   }
   
-  @keyframes shine {
-    0% {
-      transform: rotate(30deg) translate(-100%, -100%);
-    }
-    100% {
-      transform: rotate(30deg) translate(100%, 100%);
-    }
-  }
-  
   /* Glow effect */
   .animate-glow {
     animation: glow 3s ease-in-out infinite alternate;
@@ -201,19 +387,23 @@
 /* Custom Components */
 @layer components {
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-slate-700 to-slate-900 dark:from-slate-400 dark:to-slate-300;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-slate-400 dark:to-slate-300;
   }
   
   .gradient-text-secondary {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-800 dark:from-slate-500 dark:to-slate-400;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-600 dark:from-slate-500 dark:to-slate-400;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-slate-800/90 rounded-xl border border-slate-300 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-200;
   }
   
   .card-glass {
-    @apply bg-white/60 dark:bg-slate-800/60 backdrop-blur-md border border-slate-200/30 dark:border-slate-700/30;
+    @apply bg-white/90 dark:bg-slate-800/80 backdrop-blur-md border border-slate-300/50 dark:border-slate-700/50 shadow-sm dark:shadow-blue-900/5;
   }
   
   .card-glass-hover {
-    @apply card-glass hover:bg-white/80 dark:hover:bg-slate-800/80 transition-colors duration-300;
+    @apply card-glass hover:bg-white dark:hover:bg-slate-800/90 hover:border-blue-500/30 dark:hover:border-blue-600/30 hover:shadow-md dark:hover:shadow-blue-900/10 transition-all duration-300;
   }
   
   .badge-gradient {
@@ -221,19 +411,15 @@
   }
   
   .btn-gradient {
-    @apply bg-gradient-to-r from-slate-600 to-slate-700 text-white hover:from-slate-700 hover:to-slate-800 transition-colors;
+    @apply bg-gradient-to-r from-blue-700 to-indigo-700 text-white hover:from-blue-800 hover:to-indigo-800 transition-colors shadow-sm hover:shadow;
   }
   
   .btn-secondary-gradient {
-    @apply bg-gradient-to-r from-slate-500 to-slate-600 text-white hover:from-slate-600 hover:to-slate-700 transition-colors;
-  }
-  
-  .card {
-    @apply bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-200;
+    @apply bg-gradient-to-r from-slate-600 to-slate-700 text-white hover:from-slate-700 hover:to-slate-800 transition-colors shadow-sm hover:shadow;
   }
   
   .input {
-    @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 transition-colors;
+    @apply bg-white dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-700 dark:focus:ring-blue-500/70 transition-colors;
   }
   
   .tag {
@@ -355,7 +541,7 @@
   
   /* Code block with blinking cursor for tech/masculine feel */
   .code-terminal {
-    @apply font-mono bg-slate-900 text-slate-50 p-4 rounded-lg border border-slate-700 relative overflow-hidden;
+    @apply font-mono bg-slate-100 text-slate-900 dark:bg-slate-900 dark:text-slate-50 p-4 rounded-lg border border-slate-300 dark:border-slate-700 relative overflow-hidden shadow-sm;
   }
   
   .code-terminal::after {
@@ -447,6 +633,66 @@
     z-index: -1;
     opacity: 0.7;
     pointer-events: none;
+  }
+  
+  /* Light mode code styling with better contrast */
+  :root:not(.dark) .card-glass {
+    @apply bg-white/95 backdrop-blur-sm border border-slate-300 shadow-sm;
+  }
+  
+  :root:not(.dark) .card-glass-hover:hover {
+    @apply bg-white border-blue-400 shadow-md;
+  }
+  
+  :root:not(.dark) pre {
+    @apply bg-slate-100 border border-slate-300 text-slate-900;
+  }
+  
+  :root:not(.dark) code {
+    @apply bg-slate-200 text-blue-900 px-1 py-0.5 rounded;
+  }
+  
+  :root:not(.dark) .tech-tag {
+    @apply bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 hover:border-blue-300 transition-all duration-200;
+  }
+  
+  :root:not(.dark) .tech-tag:hover {
+    @apply bg-blue-200 border-blue-400;
+  }
+  
+  /* Improved form inputs for light mode */
+  :root:not(.dark) input, 
+  :root:not(.dark) textarea, 
+  :root:not(.dark) select {
+    @apply bg-white border border-slate-200 text-slate-900 focus:border-blue-400 focus:ring-1 focus:ring-blue-400 shadow-sm;
+  }
+  
+  /* Improved button styling for light mode */
+  :root:not(.dark) button:not(.btn-gradient) {
+    @apply bg-white border border-slate-200 text-slate-800 hover:bg-slate-50 shadow-sm hover:shadow;
+  }
+  
+  /* Better gradient buttons for light mode */
+  :root:not(.dark) .btn-gradient {
+    @apply bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-sm hover:shadow;
+  }
+  
+  /* Improved code styling for light mode */
+  :root:not(.dark) code {
+    @apply bg-slate-100 text-slate-800 px-1 py-0.5 rounded font-mono text-sm;
+  }
+  
+  :root:not(.dark) pre {
+    @apply bg-slate-50 border border-slate-200 rounded-lg shadow-sm;
+  }
+  
+  :root:not(.dark) pre code {
+    @apply bg-transparent text-slate-700;
+  }
+  
+  /* Improved light mode glass effect */
+  :root:not(.dark) .glass {
+    @apply bg-white/90 backdrop-blur-md border border-white/40 shadow-sm;
   }
 }
 
@@ -654,7 +900,8 @@ pre {
 
 /* New typography classes for tech-focused design */
 .font-mono {
-  font-family: var(--font-roboto-mono), var(--font-fira-code), monospace;
+  font-family: var(--font-mono);
+  letter-spacing: -0.025em;
 }
 
 .font-heading {
@@ -683,6 +930,7 @@ pre, code {
 /* Add a blinking cursor to code blocks for that tech feel */
 .prose pre {
   position: relative;
+  @apply bg-slate-100 dark:bg-slate-900/90 border border-slate-300 dark:border-slate-700;
 }
 
 .prose pre::after {
@@ -919,4 +1167,312 @@ pre.code-animated code {
   100% {
     transform: translate(0);
   }
+}
+
+/* Light mode code background */
+.code-bg-light {
+  background-color: white;
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 1), rgba(241, 245, 249, 0.8));
+  position: relative;
+}
+
+/* Code matrix background for dark mode */
+.code-bg-dark {
+  background-color: #0B1120;
+  background-image: var(--bg-pattern-dark);
+  position: relative;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0B1120;
+  color: #e2e8f0;
+}
+
+/* Add vertical code lines in the background */
+.code-bg-light::before,
+.code-bg-dark::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent,
+    transparent 40px,
+    rgba(59, 130, 246, 0.03) 40px,
+    rgba(59, 130, 246, 0.03) 41px,
+    transparent 41px,
+    transparent 80px
+  );
+  z-index: 0;
+}
+
+.code-bg-dark::before {
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent,
+    transparent 40px,
+    rgba(6, 182, 212, 0.05) 40px,
+    rgba(6, 182, 212, 0.05) 41px,
+    transparent 41px,
+    transparent 80px
+  );
+}
+
+/* Add small animated code-like elements in the dark mode background */
+/* Dark mode fixes */
+.dark .white-bg {
+  background-color: #0B1120;
+}
+
+.dark .slate-text {
+  color: #e2e8f0;
+}
+
+.dark .slate-border {
+  border-color: rgba(51, 65, 85, 0.5);
+}
+
+.dark .slate-bg-light {
+  background-color: #0f172a;
+}
+
+/* Add more consistency to dark mode transitions */
+.theme-transition {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Add light mode body background */
+:root:not(.dark) body {
+  background-color: white;
+  color: rgb(15, 23, 42);
+}
+
+/* Add better light mode article content styling */
+:root:not(.dark) .article-content {
+  @apply prose-slate max-w-none;
+}
+
+:root:not(.dark) .article-content p {
+  @apply text-slate-700 mb-5 leading-relaxed;
+}
+
+:root:not(.dark) .article-content a {
+  @apply text-blue-700 hover:text-blue-800 underline decoration-blue-300 hover:decoration-blue-500;
+}
+
+:root:not(.dark) .article-content h2 {
+  @apply text-slate-900 font-bold text-2xl mt-8 mb-4;
+}
+
+:root:not(.dark) .article-content h3 {
+  @apply text-slate-900 font-bold text-xl mt-6 mb-3;
+}
+
+:root:not(.dark) .article-content blockquote {
+  @apply pl-4 border-l-4 border-blue-200 italic my-6 text-slate-600;
+}
+
+/* Improve card styling in light mode */
+:root:not(.dark) .card-glass-hover:hover {
+  @apply bg-white border-blue-300 shadow-md shadow-blue-50;
+}
+
+/* Subtle light mode pattern */
+:root:not(.dark) {
+  background-image: 
+    linear-gradient(to right, rgba(226, 232, 240, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Improved light mode link styling */
+:root:not(.dark) a:not(.btn) {
+  @apply text-blue-600 hover:text-blue-700 transition-colors;
+}
+
+/* Improved light mode badges */
+:root:not(.dark) .badge-gradient {
+  @apply bg-gradient-to-r from-slate-200 to-slate-300 text-slate-700 hover:from-slate-300 hover:to-slate-400;
+}
+
+/* Better light mode tag styling */
+:root:not(.dark) .tag {
+  @apply bg-slate-100 text-slate-700 ring-1 ring-slate-200 hover:bg-slate-200;
+}
+
+/* Add soft shadows to cards in light mode */
+:root:not(.dark) .card, 
+:root:not(.dark) .card-glass {
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
+}
+
+:root:not(.dark) .card:hover, 
+:root:not(.dark) .card-glass:hover {
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+}
+
+/* Enhanced dark mode styling */
+.dark .card {
+  @apply bg-slate-800/90 border-slate-700 shadow-blue-900/5;
+}
+
+.dark .card-glass {
+  @apply bg-slate-800/80 backdrop-blur-md border-slate-700/50 shadow-blue-900/5;
+}
+
+.dark .article-content p {
+  @apply text-slate-300;
+}
+
+.dark .prose pre {
+  @apply bg-slate-900/90 border-slate-700;
+}
+
+.dark .prose code {
+  @apply bg-slate-800 text-slate-200;
+}
+
+.dark .white-bg {
+  background-color: #0B1120;
+}
+
+/* Fix for dark mode specific components */
+.dark .card-glass-hover:hover {
+  @apply bg-slate-800/90 border-blue-600/30 shadow-blue-900/10;
+}
+
+.dark .tag {
+  @apply bg-slate-800 text-slate-200 ring-1 ring-slate-700 hover:bg-slate-700;
+}
+
+.dark a:not(.btn) {
+  @apply text-slate-400 hover:text-slate-300 transition-colors;
+}
+
+.dark .badge-gradient {
+  @apply from-slate-700/80 to-slate-800/80 text-slate-200 hover:from-slate-600/80 hover:to-slate-700/80;
+}
+
+/* Ensure dark mode background in all cases */
+html.dark, .dark body, .dark main {
+  background-color: #0B1120;
+}
+
+/* Footer specific styling */
+.dark footer, 
+.dark .footer-container {
+  background-color: #0B1120;
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+.dark .footer-divider:before,
+.dark .footer-divider:after {
+  background-color: rgba(51, 65, 85, 0.8);
+}
+
+:root:not(.dark) footer,
+:root:not(.dark) .footer-container {
+  background-color: white;
+  border-color: #e2e8f0;
+}
+
+:root:not(.dark) .footer-link {
+  color: #64748b;
+}
+
+:root:not(.dark) .footer-link:hover {
+  color: #1e293b;
+}
+
+/* Fix for footer clickability issues */
+footer a, 
+footer button,
+footer li,
+footer .flex {
+  position: relative;
+  z-index: 30;
+}
+
+/* Make all code bubbles and background elements never block interactions */
+.code-bubbles,
+.matrix-code,
+.circuit-pattern,
+.neural-network-bg,
+.code-bg-light::after,
+.code-bg-dark::after {
+  pointer-events: none !important;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+/* Add custom animations for blog page */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes pulse-slow-delayed {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Utility classes for animations */
+.animate-pulse-slow {
+  animation: pulse-slow 8s ease-in-out infinite;
+}
+
+.animate-pulse-slow-delayed {
+  animation: pulse-slow-delayed 10s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 3s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+/* Hide scrollbar for the sticky tag bar */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 } 

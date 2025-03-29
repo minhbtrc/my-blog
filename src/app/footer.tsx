@@ -27,7 +27,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
           {/* About */}
           <div className="md:col-span-5 space-y-4">
-            <h3 className="text-xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">Minh BTC</h3>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">MinhBTC</h3>
             <p className="text-base-content/80 text-sm leading-relaxed">
               A personal blog about AI, machine learning, and software development.
               Sharing insights, tutorials, and thoughts on the latest advancements in technology.
