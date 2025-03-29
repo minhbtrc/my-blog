@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 // Mock data that would normally come from a database
 const BLOGS = {
@@ -12,30 +12,25 @@ const BLOGS = {
   }
 };
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string[] } }
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
   try {
     // Convert the slug array to a string path
-    const path = params.slug.join('/');
+    const slug = req.query.slug as string[];
+    const path = slug.join('/');
     
     // Look up the blog post in our mock data
     const blogPost = BLOGS[path];
     
     if (!blogPost) {
-      return NextResponse.json(
-        { error: 'Blog post not found' },
-        { status: 404 }
-      );
+      return res.status(404).json({ error: 'Blog post not found' });
     }
     
-    return NextResponse.json(blogPost);
+    return res.status(200).json(blogPost);
   } catch (error) {
     console.error('Error fetching blog data:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return res.status(500).json({ error: 'Internal server error' });
   }
 } 

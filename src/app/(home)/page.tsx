@@ -1089,70 +1089,43 @@ export default function Home() {
                   ☕
                 </span>
               </p>
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                I specialize in AI/ML systems with a focus on <span className="text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer">LLMs</span>, <span className="text-cyan-600 dark:text-cyan-400 font-medium hover:underline cursor-pointer">NLP</span>, and <span className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline cursor-pointer">retrieval-augmented generation</span> for practical applications.
-              </p>
             </motion.div>
             
             {/* CTA Buttons with equal height, spacing and improved hover effects */}
-            <motion.div 
-              className="flex flex-wrap items-center gap-3 mt-2"
+            <motion.div
+              className="flex flex-wrap items-center gap-4 mt-4"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <Link 
-                href="/about" 
-                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-blue-600 text-white transition-all duration-300 hover:bg-blue-700 shadow-sm hover:shadow-md hover:shadow-blue-500/20 hover:scale-[1.02] focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:outline-none relative overflow-hidden"
+              {/* About Me */}
+              <Link
+                href="/about"
+                className="group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-blue-500/30"
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  <span className="font-bold">About Me</span>
-                  <svg 
-                    className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor"
-                  >
-                    <path 
-                      fillRule="evenodd" 
-                      d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" 
-                      clipRule="evenodd" 
-                    />
-                  </svg>
-                  <span className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out -z-10"></span>
-                </span>
+                <span className="relative z-10">About Me</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <span className="absolute inset-0 bg-white/10 group-hover:scale-x-100 scale-x-0 origin-left transition-transform duration-500 ease-out rounded-lg -z-10" />
               </Link>
-              
-              <Link 
-                href="/blog" 
-                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-indigo-600 text-white transition-all duration-300 hover:bg-indigo-700 shadow-sm hover:shadow-md hover:shadow-indigo-500/20 hover:scale-[1.02] focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:outline-none relative overflow-hidden"
+
+              {/* Blog */}
+              <Link
+                href="/blog"
+                className="group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-indigo-500/30"
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  <span className="font-bold">Read Blog</span>
-                  <svg 
-                    className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor"
-                  >
-                    <path 
-                      fillRule="evenodd" 
-                      d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" 
-                      clipRule="evenodd" 
-                    />
-                  </svg>
-                  <span className="absolute inset-0 bg-white/10 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 ease-out -z-10"></span>
-                </span>
+                <span className="relative z-10">Read Blog</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <span className="absolute inset-0 bg-white/10 group-hover:scale-x-100 scale-x-0 origin-left transition-transform duration-500 ease-out rounded-lg -z-10" />
               </Link>
-              
-              <Link 
-                href="/contact" 
-                className="group px-5 py-2.5 text-sm font-bold rounded-lg bg-green-600 text-white transition-all duration-300 hover:bg-green-700 shadow-sm hover:shadow-md hover:shadow-green-500/20 hover:scale-[1.02] focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 focus:outline-none flex items-center"
+
+              {/* Contact */}
+              <Link
+                href="/contact"
+                className="group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-green-500/30"
               >
-                <span className="flex items-center gap-2">
-                  <span className="font-bold">Contact</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
+                <span className="relative z-10">Contact</span>
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                <span className="absolute inset-0 bg-white/10 group-hover:scale-x-100 scale-x-0 origin-left transition-transform duration-500 ease-out rounded-lg -z-10" />
               </Link>
             </motion.div>
             
