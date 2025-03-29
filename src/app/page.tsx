@@ -1,7 +1,9 @@
-import dynamicImport from 'next/dynamic';
-const HomePageComponent = dynamicImport(() => import('./(home)/page'), { ssr: false });
+import HomeClient from '@/app/HomeClient';
 
-export default HomePageComponent;
+// Force static rendering and set revalidation
+export const dynamic = 'force-static';
+export const revalidate = 0;
 
-// Disable static generation to fix missing server file on Vercel
-export const dynamic = 'force-dynamic';
+export default function Home() {
+  return <HomeClient />;
+}

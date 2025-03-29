@@ -1,0 +1,18 @@
+# Node modules
+node_modules
+
+# Build output
+.next-tmp
+build
+
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Misc
+.DS_Store
+*.pem 

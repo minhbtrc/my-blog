@@ -1,0 +1,44 @@
+{
+  "version": 2,
+  "buildCommand": "yarn vercel-build",
+  "framework": "nextjs",
+  "cleanUrls": true,
+  "images": {
+    "sizes": [16, 32, 64, 128, 256, 384, 512, 1024],
+    "domains": ["avatars.githubusercontent.com", "www.gravatar.com", "github.com", "raw.githubusercontent.com", "cdn-lfs-us-1.hf.co"],
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "**"
+      }
+    ]
+  },
+  "env": {
+    "NEXT_SKIP_SERIALIZABLE_CHECK": "1",
+    "NEXT_SKIP_TYPECHECKING": "1",
+    "NEXT_TELEMETRY_DISABLED": "1",
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NEXT_SKIP_SERIALIZABLE_CHECK": "1",
+      "NEXT_SKIP_TYPECHECKING": "1",
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "NODE_ENV": "production"
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "github": {
+    "silent": true
+  }
+} 

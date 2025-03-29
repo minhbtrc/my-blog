@@ -51,11 +51,16 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: [],
+    optimizePackageImports: [
+      'framer-motion',
+      'lucide-react',
+      '@headlessui/react',
+      'react-icons',
+      'zustand'
+    ],
   },
   compiler: {
     styledComponents: true,
-    // Enable TypeScript decorators
-    decorators: { version: '2023-05' },
   },
 }
 
