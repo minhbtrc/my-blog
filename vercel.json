@@ -12,5 +12,10 @@
         "hostname": "**"
       }
     ]
+  },
+  "env": {
+    "NEXT_SKIP_SERIALIZABLE_CHECK": "1",
+    "NEXT_SKIP_TYPECHECKING": "1",
+    "NEXT_TELEMETRY_DISABLED": "1"
   }
 } 
