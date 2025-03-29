@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Github, Twitter, Rss, MessagesSquare, FileCode, MapPin } from 'lucide-react'
+import { Github, Rss, MessagesSquare, FileCode, Linkedin } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function Footer() {
@@ -57,16 +57,16 @@ export default function Footer() {
             
             <div className="flex space-x-1.5">
               <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.95 }}>
-                <a href="https://github.com/minhbtc-99" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors">
+                <a href="https://github.com/minhbtrc" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors">
                   <div className="w-7 h-7 flex items-center justify-center rounded-md bg-gray-800/80 dark:bg-slate-800/80 hover:bg-gray-700 dark:hover:bg-slate-700 border border-gray-700/50 dark:border-slate-700/50">
                     <Github className="w-3.5 h-3.5" />
                   </div>
                 </a>
               </motion.div>
               <motion.div whileHover={{ y: -2 }} whileTap={{ scale: 0.95 }}>
-                <a href="https://twitter.com/minhbtc_" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors">
+                <a href="https://www.linkedin.com/in/minhbtcm00/" target="_blank" rel="noreferrer" className="text-gray-400 hover:text-gray-300 transition-colors">
                   <div className="w-7 h-7 flex items-center justify-center rounded-md bg-gray-800/80 dark:bg-slate-800/80 hover:bg-gray-700 dark:hover:bg-slate-700 border border-gray-700/50 dark:border-slate-700/50">
-                    <Twitter className="w-3.5 h-3.5" />
+                    <Linkedin className="w-3.5 h-3.5" />
                   </div>
                 </a>
               </motion.div>
