@@ -132,7 +132,7 @@ export default function Template({ children }: { children: ReactNode }) {
                     </ClientOnly>
                     
                     {/* Controls for article pages */}
-                    {isMounted && !isMainBlogPage && (
+                    {/* {isMounted && !isMainBlogPage && (
                       <div className="w-full flex flex-row gap-2 justify-end py-3 border-t border-b border-gray-200 dark:border-blue-900/30 mt-3">
                         <FacebookShare className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-gray-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-cyan-300 p-1.5 rounded-md transition-colors" />
                         <TwitterShare className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-gray-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-cyan-300 p-1.5 rounded-md transition-colors" />
@@ -144,7 +144,7 @@ export default function Template({ children }: { children: ReactNode }) {
                           listen.js
                         </button>
                       </div>
-                    )}
+                    )} */}
                   </div>
                   
                   {/* Only show tags when client-side */}
@@ -204,7 +204,7 @@ export default function Template({ children }: { children: ReactNode }) {
                   </div>
                 )}
                 
-                {/* Footer quote */}
+                {/* Footer quote
                 {isMounted && !isMainBlogPage && (
                   <div className="w-full max-w-3xl px-4 mt-10 border-t border-gray-200 dark:border-blue-900/30 pt-6 text-center mb-12">
                     <p className="italic text-gray-500 dark:text-slate-400 mb-5 font-mono">
@@ -217,7 +217,7 @@ export default function Template({ children }: { children: ReactNode }) {
                       contact.connect()
                     </Link>
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </div>
