@@ -21,8 +21,8 @@ const FALLBACK_BLOGS = [
     route: "/blog/building-blog-with-ai",
     title: "How I Built My Blog with ChatGPT & Cursor — As an AI Engineer, Not a Frontend Dev",
     description: "My journey building a modern, developer-centric blog using AI tools like Cursor and GPT-4o, despite having limited frontend experience.",
-    date: "2023-08-10",
-    readingTime: "6 min read",
+    date: "2025-03-29",
+    readingTime: "10 min read",
     tags: ["ai", "development", "cursor", "gpt4", "nextjs"],
     featured: true
   },
@@ -30,7 +30,7 @@ const FALLBACK_BLOGS = [
     route: "/blog/langchain-chatbot",
     title: "Building a Privacy-First AI Chatbot with LangChain",
     description: "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and enthusiasts in the AI space.",
-    date: "2023-07-15",
+    date: "2024-12-15",
     readingTime: "8 min read",
     tags: ["ai", "langchain", "privacy", "development"],
     featured: true
@@ -416,91 +416,153 @@ const FeaturedPostCard = ({ post }) => (
 
 const RegularPostCard = ({ post, index }) => (
   <motion.div 
-    className="relative overflow-hidden card border-l-4 border-l-blue-500 dark:border-l-blue-600 border-t border-r border-b border-gray-200 dark:border-slate-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 animate-fade-in hover:translate-y-[-2px]"
-    whileHover={cardHover.hover}
-    initial="rest"
-    whileTap={{ scale: 0.98 }}
-    variants={cardHover}
+    className="relative overflow-hidden card border-l-4 border-l-blue-500 dark:border-l-blue-600 border-t border-r border-b border-gray-200 dark:border-slate-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 animate-fade-in group"
+    whileHover={{ 
+      scale: 1.01, 
+      y: -5,
+      boxShadow: "0 0 15px 2px rgba(52, 211, 153, 0.2)"
+    }}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4, delay: index * 0.1 }}
   >
-    <div className="bg-gray-800 dark:bg-slate-800/80 border-b border-gray-700 dark:border-slate-700 py-2 px-4 flex items-center justify-between shadow-sm">
+    {/* Terminal-inspired header */}
+    <div className="bg-gray-800/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-700/70 dark:border-slate-700/70 py-2 px-4 flex items-center justify-between shadow-sm">
       <div className="flex items-center space-x-1.5">
-        <div className="w-3 h-3 rounded-full bg-red-500 ring-1 ring-red-700 dark:ring-red-700 shadow-sm"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500 ring-1 ring-yellow-700 dark:ring-yellow-700 shadow-sm"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500 ring-1 ring-green-700 dark:ring-green-700 shadow-sm"></div>
+        <div className="w-3 h-3 rounded-full bg-red-500 ring-1 ring-red-700 dark:ring-red-700 shadow-sm group-hover:animate-pulse"></div>
+        <div className="w-3 h-3 rounded-full bg-yellow-500 ring-1 ring-yellow-700 dark:ring-yellow-700 shadow-sm group-hover:animate-pulse delay-75"></div>
+        <div className="w-3 h-3 rounded-full bg-green-500 ring-1 ring-green-700 dark:ring-green-700 shadow-sm group-hover:animate-pulse delay-150"></div>
       </div>
       <div className="flex items-center">
         <span className="text-xs font-mono text-gray-300 dark:text-gray-400 mr-2 bg-gray-700/80 dark:bg-slate-700/70 px-2 py-0.5 rounded shadow-inner">~/blog</span>
         <motion.div 
-          className="px-2 py-0.5 bg-blue-500/90 text-white text-xs font-medium rounded flex items-center shadow-sm"
+          className="px-2 py-0.5 bg-blue-600/90 text-white text-xs font-medium rounded-md flex items-center shadow-sm"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
-          <Sparkles className="h-3 w-3 mr-1" />
+          <FileText className="h-3 w-3 mr-1" />
           <span>Post</span>
         </motion.div>
       </div>
     </div>
 
-    <div className="p-6 bg-gray-950/95 dark:bg-slate-800/95 backdrop-blur-sm transition-colors duration-300 relative z-10">
+    <div className="p-6 bg-gradient-to-b from-gray-950/80 to-gray-900/80 dark:from-slate-800/80 dark:to-slate-800/70 backdrop-blur-md transition-colors duration-300 relative z-10 border border-white/5">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/0 via-blue-500/40 to-blue-500/0"></div>
+      
+      {/* Status badges */}
+      {new Date(post.date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
+        <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-md transform rotate-3 shadow-lg z-20 group-hover:scale-110 transition-transform">
+          🆕 NEW
+        </div>
+      )}
+      
+      {/* Trending badge for our example */}
+      {post.title.includes("ChatGPT") && (
+        <div className="absolute top-3 right-3 bg-orange-500/90 text-white text-xs font-bold px-2 py-0.5 rounded-md shadow-md z-20 flex items-center">
+          <span className="mr-1">🚀</span> TRENDING
+        </div>
+      )}
+      
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
           <div className="flex items-center text-xs text-gray-300 dark:text-slate-400 mb-3 space-x-4">
             <span className="flex items-center">
-              <Calendar className="h-3.5 w-3.5 mr-1" />
+              <Calendar className="h-3.5 w-3.5 mr-1 text-blue-400" />
               {formatDate(post.date)}
             </span>
             <span className="flex items-center">
-              <Clock className="h-3.5 w-3.5 mr-1" />
+              <Clock className="h-3.5 w-3.5 mr-1 text-blue-400" />
               {post.readingTime}
             </span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-100 dark:text-slate-100 mb-3 group-hover:text-blue-400 dark:group-hover:text-blue-400 transition-colors">
+          <h2 className="text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-300 dark:from-slate-100 dark:to-slate-300 mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-cyan-400 transition-all duration-300">
             {post.title}
           </h2>
         </div>
       </div>
 
-      <div className="pl-3 border-l-2 border-blue-800 dark:border-blue-800 mb-4">
-        <p className="text-gray-300 dark:text-slate-400">
+      <div className="pl-3 border-l-2 border-blue-600 dark:border-blue-600 mb-4 bg-blue-900/10 dark:bg-blue-900/10 p-3 rounded-r-md backdrop-blur-sm">
+        <p className="text-gray-300 dark:text-slate-300 typing-animation">
           {post.description}
         </p>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        {post.tags?.slice(0, 3).map((tag) => (
-          <span 
-            key={tag}
-            className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md bg-blue-900/40 dark:bg-blue-900/20 text-blue-300 dark:text-blue-300 transition-colors border border-blue-800/60 dark:border-blue-800/30"
-          >
-            <Hash className="h-3 w-3 mr-1" />
-            {tag}
-          </span>
-        ))}
+        {post.tags?.slice(0, 3).map((tag) => {
+          // Define emoji icon for each tag
+          const tagIcons = {
+            'ai': '🧠',
+            'development': '💻',
+            'cursor': '🖱️',
+            'gpt4': '🤖',
+            'nextjs': '⚡',
+            'langchain': '⛓️',
+            'privacy': '🔒'
+          };
+          
+          return (
+            <motion.span 
+              key={tag}
+              className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-blue-900/40 dark:bg-blue-900/30 text-blue-300 dark:text-blue-200 transition-colors border border-blue-800/60 dark:border-blue-700/50 hover:bg-blue-800/50 hover:border-blue-600 hover:scale-105 transform"
+              whileHover={{ 
+                boxShadow: "0 0 8px 1px rgba(59, 130, 246, 0.5)",
+                y: -1
+              }}
+            >
+              <span className="mr-1">{tagIcons[tag] || <Hash className="h-3 w-3" />}</span>
+              {tag}
+            </motion.span>
+          );
+        })}
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center text-sm font-mono text-gray-300 dark:text-gray-400 bg-gray-800 dark:bg-slate-700/30 px-2 py-1 rounded-md border border-gray-700 dark:border-slate-700">
+      <div className="flex items-center justify-between bg-gray-800/60 dark:bg-slate-900/60 p-3 rounded-md border border-gray-700/40 dark:border-slate-700/40 mt-6 backdrop-blur-md">
+        <div className="flex items-center text-sm font-mono text-gray-300 dark:text-gray-400 bg-gray-800/90 dark:bg-slate-800/90 px-2.5 py-1 rounded-md border border-gray-700 dark:border-slate-700">
           <span className="text-green-400 dark:text-green-400 font-bold">$</span>
-          <span className="ml-1">/read-article</span>
+          <span className="ml-1.5">read-article --title {post.title.split(' ')[0].toLowerCase()} --open</span>
+          <span className="ml-1 animate-blink">|</span>
         </div>
 
         <Link 
           href={post.route || `/blog/${post.slug}`}
-          className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors group-hover:underline"
+          className="inline-flex items-center text-sm font-medium text-blue-400 dark:text-blue-300 hover:text-blue-300 dark:hover:text-blue-200 transition-colors group-hover:underline bg-blue-900/20 dark:bg-blue-900/30 px-3 py-1 rounded-md hover:bg-blue-900/40 transition-all duration-200 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
         >
-          <span>Read article</span>
-          <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+          <span>Execute</span>
+          <ArrowRight className="h-4 w-4 ml-1.5 group-hover:translate-x-1.5 transition-transform duration-300" />
         </Link>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 bg-gray-800 dark:bg-slate-700/30 border-t border-gray-700 dark:border-slate-700 py-1 px-3 flex items-center justify-between text-[10px] font-mono text-gray-300 dark:text-gray-400">
+      <div className="absolute bottom-0 left-0 right-0 bg-gray-800/90 dark:bg-slate-900/80 border-t border-gray-700 dark:border-slate-700/50 py-1.5 px-3 flex items-center justify-between text-[10px] font-mono text-gray-300 dark:text-gray-400 backdrop-blur-sm">
         <div className="flex items-center">
-          <div className="w-2 h-2 rounded-full bg-green-500 mr-1.5 shadow-sm"></div>
-          <span>Ready</span>
+          <div className="w-2 h-2 rounded-full bg-green-500 mr-1.5 shadow-sm animate-pulse"></div>
+          <motion.span
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+          >
+            Ready
+          </motion.span>
         </div>
-        <span>{Math.floor(Math.random() * 1000) + 100} lines</span>
+        <span className="bg-gray-700/50 dark:bg-slate-700/50 px-1.5 py-0.5 rounded">
+          {Math.floor(Math.random() * 200) + 350} Lines
+        </span>
       </div>
+      
+      {/* Add a subtle diagonal pattern overlay */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0wIDYwTDYwIDBIMzBMMCA1MFoiIGZpbGw9IiM1MDkwQzA0MCIvPgo8L3N2Zz4=')] opacity-5 mix-blend-soft-light pointer-events-none z-[-1]"></div>
+      
+      {/* Scan line animation */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent z-[-1] pointer-events-none opacity-0 group-hover:opacity-100"
+        animate={{ 
+          y: ["100%", "-100%"]
+        }}
+        transition={{ 
+          repeat: Infinity, 
+          duration: 2, 
+          ease: "linear"
+        }}
+      />
     </div>
   </motion.div>
 );
@@ -889,4 +951,34 @@ export default function BlogPage() {
       <BlogPageContent />
     </Suspense>
   );
+}
+
+/* Additional animation styles */
+const globalStyles = `
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+.typing-animation {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 1.5s steps(40, end);
+}
+`;
+
+// Add the styles to the document
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.innerHTML = globalStyles;
+  document.head.appendChild(style);
 } 
