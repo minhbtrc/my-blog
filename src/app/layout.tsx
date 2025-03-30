@@ -17,6 +17,7 @@ import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono, Fira_Code, Source_Code_Pro } from 'next/font/google'
+import { Analytics } from "@vercel/analytics/react"
 
 // Import ReactPlayer dynamically to avoid SSR issues
 const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false })
@@ -436,6 +437,15 @@ export default function RootLayout({
             </div>
           </MotionConfig>
         </ThemeProvider>
+        
+        <Analytics />
+        
+        <NextProgressBar
+          height="3px"
+          color="rgb(59, 130, 246)"
+          options={{ showSpinner: false }}
+          shallowRouting
+        />
       </body>
     </html>
   )
