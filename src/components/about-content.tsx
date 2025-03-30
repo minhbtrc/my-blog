@@ -141,13 +141,13 @@ export default function AboutContent() {
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-            <Link 
-              href="mailto:minh.btrc@gmail.com"
+            {/* <Link 
+              href="mailto:contact@example.com"
               className="inline-flex items-center px-4 py-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-700/40 dark:hover:border-blue-800/40 transition-all text-sm font-mono gap-2 shadow-sm" 
             >
               <Mail className="w-4 h-4" />
               contact.me()
-            </Link>
+            </Link> */}
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05, y: -2 }}

@@ -89,7 +89,7 @@ export default function Menu() {
           <ArrowUpRight className="w-4 h-4 hidden group-hover:flex animate-pop-in" />
         </Link>
 
-        <motion.span
+        {/* <motion.span
           className="text-xs font-light opacity-60 mx-3 mb-2 mt-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.6 }}
@@ -99,13 +99,13 @@ export default function Menu() {
         
         <Link
           className="btn btn-ghost btn-sm flex flex-row gap-4 justify-start items-center font-normal group"
-          href="mailto:minh.btrc@gmail.com"
+          href="mailto:contact@example.com"
           target="_blank"
         >
           <Mail className="w-4 h-4" />
           <span className="grow text-left">Contact</span>
           <ArrowUpRight className="w-4 h-4 hidden group-hover:flex animate-pop-in" />
-        </Link>
+        </Link> */}
       </PopoverPanel>
     </Popover>
   )

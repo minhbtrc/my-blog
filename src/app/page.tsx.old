@@ -203,7 +203,7 @@ const profile = {
   languages: ["Python", "TypeScript", "JavaScript"],
   frameworks: ["PyTorch", "LangChain", "Transformers", "React", "Next.js"],
   hobbies: ["Reading tech papers", "Football", "Coffee brewing"],
-  contact: "minh.btrc@gmail.com"
+  contact: "contact@example.com"
 };
 
 // ====================================

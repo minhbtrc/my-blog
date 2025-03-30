@@ -726,13 +726,13 @@ export default function HomeClient() {
                 >
                   <Linkedin className="h-4 w-4" />
                 </a>
-                <a 
-                  href="mailto:minh.btrc@gmail.com" 
+                {/* <a 
+                  href="mailto:contact@example.com" 
                   className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
                   aria-label="Email"
                 >
                   <Mail className="h-4 w-4" />
-                </a>
+                </a> */}
                 <a 
                   href="/blog" 
                   className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"

@@ -23,9 +23,9 @@ export default function Footer() {
       <Link href="https://www.linkedin.com/in/minh-bui-tran-cong" className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
         <Linkedin className="h-5 w-5" />
       </Link>
-      <Link href="mailto:minh.btc.dev@gmail.com" className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
+      {/* <Link href="mailto:contact@example.com" className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
         <Mail className="h-5 w-5" />
-      </Link>
+      </Link> */}
     </div>
   )
 }

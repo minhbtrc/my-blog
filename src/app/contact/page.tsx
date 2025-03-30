@@ -468,12 +468,12 @@ export default function ContactPage() {
                   <div className="w-10 h-10 rounded-md bg-blue-50 dark:bg-slate-800/80 border border-blue-200 dark:border-blue-900/30 flex items-center justify-center text-blue-700 dark:text-cyan-400">
                     <Mail className="w-5 h-5" />
                   </div>
-                  <div>
+                  {/* <div>
                     <h3 className="font-medium text-slate-800 dark:text-slate-200 font-mono">email</h3>
-                    <a href="mailto:minh.btrc@gmail.com" className="text-slate-700 hover:text-blue-700 dark:text-slate-400 dark:hover:text-cyan-300 transition-colors font-light">
-                      minh.btrc@gmail.com
+                    <a href="mailto:contact@example.com" className="text-slate-700 hover:text-blue-700 dark:text-slate-400 dark:hover:text-cyan-300 transition-colors font-light">
+                      contact@example.com
                     </a>
-                  </div>
+                  </div> */}
                 </div>
                 
                 <div className="flex items-start gap-4">
