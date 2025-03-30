@@ -284,15 +284,7 @@ export default function RootLayout({
             />
             
             {/* Header */}
-            <header 
-              className={clsx(
-                'fixed top-0 left-0 w-full z-40 border-b border-transparent backdrop-blur-sm transition-all duration-300',
-                { 
-                  'py-3 shadow-sm border-slate-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-slate-900/80': scrolled === "up",
-                  'py-2 translate-y-[-100%] border-transparent': scrolled === "down",
-                }
-              )}
-            >
+            <header className={`sticky top-0 w-full z-30 transition-all duration-300 ${scrolled === "down" ? "-translate-y-full" : "translate-y-0"} ${mounted ? "bg-white/95 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200 dark:border-slate-800/50 dark:shadow-blue-900/5" : ""}`}>
               <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                   {/* Logo */}
