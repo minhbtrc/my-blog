@@ -496,7 +496,7 @@ export default function ContactPage() {
               
               <div className="space-y-4">
                 <a 
-                  href="https://github.com/minhbtrc" 
+                  href={process.env.NEXT_PUBLIC_GITHUB_URL || ""} 
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-4 p-3 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group border border-transparent hover:border-slate-300 dark:hover:border-blue-900/20"
@@ -512,7 +512,7 @@ export default function ContactPage() {
                 </a>
                 
                 <a 
-                  href="https://www.linkedin.com/in/minhbtcm00/" 
+                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""} 
                   target="_blank"
                   rel="noreferrer"
                   className="flex items-center gap-4 p-3 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group border border-transparent hover:border-slate-300 dark:hover:border-blue-900/20"
@@ -526,6 +526,26 @@ export default function ContactPage() {
                     <p className="text-sm text-slate-600 dark:text-slate-400 font-mono group-hover:text-blue-700 dark:group-hover:text-slate-300 transition-colors">in/minhbtcm00</p>
                   </div>
                 </a>
+                
+                {process.env.NEXT_PUBLIC_HUGGINGFACE_URL && (
+                  <a 
+                    href={process.env.NEXT_PUBLIC_HUGGINGFACE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-4 p-3 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group border border-transparent hover:border-slate-300 dark:hover:border-blue-900/20"
+                    style={{ position: 'relative', zIndex: 50 }}
+                  >
+                    <div className="w-10 h-10 rounded-md bg-purple-50 dark:bg-slate-800/80 border border-purple-200 dark:border-blue-900/30 flex items-center justify-center text-purple-700 dark:text-purple-400 group-hover:text-purple-800 dark:group-hover:text-cyan-400 transition-colors">
+                      <svg viewBox="0 0 95 88" fill="currentColor" className="w-5 h-5">
+                        <path d="M47.2119 0C26.7279 0 10.1255 16.7482 10.1255 37.4223C10.1255 43.5567 11.8306 49.2766 14.8211 54.2455L0 86.5839H25.5591L32.2099 69.608C36.9538 71.6223 41.9637 72.8446 47.2119 72.8446C67.696 72.8446 84.2984 56.0964 84.2984 35.4223C84.2984 15.8304 67.696 0 47.2119 0ZM26.1682 47.4522C22.1547 47.4522 18.8905 44.1879 18.8905 40.1744C18.8905 36.1608 22.1547 32.8966 26.1682 32.8966C30.1817 32.8966 33.446 36.1608 33.446 40.1744C33.446 44.1879 30.1817 47.4522 26.1682 47.4522ZM47.2119 39.2589C50.2204 39.2589 52.6591 36.8201 52.6591 33.8117C52.6591 30.8033 50.2204 28.3645 47.2119 28.3645C44.2035 28.3645 41.7647 30.8033 41.7647 33.8117C41.7647 36.8201 44.2035 39.2589 47.2119 39.2589ZM68.2557 47.4522C64.2422 47.4522 60.9779 44.1879 60.9779 40.1744C60.9779 36.1608 64.2422 32.8966 68.2557 32.8966C72.2692 32.8966 75.5334 36.1608 75.5334 40.1744C75.5334 44.1879 72.2692 47.4522 68.2557 47.4522Z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-slate-800 dark:text-slate-200 font-mono">huggingface</h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 font-mono group-hover:text-purple-700 dark:group-hover:text-slate-300 transition-colors">minhbtc</p>
+                    </div>
+                  </a>
+                )}
               </div>
             </div>
           </motion.div>

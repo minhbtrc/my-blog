@@ -17,23 +17,17 @@ export default function Footer() {
         © 2025 MinhBTC. All rights reserved.
       </div>
       
-      <Link href="https://github.com/minhbtc" className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
-        <Github className="h-5 w-5" />
+      <Link href={process.env.NEXT_PUBLIC_GITHUB_URL || ""} className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
+        <Github className="w-5 h-5" />
       </Link>
-      <Link href="https://www.linkedin.com/in/minh-bui-tran-cong" className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
-        <Linkedin className="h-5 w-5" />
+      <Link href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""} className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
+        <Linkedin className="w-5 h-5" />
       </Link>
       {/* <Link href="mailto:contact@example.com" className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
         <Mail className="h-5 w-5" />
       </Link> */}
-      <Link 
-        href="https://buymeacoffee.com/minhbtc" 
-        target="_blank" 
-        rel="noopener noreferrer" 
-        className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/90 hover:bg-amber-600 text-white rounded-md transition-all shadow-sm hover:shadow"
-      >
-        <Coffee className="h-4 w-4" />
-        <span className="text-xs font-medium">Buy me a coffee</span>
+      <Link href={process.env.NEXT_PUBLIC_BUYMEACOFFEE_URL || ""} className="p-2 text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300">
+        <Coffee className="w-5 h-5" />
       </Link>
     </div>
   )

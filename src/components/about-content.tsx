@@ -154,7 +154,7 @@ export default function AboutContent() {
                 whileTap={{ scale: 0.98 }}
               >
             <a
-              href="https://github.com/minhbtrc"
+              href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center px-4 py-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-slate-800 dark:text-slate-300 hover:text-blue-700 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-blue-800/40 transition-all text-sm font-mono gap-2 shadow-sm" 
@@ -168,7 +168,7 @@ export default function AboutContent() {
                 whileTap={{ scale: 0.98 }}
               >
             <a
-              href="https://www.linkedin.com/in/minhbtcm00/"
+              href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""}
               target="_blank"
               rel="noreferrer" 
               className="inline-flex items-center px-4 py-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-slate-800 dark:text-slate-300 hover:text-blue-700 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-blue-800/40 transition-all text-sm font-mono gap-2 shadow-sm" 

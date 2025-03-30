@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Terminal, Play, Pause, ChevronRight, ChevronLeft, RefreshCw } from 'lucide-react';
-import { Code, Github, Linkedin, Mail } from 'lucide-react';
+import { ArrowRight, Terminal, Play, Pause, ChevronRight, ChevronLeft, RefreshCw, Code } from 'lucide-react';
+import { Github, Linkedin } from 'lucide-react';
 import { useState, useEffect, useRef, Suspense } from 'react';
 import React, { Fragment, lazy } from 'react';
 import dynamic from 'next/dynamic';
@@ -709,7 +709,7 @@ export default function HomeClient() {
             >
               <div className="flex gap-2 p-1.5 rounded-full bg-slate-100 dark:bg-slate-800/90 backdrop-blur-sm shadow-md border border-slate-300 dark:border-slate-700/50">
                 <a 
-                  href="https://github.com/minhbtrc" 
+                  href={process.env.NEXT_PUBLIC_GITHUB_URL || ""} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
@@ -718,7 +718,7 @@ export default function HomeClient() {
                   <Github className="h-4 w-4" />
                 </a>
                 <a 
-                  href="https://linkedin.com/in/minhbtcm00" 
+                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
@@ -726,20 +726,26 @@ export default function HomeClient() {
                 >
                   <Linkedin className="h-4 w-4" />
                 </a>
-                {/* <a 
-                  href="mailto:contact@example.com" 
-                  className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
-                  aria-label="Email"
-                >
-                  <Mail className="h-4 w-4" />
-                </a> */}
-                <a 
+                {process.env.NEXT_PUBLIC_HUGGINGFACE_URL && (
+                  <a 
+                    href={process.env.NEXT_PUBLIC_HUGGINGFACE_URL} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
+                    aria-label="HuggingFace"
+                  >
+                    <svg viewBox="0 0 95 88" fill="currentColor" className="h-4 w-4">
+                      <path d="M47.2119 0C26.7279 0 10.1255 16.7482 10.1255 37.4223C10.1255 43.5567 11.8306 49.2766 14.8211 54.2455L0 86.5839H25.5591L32.2099 69.608C36.9538 71.6223 41.9637 72.8446 47.2119 72.8446C67.696 72.8446 84.2984 56.0964 84.2984 35.4223C84.2984 15.8304 67.696 0 47.2119 0ZM26.1682 47.4522C22.1547 47.4522 18.8905 44.1879 18.8905 40.1744C18.8905 36.1608 22.1547 32.8966 26.1682 32.8966C30.1817 32.8966 33.446 36.1608 33.446 40.1744C33.446 44.1879 30.1817 47.4522 26.1682 47.4522ZM47.2119 39.2589C50.2204 39.2589 52.6591 36.8201 52.6591 33.8117C52.6591 30.8033 50.2204 28.3645 47.2119 28.3645C44.2035 28.3645 41.7647 30.8033 41.7647 33.8117C41.7647 36.8201 44.2035 39.2589 47.2119 39.2589ZM68.2557 47.4522C64.2422 47.4522 60.9779 44.1879 60.9779 40.1744C60.9779 36.1608 64.2422 32.8966 68.2557 32.8966C72.2692 32.8966 75.5334 36.1608 75.5334 40.1744C75.5334 44.1879 72.2692 47.4522 68.2557 47.4522Z" />
+                    </svg>
+                  </a>
+                )}
+                <Link
                   href="/blog" 
                   className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
                   aria-label="Blog"
                 >
                   <Code className="h-4 w-4" />
-                </a>
+                </Link>
               </div>
             </motion.div>
           </div>

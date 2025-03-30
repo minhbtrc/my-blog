@@ -704,7 +704,7 @@ const FooterSection = () => (
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link href="https://github.com/minhbtrc" className="text-gray-400 hover:text-gray-300 transition-colors">
+            <Link href={process.env.NEXT_PUBLIC_GITHUB_URL || ""} className="text-gray-400 hover:text-gray-300 transition-colors">
               <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-github"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
               </div>
@@ -715,12 +715,27 @@ const FooterSection = () => (
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link href="https://www.linkedin.com/in/minhbtcm00/" className="text-gray-400 hover:text-gray-300 transition-colors">
+            <Link href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""} className="text-gray-400 hover:text-gray-300 transition-colors">
               <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
               </div>
             </Link>
           </motion.div>
+          
+          {process.env.NEXT_PUBLIC_HUGGINGFACE_URL && (
+            <motion.div
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Link href={process.env.NEXT_PUBLIC_HUGGINGFACE_URL} className="text-gray-400 hover:text-gray-300 transition-colors">
+                <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
+                  <svg viewBox="0 0 95 88" width="18" height="18" fill="currentColor">
+                    <path d="M47.2119 0C26.7279 0 10.1255 16.7482 10.1255 37.4223C10.1255 43.5567 11.8306 49.2766 14.8211 54.2455L0 86.5839H25.5591L32.2099 69.608C36.9538 71.6223 41.9637 72.8446 47.2119 72.8446C67.696 72.8446 84.2984 56.0964 84.2984 35.4223C84.2984 15.8304 67.696 0 47.2119 0ZM26.1682 47.4522C22.1547 47.4522 18.8905 44.1879 18.8905 40.1744C18.8905 36.1608 22.1547 32.8966 26.1682 32.8966C30.1817 32.8966 33.446 36.1608 33.446 40.1744C33.446 44.1879 30.1817 47.4522 26.1682 47.4522ZM47.2119 39.2589C50.2204 39.2589 52.6591 36.8201 52.6591 33.8117C52.6591 30.8033 50.2204 28.3645 47.2119 28.3645C44.2035 28.3645 41.7647 30.8033 41.7647 33.8117C41.7647 36.8201 44.2035 39.2589 47.2119 39.2589ZM68.2557 47.4522C64.2422 47.4522 60.9779 44.1879 60.9779 40.1744C60.9779 36.1608 64.2422 32.8966 68.2557 32.8966C72.2692 32.8966 75.5334 36.1608 75.5334 40.1744C75.5334 44.1879 72.2692 47.4522 68.2557 47.4522Z" />
+                  </svg>
+                </div>
+              </Link>
+            </motion.div>
+          )}
           
           <motion.div
             whileHover={{ y: -2 }}

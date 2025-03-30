@@ -143,7 +143,7 @@ export default function Profile() {
           </h3>
           <div className="flex justify-center gap-4 mb-4">
             <Link
-              href="https://github.com/minhbtrc"
+              href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
               target="_blank"
               className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/50 dark:hover:bg-slate-600/50 text-slate-700 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
               aria-label="GitHub Profile"
@@ -151,7 +151,7 @@ export default function Profile() {
               <SiGithub className="w-4 h-4" />
             </Link>
             <Link
-              href="https://www.linkedin.com/in/minhbtcm00/"
+              href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""}
               target="_blank"
               className="w-9 h-9 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-700/50 dark:hover:bg-slate-600/50 text-slate-700 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
               aria-label="LinkedIn Profile"
@@ -166,7 +166,7 @@ export default function Profile() {
               <Mail className="w-4 h-4" />
             </Link>
             <Link
-              href="https://github.com/sponsors/minhbtrc"
+              href={process.env.NEXT_PUBLIC_GITHUB_SPONSORS_URL || ""}
               target="_blank"
               className="w-9 h-9 flex items-center justify-center rounded-full bg-pink-100 hover:bg-pink-200 dark:bg-pink-900/30 dark:hover:bg-pink-800/40 text-pink-700 dark:text-pink-300 hover:text-pink-800 dark:hover:text-pink-200 transition-colors"
               aria-label="Sponsor Me on GitHub"
