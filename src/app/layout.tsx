@@ -5,7 +5,7 @@ import { ThemeProvider } from 'next-themes'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3 } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Moon, Sun, Disc3, Coffee } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import clsx from 'clsx'
@@ -430,6 +430,52 @@ export default function RootLayout({
             
             {/* Main Content */}
             <main className="flex-grow z-10 relative">{children}</main>
+            
+            {/* Floating Buy Me a Coffee Button */}
+            {mounted && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1, duration: 0.5 }}
+                className="fixed bottom-6 right-6 z-50"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Link 
+                    href="https://buymeacoffee.com/minhbtc" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full shadow-[0_4px_12px_rgba(245,158,11,0.3)] hover:shadow-[0_6px_16px_rgba(245,158,11,0.4)] border border-amber-600/20 transition-all duration-300 group"
+                    aria-label="Support my work by buying me a coffee"
+                    title="Support my work by buying me a coffee"
+                  >
+                    <div className="relative">
+                      <Coffee className="h-5 w-5" />
+                      <motion.div 
+                        className="absolute top-0 left-0 w-full h-full opacity-70"
+                        animate={{ y: [0, -12, 0] }}
+                        transition={{ 
+                          repeat: Infinity, 
+                          duration: 1.5,
+                          repeatDelay: 3,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        <span className="block h-1 w-1 rounded-full bg-white absolute top-0 right-0"></span>
+                      </motion.div>
+                    </div>
+                    <span className="font-medium">Buy me a coffee</span>
+                    <span className="hidden md:flex items-center justify-center w-5 h-5 bg-white text-amber-600 rounded-full text-xs font-bold">♥</span>
+                  </Link>
+                </motion.div>
+                <div className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </div>
+              </motion.div>
+            )}
             
             {/* Footer - increase z-index to ensure it's above other elements */}
             <div className="relative z-30">

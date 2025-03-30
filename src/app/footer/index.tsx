@@ -8,7 +8,7 @@ import Island from '@/components/island'
 import ToTop from './totop'
 import Link from 'next/link'
 import { SiLinkedin, SiGithub as Github } from '@icons-pack/react-simple-icons'
-import { Mail, Linkedin } from 'lucide-react'
+import { Mail, Linkedin, Coffee } from 'lucide-react'
 
 export default function Footer() {
   return (
@@ -26,6 +26,15 @@ export default function Footer() {
       {/* <Link href="mailto:contact@example.com" className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">
         <Mail className="h-5 w-5" />
       </Link> */}
+      <Link 
+        href="https://buymeacoffee.com/minhbtc" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="flex items-center gap-2 px-3 py-1.5 bg-amber-500/90 hover:bg-amber-600 text-white rounded-md transition-all shadow-sm hover:shadow"
+      >
+        <Coffee className="h-4 w-4" />
+        <span className="text-xs font-medium">Buy me a coffee</span>
+      </Link>
     </div>
   )
 }
