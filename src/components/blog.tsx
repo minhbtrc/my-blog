@@ -120,12 +120,32 @@ export function BlogCard({ route }: { route: string }) {
     fetcher,
   )
 
+  // Check if post was updated in the last 7 days
+  const isNew = data?.date ? 
+    (new Date().getTime() - new Date(data.date).getTime()) < 7 * 24 * 60 * 60 * 1000 : 
+    false;
+
   return (
     <Link
       href={`/blog/${url}`}
-      className="block w-full h-full bg-slate-800/40 hover:bg-slate-800/70 border border-slate-700/50 hover:border-blue-900/40 transition-all duration-300 rounded-lg p-6 backdrop-blur-sm relative shadow-md hover:shadow-lg hover:shadow-blue-900/10 group"
+      className="block w-full h-full bg-slate-800/40 hover:bg-slate-800/70 border border-slate-700/50 hover:border-blue-900/40 transition-all duration-300 rounded-lg p-6 backdrop-blur-sm relative shadow-md hover:shadow-lg hover:shadow-blue-900/10 group hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:ring-offset-1 focus:ring-offset-slate-900"
     >
       {/* Terminal window header decoration */}
+      <div className="absolute top-0 left-0 right-0 h-6 bg-slate-900/80 rounded-t-lg -mt-6 -mx-6 flex items-center px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-full bg-red-400/70 group-hover:bg-red-500 transition-colors"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-400/70 group-hover:bg-yellow-500 transition-colors"></div>
+          <div className="w-3 h-3 rounded-full bg-green-400/70 group-hover:bg-green-500 transition-colors"></div>
+        </div>
+        <div className="absolute right-4 top-1.5">
+          {isNew && (
+            <span className="bg-blue-900/80 text-blue-300 text-xs px-2 py-0.5 rounded-md font-medium">
+              New
+            </span>
+          )}
+        </div>
+      </div>
+      
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500/0 via-cyan-500/30 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       
       {/* Code editor line numbers decoration */}
@@ -150,18 +170,25 @@ export function BlogCard({ route }: { route: string }) {
           </div>
         ) : (
           <>
-            <h3 className="text-lg font-bold mb-3 text-slate-100 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-blue-500 transition-colors line-clamp-2">
-              {data?.title || 'Unknown Article'}
-            </h3>
-            <p className="text-sm text-slate-400 mb-4 line-clamp-3 font-light">
+            <div className="flex justify-between items-start mb-1">
+              <h3 className="text-lg font-bold text-slate-100 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-blue-500 transition-colors line-clamp-2 max-w-prose">
+                {data?.title || 'Unknown Article'}
+              </h3>
+              <span className="bg-blue-900/40 text-blue-300 text-xs px-2 py-0.5 rounded-md font-mono ml-2 flex-shrink-0">
+                Post
+              </span>
+            </div>
+            
+            <p className="text-sm text-slate-400 mt-4 mb-4 line-clamp-3 font-light max-w-prose">
               {data?.description || 'No description available'}
             </p>
+            
             {data?.tags && data.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
                 {data.tags.slice(0, 3).map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center px-2 py-0.5 rounded-md text-xs bg-slate-800/70 text-cyan-300 border border-blue-900/30 font-mono"
+                    className="inline-flex items-center px-2 py-0.5 rounded-md text-xs bg-slate-800/70 text-cyan-300 border border-blue-900/30 font-mono hover:bg-blue-800/40 hover:text-cyan-100 hover:border-blue-700/50 transition-colors"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/70 mr-1.5"></span>
                     {tag}
@@ -172,7 +199,8 @@ export function BlogCard({ route }: { route: string }) {
                 )}
               </div>
             )}
-            <div className="flex items-center justify-between text-xs">
+            
+            <div className="flex items-center justify-between text-xs border-t border-slate-700/40 pt-3 mt-4">
               <div className="flex items-center gap-3">
                 {data?.date && (
                   <span className="flex items-center text-slate-500 font-mono">
@@ -187,10 +215,14 @@ export function BlogCard({ route }: { route: string }) {
                   </span>
                 )}
               </div>
-              <span className="text-slate-500 group-hover:text-cyan-400 font-mono text-xs transition-all">
-                read()<span className="group-hover:ml-0.5 transition-all">→</span>
-              </span>
+              <div className="flex items-center">
+                <span className="text-slate-500 font-mono text-xs mr-2">$</span>
+                <span className="text-cyan-400 font-mono text-xs group-hover:underline transition-all">
+                  /read-article<span className="group-hover:ml-0.5 transition-all">→</span>
+                </span>
+              </div>
             </div>
+
             <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-cyan-500/5 to-transparent rounded-tl-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </>
         )}
