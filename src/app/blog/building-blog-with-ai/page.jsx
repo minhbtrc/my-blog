@@ -280,80 +280,183 @@ export default function BuildingBlogWithAIPage() {
       </section>
 
       {/* Next idea section */}
-      <section className="mb-14">
-        <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-50">
+      <section className="mb-16">
+        <h2 className="text-2xl font-bold mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800 text-neutral-900 dark:text-neutral-50 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 text-neutral-700 dark:text-neutral-300"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707M12 22c-5.523 0-10-4.477-10-10s4.477-10 10-10 10 4.477 10 10-4.477 10-10 10z"></path></svg>
           The Plot Thickens: An AI Agent to Automate the Loop
         </h2>
         
-        <p className="text-lg mb-6 text-neutral-800 dark:text-neutral-200">
-          But our story doesn't end here. The development loop still requires manual steps that beg for automation:
-        </p>
+        <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800 p-5 rounded-lg mb-8 border border-neutral-200 dark:border-neutral-800">
+          <p className="text-lg mb-0 text-neutral-800 dark:text-neutral-200 leading-relaxed">
+            But our story doesn't end here. The development loop still requires manual steps that beg for automation—a perfect opportunity for an AI engineer's skillset.
+          </p>
+        </div>
         
-        <div className="space-y-6 mb-8">
-          <div className="flex items-start">
-            <div className="bg-neutral-200 dark:bg-neutral-800 w-8 h-8 rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-              <span className="font-bold text-neutral-800 dark:text-neutral-200">1</span>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2 text-neutral-900 dark:text-neutral-50">Taking Screenshots</h3>
-              <p className="text-neutral-700 dark:text-neutral-300">Every change requires manually grabbing screenshots of the current state. Tedious.</p>
-            </div>
+        <div className="bg-white dark:bg-neutral-900 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800 overflow-hidden mb-10">
+          <div className="p-5 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900">
+            <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-50">
+              Current Manual Process: The Tedious Parts
+            </h3>
           </div>
           
-          <div className="flex items-start">
-            <div className="bg-neutral-200 dark:bg-neutral-800 w-8 h-8 rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-              <span className="font-bold text-neutral-800 dark:text-neutral-200">2</span>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2 text-neutral-900 dark:text-neutral-50">Uploading Screenshots</h3>
-              <p className="text-neutral-700 dark:text-neutral-300">Manual uploads to GPT-4o for review and suggestions. Click, drag, drop, repeat.</p>
-            </div>
-          </div>
-          
-          <div className="flex items-start">
-            <div className="bg-neutral-200 dark:bg-neutral-800 w-8 h-8 rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
-              <span className="font-bold text-neutral-800 dark:text-neutral-200">3</span>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2 text-neutral-900 dark:text-neutral-50">Copy-Pasting Suggestions</h3>
-              <p className="text-neutral-700 dark:text-neutral-300">Recommendations make the journey back to Cursor for implementation. Context-switching feels so 2022.</p>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white dark:bg-neutral-950 p-5 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800">
+                <div className="bg-blue-100 dark:bg-blue-900/30 w-10 h-10 rounded-full flex items-center justify-center mb-4 mx-auto border border-blue-200 dark:border-blue-800">
+                  <span className="font-bold text-blue-800 dark:text-blue-300">1</span>
+                </div>
+                <h4 className="font-semibold mb-3 text-center text-neutral-900 dark:text-neutral-50">Taking Screenshots</h4>
+                <p className="text-neutral-700 dark:text-neutral-300 text-center leading-relaxed">Every change requires manually grabbing screenshots of the current state.</p>
+                <div className="flex justify-center mt-4">
+                  <span className="text-xs inline-flex items-center px-2.5 py-1 rounded-md bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>
+                    Tedious
+                  </span>
+                </div>
+              </div>
+              
+              <div className="bg-white dark:bg-neutral-950 p-5 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800">
+                <div className="bg-purple-100 dark:bg-purple-900/30 w-10 h-10 rounded-full flex items-center justify-center mb-4 mx-auto border border-purple-200 dark:border-purple-800">
+                  <span className="font-bold text-purple-800 dark:text-purple-300">2</span>
+                </div>
+                <h4 className="font-semibold mb-3 text-center text-neutral-900 dark:text-neutral-50">Uploading Screenshots</h4>
+                <p className="text-neutral-700 dark:text-neutral-300 text-center leading-relaxed">Manual uploads to GPT-4o for review. Click, drag, drop, repeat.</p>
+                <div className="flex justify-center mt-4">
+                  <span className="text-xs inline-flex items-center px-2.5 py-1 rounded-md bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><path d="M17 10h2a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-2"></path><path d="M5 10H3a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h2"></path><rect width="13" height="9" x="5" y="8" rx="2"></rect></svg>
+                    Repetitive
+                  </span>
+                </div>
+              </div>
+              
+              <div className="bg-white dark:bg-neutral-950 p-5 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800">
+                <div className="bg-green-100 dark:bg-green-900/30 w-10 h-10 rounded-full flex items-center justify-center mb-4 mx-auto border border-green-200 dark:border-green-800">
+                  <span className="font-bold text-green-800 dark:text-green-300">3</span>
+                </div>
+                <h4 className="font-semibold mb-3 text-center text-neutral-900 dark:text-neutral-50">Copy-Pasting Suggestions</h4>
+                <p className="text-neutral-700 dark:text-neutral-300 text-center leading-relaxed">Recommendations make the journey back to Cursor for implementation.</p>
+                <div className="flex justify-center mt-4">
+                  <span className="text-xs inline-flex items-center px-2.5 py-1 rounded-md bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1"><path d="M8 3v3a2 2 0 0 1-2 2H3"></path><path d="M21 8V5a2 2 0 0 0-2-2h-5"></path><path d="M3 16v3a2 2 0 0 0 2 2h5"></path><path d="M16 21h5a2 2 0 0 0 2-2v-3"></path></svg>
+                    Context-switching
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         
-        <div className="mb-8">
-          <h3 className="text-xl font-bold mb-4 text-neutral-900 dark:text-neutral-50">The Plot Twist: Automating Everything</h3>
+        <div className="mb-10">
+          <h3 className="text-xl font-bold mb-5 text-neutral-900 dark:text-neutral-50 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 text-neutral-700 dark:text-neutral-300"><path d="M2 12h20M16 6l6 6-6 6"></path></svg>
+            The Plot Twist: Automating Everything
+          </h3>
           
-          <p className="mb-4 text-neutral-700 dark:text-neutral-300">
-            Like any good story, this one needs a sequel. Imagine a local agent for MacOS that could:
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="p-6 bg-white dark:bg-neutral-950 rounded-lg shadow-sm border border-neutral-200 dark:border-neutral-800">
+              <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed mb-5">
+                Like any good story, this one needs a sequel. Imagine a local agent for MacOS that could automate the entire feedback loop:
+              </p>
+              
+              <ul className="space-y-3 mb-4">
+                <li className="flex items-start bg-neutral-50 dark:bg-neutral-900 p-3 rounded-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 dark:text-green-400 mr-2 mt-1 flex-shrink-0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  <span className="text-neutral-700 dark:text-neutral-300">Detect UI renders in the browser like a vigilant sentinel</span>
+                </li>
+                <li className="flex items-start bg-neutral-50 dark:bg-neutral-900 p-3 rounded-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 dark:text-green-400 mr-2 mt-1 flex-shrink-0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  <span className="text-neutral-700 dark:text-neutral-300">Capture screens automatically, no human intervention required</span>
+                </li>
+                <li className="flex items-start bg-neutral-50 dark:bg-neutral-900 p-3 rounded-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 dark:text-green-400 mr-2 mt-1 flex-shrink-0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  <span className="text-neutral-700 dark:text-neutral-300">Whisk screenshots to GPT-4o along with current component code</span>
+                </li>
+                <li className="flex items-start bg-neutral-50 dark:bg-neutral-900 p-3 rounded-md">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 dark:text-green-400 mr-2 mt-1 flex-shrink-0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  <span className="text-neutral-700 dark:text-neutral-300">Deliver GPT's feedback directly to the editor like a digital carrier pigeon</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div className="my-8 rounded-md overflow-hidden border border-neutral-200 dark:border-neutral-700 shadow-sm">
+              <div className="p-4 bg-neutral-50 dark:bg-neutral-900 text-center text-neutral-600 dark:text-neutral-400 font-semibold border-b border-neutral-200 dark:border-neutral-800">
+                Automated AI Development Loop
+              </div>
+              <div className="p-6 bg-white dark:bg-neutral-950">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto max-w-4xl">
+                  {/* First row */}
+                  <div className="text-center md:col-span-1">
+                    <div className="w-24 h-24 mx-auto mb-3 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 dark:text-blue-400"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+                    </div>
+                    <h4 className="font-medium text-lg text-neutral-800 dark:text-neutral-200 mb-1">Code Editor</h4>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Developer writes code</p>
+                  </div>
+
+                  <div className="flex flex-col justify-center items-center md:col-span-1">
+                    <div className="w-20 h-20 mx-auto mb-3 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center border border-green-200 dark:border-green-800">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600 dark:text-green-400"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 8a1 1 0 0 0-1 1v8a1 1 0 0 0 1.6.8l6-4a1 1 0 0 0 0-1.6l-6-4A1 1 0 0 0 9 8Z"/></svg>
+                    </div>
+                    <h4 className="font-medium text-lg text-neutral-800 dark:text-neutral-200 mb-1">UI Renderer</h4>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Code renders in browser</p>
+                  </div>
+
+                  <div className="text-center md:col-span-1">
+                    <div className="w-24 h-24 mx-auto mb-3 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 dark:text-blue-400"><path d="M2 16V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2Z"/><path d="M6 12h12"/><path d="M8 16v4"/><path d="M16 16v4"/><path d="M10 7V3"/><path d="M14 7V3"/></svg>
+                    </div>
+                    <h4 className="font-medium text-lg text-neutral-800 dark:text-neutral-200 mb-1">Local Agent</h4>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Automatically captures UI</p>
+                  </div>
+                </div>
+
+                {/* Arrows down */}
+                <div className="flex justify-center my-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-400 dark:text-neutral-500"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+                </div>
+
+                {/* Second row - center only */}
+                <div className="flex justify-center">
+                  <div className="text-center">
+                    <div className="w-28 h-28 mx-auto mb-3 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center border border-purple-200 dark:border-purple-800">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600 dark:text-purple-400"><path d="M12 2c1.7 0 3.4.3 5 .9 1.6.6 3 1.5 4.3 2.8s2.2 2.7 2.8 4.3c.6 1.6.9 3.2.9 5 0 1.7-.3 3.4-.9 5-1.2 3.5-3.9 6.2-7.3 7.4-3.5 1.3-7.4.6-10.2-1.7-.6-.4-.9-1.2-.9-2v-2.5"/><path d="M12 2C6.5 2 2 6.5 2 12v2.8c0 1.5 1.4 2.5 2.8 2.1l8.8-2.5c2.4-.7 4-2.9 4-5.4V8.5c0-1.2-1-2.1-2.1-2s-2.1 1-2.1 2.2v4.4"/></svg>
+                    </div>
+                    <h4 className="font-medium text-lg text-neutral-800 dark:text-neutral-200 mb-1">GPT-4o Analysis</h4>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">Evaluates UI and suggests improvements</p>
+                  </div>
+                </div>
+
+                {/* Circular arrows to connect back to first element */}
+                <div className="flex justify-center my-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500 dark:text-blue-400"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+                </div>
+
+                <div className="text-center mt-2">
+                  <p className="text-neutral-700 dark:text-neutral-300 font-medium">Continuous Feedback Loop</p>
+                  <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">AI improvements flow back into code, creating a seamless development cycle</p>
+                </div>
+              </div>
+            </div>
+          </div>
           
-          <ul className="space-y-3 mb-6 pl-4 border-l-2 border-neutral-300 dark:border-neutral-700">
-            <li className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-600 dark:text-neutral-400 mr-2 mt-1 flex-shrink-0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              <span className="text-neutral-700 dark:text-neutral-300">Detect UI renders in the browser like a vigilant sentinel</span>
-            </li>
-            <li className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-600 dark:text-neutral-400 mr-2 mt-1 flex-shrink-0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              <span className="text-neutral-700 dark:text-neutral-300">Capture screens automatically, no human intervention required</span>
-            </li>
-            <li className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-600 dark:text-neutral-400 mr-2 mt-1 flex-shrink-0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              <span className="text-neutral-700 dark:text-neutral-300">Whisk screenshots to GPT-4o along with current component code</span>
-            </li>
-            <li className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-neutral-600 dark:text-neutral-400 mr-2 mt-1 flex-shrink-0"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-              <span className="text-neutral-700 dark:text-neutral-300">Deliver GPT's feedback directly to the editor like a digital carrier pigeon</span>
-            </li>
-          </ul>
-          
-          <p className="mb-4 text-neutral-700 dark:text-neutral-300">
+          <p className="mb-4 text-neutral-700 dark:text-neutral-300 leading-relaxed">
             This would create a seamless feedback loop—a symphony of design suggestions flowing into code almost as fast as thoughts form.
           </p>
-          
-          <div className="pl-4 border-l-2 border-neutral-300 dark:border-neutral-700 mt-8">
-            <p className="font-semibold mb-2 text-neutral-800 dark:text-neutral-200">Next Chapter: The Agent Awakens</p>
-            <p className="text-neutral-700 dark:text-neutral-300">This is where the next part of our tale begins. A story of automation, intelligence, and perhaps finally conquering the CSS beast once and for all.</p>
+        </div>
+        
+        <div className="p-6 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-blue-950/40 rounded-lg border border-indigo-100 dark:border-indigo-900/40 mt-8">
+          <div className="flex items-start">
+            <div className="bg-indigo-100 dark:bg-indigo-900/50 w-10 h-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0 border border-indigo-200 dark:border-indigo-800 mt-1">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-600 dark:text-indigo-400"><path d="M18 10h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v6H2a2 2 0 0 0-2 2v7a5 5 0 0 0 5 5h14a5 5 0 0 0 5-5v-7a2 2 0 0 0-2-2z"></path></svg>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2 text-neutral-900 dark:text-neutral-50 text-lg">Next Chapter: The Agent Awakens</h4>
+              <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed">This is where the next part of our tale begins. A story of automation, intelligence, and perhaps finally conquering the CSS beast once and for all. We've already started building this local agent, so stay tuned!</p>
+              <div className="mt-4 flex items-center text-sm text-neutral-600 dark:text-neutral-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                <span>Want to collaborate on this project? Reach out!</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

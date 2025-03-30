@@ -4,7 +4,6 @@ description: My journey building a modern, developer-centric blog using AI tools
 date: 2023-08-10
 tags:
   - ai
-  - development
   - cursor
   - gpt4
   - nextjs
