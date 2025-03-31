@@ -195,10 +195,11 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
 };
 
 const RegularPostCard = ({ post, index }) => (
-  <motion.div 
-    className="relative overflow-hidden card border-l-4 border-l-blue-500 dark:border-l-blue-600 border-t border-r border-b border-gray-200 dark:border-slate-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 animate-fade-in group"
+  <motion.div
+    className="flex flex-col overflow-hidden rounded-lg shadow transition-all duration-300
+               border border-gray-200 bg-white hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 group relative"
     whileHover={{ 
-      scale: 1.01, 
+      scale: 1.02, 
       y: -5,
       boxShadow: "0 0 15px 2px rgba(52, 211, 153, 0.2)"
     }}
@@ -206,126 +207,80 @@ const RegularPostCard = ({ post, index }) => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.4, delay: index * 0.1 }}
   >
-    {/* Terminal-inspired header */}
-    <div className="bg-gray-50 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-700/70 py-1.5 px-3 flex items-center justify-between shadow-sm">
-      <div className="flex items-center space-x-1.5">
-        <div className="w-2.5 h-2.5 rounded-full bg-red-500/40 dark:bg-red-500 ring-1 ring-red-600/30 dark:ring-red-700 shadow-sm group-hover:animate-pulse"></div>
-        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40 dark:bg-yellow-500 ring-1 ring-yellow-600/30 dark:ring-yellow-700 shadow-sm group-hover:animate-pulse delay-75"></div>
-        <div className="w-2.5 h-2.5 rounded-full bg-green-500/40 dark:bg-green-500 ring-1 ring-green-600/30 dark:ring-green-700 shadow-sm group-hover:animate-pulse delay-150"></div>
+    {/* Terminal header (fixed height) */}
+    <div className="flex items-center justify-between border-b px-4 py-2
+                    bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+      <div className="flex gap-1.5">
+        <div className="h-3 w-3 rounded-full bg-red-500 group-hover:animate-pulse"></div>
+        <div className="h-3 w-3 rounded-full bg-yellow-500 group-hover:animate-pulse delay-75"></div>
+        <div className="h-3 w-3 rounded-full bg-green-500 group-hover:animate-pulse delay-150"></div>
       </div>
-      <div className="flex items-center">
-        <span className="text-[11px] font-mono text-gray-500 dark:text-gray-400 mr-2 bg-gray-100/80 dark:bg-slate-700/70 px-2 py-0.5 rounded shadow-inner">~/blog</span>
-        <motion.div 
-          className="px-1.5 py-0.5 bg-blue-500/90 text-white text-[11px] font-medium rounded flex items-center shadow-sm"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          <FileText className="h-3 w-3 mr-1" />
-          <span>Post</span>
-        </motion.div>
-      </div>
+      <span className="font-mono text-xs text-gray-500 dark:text-slate-400">
+        ~/blog
+      </span>
     </div>
 
-    <div className="p-4 bg-white dark:bg-slate-800/80 backdrop-blur-md transition-colors duration-300 relative z-10">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/0 via-blue-500/40 to-blue-500/0"></div>
-      
-      {/* Status badges */}
-      {new Date(post.date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
-        <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-md transform rotate-3 shadow-lg z-20 group-hover:scale-110 transition-transform">
-          🆕 NEW
-        </div>
-      )}
-      
-      {/* Trending badge for our example */}
-      {post.title.includes("ChatGPT") && (
-        <div className="absolute top-3 right-3 bg-orange-500/90 text-white text-xs font-bold px-2 py-0.5 rounded-md shadow-md z-20 flex items-center">
-          <span className="mr-1">🚀</span> TRENDING
-        </div>
-      )}
-      
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <div className="flex items-center text-xs text-gray-600 dark:text-slate-400 mb-3 space-x-4">
-            <span className="flex items-center">
-              <Calendar className="h-3.5 w-3.5 mr-1 text-blue-500 dark:text-blue-400" />
-              {formatDate(post.date)}
-            </span>
-            <span className="flex items-center">
-              <Clock className="h-3.5 w-3.5 mr-1 text-blue-500 dark:text-blue-400" />
-              {post.readingTime}
-            </span>
-          </div>
-
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-            {post.title}
-          </h2>
-        </div>
+    {/* Main content (expandable) */}
+    <div className="flex flex-col flex-1 p-6">
+      <div className="mb-4 flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
+        <Calendar className="h-4 w-4 text-blue-500" />
+        {formatDate(post.date)}
+        <Clock className="h-4 w-4 text-blue-500" />
+        {post.readingTime}
       </div>
 
-      <div className="pl-3 border-l-2 border-blue-500 dark:border-blue-600 mb-4 bg-blue-50/50 dark:bg-blue-900/10 p-3 rounded-r-md backdrop-blur-sm">
-        <p className="text-gray-600 dark:text-slate-300 typing-animation">
-          {post.description}
-        </p>
+      {/* Title - Flexible */}
+      <h2 className="mb-3 text-xl font-bold text-gray-800 dark:text-slate-200 flex-grow">
+        {post.title}
+      </h2>
+
+      {/* Description - Fixed lines (line-clamp for consistent height) */}
+      <p className="mb-4 text-sm text-gray-600 dark:text-slate-400 line-clamp-2 flex-grow">
+        {post.description}
+      </p>
+
+      {/* Tags - Fixed height */}
+      <div className="flex flex-wrap gap-2 mt-auto">
+        {post.tags?.map((tag) => (
+          <motion.span
+            key={tag}
+            className="inline-flex items-center rounded border px-2 py-0.5 text-xs border-gray-200 bg-gray-100 text-blue-600 dark:border-slate-700 dark:bg-slate-700 dark:text-blue-400 cursor-pointer"
+            whileHover={{ 
+              boxShadow: "0 0 8px 1px rgba(59, 130, 246, 0.5)",
+              y: -1,
+              scale: 1.05
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <Hash className="mr-1 h-3 w-3" />
+            {tag}
+          </motion.span>
+        ))}
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        {post.tags?.slice(0, 3).map((tag) => {
-          // Define emoji icon for each tag
-          const tagIcons = {
-            'ai': '🧠',
-            'development': '💻',
-            'cursor': '🖱️',
-            'gpt4': '🤖',
-            'nextjs': '⚡',
-            'langchain': '⛓️',
-            'privacy': '🔒'
-          };
-          
-          return (
-            <motion.span 
-              key={tag}
-              className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 transition-colors border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-800/50 hover:border-blue-300 dark:hover:border-blue-700 hover:scale-105 transform"
-              whileHover={{ 
-                boxShadow: "0 0 8px 1px rgba(59, 130, 246, 0.5)",
-                y: -1
-              }}
-            >
-              <span className="mr-1">{tagIcons[tag] || <Hash className="h-3 w-3" />}</span>
-              {tag}
-            </motion.span>
-          );
-        })}
-      </div>
-
-      <div className="flex items-center justify-between bg-gray-50 dark:bg-slate-900/60 p-2 rounded-md border border-gray-200 dark:border-slate-700 mt-4 backdrop-blur-md">
-        <div className="flex items-center text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-slate-800/90 px-2 py-0.5 rounded-md border border-gray-200 dark:border-slate-700">
-          <span className="text-green-600 dark:text-green-400 font-bold">$</span>
-          <span className="ml-1">read-article --title {post.title.split(' ')[0].toLowerCase()} --open</span>
+      {/* Action Bar - fixed height */}
+      <div className="mt-6 flex items-center justify-between border-t pt-4 border-gray-200 dark:border-slate-700">
+        <div className="font-mono text-xs text-gray-500 dark:text-slate-400 bg-gray-50 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-gray-200 dark:border-slate-700 flex items-center">
+          <span className="text-green-500">$</span>
+          <span className="ml-1.5">read-article --title {post.title.split(' ')[0].toLowerCase()} --open</span>
           <span className="ml-1 animate-blink">|</span>
         </div>
 
-        <Link 
+        <Link
           href={post.route || `/blog/${post.slug}`}
-          className="inline-flex items-center text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group-hover:underline bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all duration-200 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+          className="inline-flex items-center rounded bg-blue-500 px-3 py-1 text-xs text-white hover:bg-blue-600 transition hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
         >
-          <span>Execute</span>
-          <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+          Execute <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1.5 transition-transform duration-300" />
         </Link>
       </div>
-
-      <div className="absolute bottom-0 left-0 right-0 bg-gray-50 dark:bg-slate-900/80 border-t border-gray-200 dark:border-slate-700/50 py-1 px-2 flex items-center justify-between text-[10px] font-mono text-gray-500 dark:text-gray-400 backdrop-blur-sm">
-        <div className="flex items-center">
-          <div className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1 shadow-sm animate-pulse"></div>
-          <motion.span
-            animate={{ opacity: [0.7, 1, 0.7] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            Ready
-          </motion.span>
-        </div>
-        
-      </div>
     </div>
+
+    {/* Scan line animation */}
+    <motion.div 
+      className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent z-[-1] pointer-events-none opacity-0 group-hover:opacity-100"
+      animate={{ y: ["100%", "-100%"] }}
+      transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+    />
   </motion.div>
 );
 

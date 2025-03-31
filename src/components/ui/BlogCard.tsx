@@ -34,7 +34,7 @@ export function BlogCard({ post, className, featured = false }: BlogCardProps) {
     <Link
       href={post.route || '#'}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-lg transition-shadow duration-300 shadow-sm hover:shadow-md backdrop-blur-sm",
+        "group relative flex flex-col h-[280px] overflow-hidden rounded-lg transition-shadow duration-300 shadow-sm hover:shadow-md backdrop-blur-sm",
         "bg-base-100 border-base-200 hover:bg-base-200",
         className
       )}
@@ -55,7 +55,7 @@ export function BlogCard({ post, className, featured = false }: BlogCardProps) {
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-4 h-[calc(280px-32px)]">
         <div className="flex items-center gap-3 text-xs text-base-content/60 mb-4">
           <span className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-primary" />
@@ -78,11 +78,11 @@ export function BlogCard({ post, className, featured = false }: BlogCardProps) {
           </div>
         )}
 
-        <h2 className="text-xl font-mono text-base-content mb-4 leading-relaxed group-hover:text-primary">
+        <h2 className="text-xl font-mono text-base-content mb-4 leading-relaxed group-hover:text-primary line-clamp-2">
           {post.title}
         </h2>
 
-        <p className="text-sm text-base-content/70 mb-6 font-light">
+        <p className="text-sm text-base-content/70 mb-6 font-light line-clamp-2">
           {post.description}
         </p>
 
