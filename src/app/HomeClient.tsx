@@ -321,165 +321,150 @@ minh@ai-lab:~$ ./current_project.sh
     }
   };
   
+  // Terminal Hero - render method
   return (
-    <div className="w-full">
-      <div className="terminal-window relative rounded-xl overflow-hidden">
-        {/* Terminal header/tabs section */}
-        <div className="bg-gray-900 px-4 py-2 flex items-center justify-between border-b border-gray-800">
-          <div className="flex space-x-1.5">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-            <div className="w-3 h-3 rounded-full bg-green-500" />
-          </div>
-
-          {/* Terminal tabs */}
-          <div className="flex items-center space-x-1">
-            {terminalTabs.map((tab, index) => (
-              <button
-                key={index}
-                className={`px-2 py-1 text-xs rounded-md font-mono flex items-center gap-1 transition-colors ${
-                  activeTab === index 
-                    ? `text-white ${tab.color}` 
-                    : 'text-gray-400 hover:text-gray-300 hover:bg-gray-800'
-                }`}
-                onClick={() => handleTabClick(index)}
-              >
-                <span>{tab.icon}</span>
-                <span className="hidden sm:inline">{tab.name}</span>
-              </button>
-            ))}
-          </div>
-          
-          <div className="text-xs text-gray-400 font-mono">{terminalTitle}</div>
+    <div className="home-terminal terminal-window rounded-xl overflow-hidden border-2 border-slate-600/80 dark:border-cyan-900/50 bg-slate-950 dark:bg-[#0B1120] shadow-lg relative">
+      {/* Matrix-like backdrop for extra wow effect */}
+      <div className="absolute inset-0 overflow-hidden opacity-10 z-0">
+        <div className="matrix-rain-effect"></div>
+      </div>
+      
+      {/* Add scan line effect */}
+      <div className="terminal-scan-effect absolute inset-0 z-1 pointer-events-none"></div>
+      
+      {/* Terminal Header with glowing effect */}
+      <div className="home-terminal-header relative z-10 flex items-center justify-between px-4 py-2.5 bg-gradient-to-r from-slate-800 via-slate-900 to-slate-800 dark:from-slate-800/90 dark:via-slate-900 dark:to-slate-800/90 border-b-2 border-slate-700/80 dark:border-cyan-950/80">
+        <div className="flex items-center space-x-2">
+          <div className="w-3 h-3 rounded-full bg-red-500 shadow-md shadow-red-500/20 hover:bg-red-400 transition-colors duration-200"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-500 shadow-md shadow-yellow-500/20 hover:bg-yellow-400 transition-colors duration-200"></div>
+          <div className="w-3 h-3 rounded-full bg-green-500 shadow-md shadow-green-500/20 hover:bg-green-400 transition-colors duration-200"></div>
         </div>
-        
-        {/* Terminal content area */}
-        <div className={`bg-gray-900 p-3 h-[220px] overflow-y-auto font-mono text-sm text-gray-200 relative border-b border-gray-800 ${isGlitching ? 'terminal-glitch' : ''}`}>
-          <pre className="whitespace-pre-wrap">
-            <div className="terminal-prompt">
-              <span className="text-blue-400">minh@ai-lab:~$</span> 
-              <span className="text-white ml-1">
-                {isTypingHeader ? 
-                  "..." : 
-                  ["whoami", "ls projects", "cat personality.txt", "grep values mindset.md"][currentSnippetIndex]
+        <div className="text-xs text-gray-300 font-mono flex items-center gap-2 relative px-3 py-1 bg-slate-800/50 rounded-md border border-slate-700/50 shadow-inner">
+          {isTypingHeader ? (
+            <span className="animate-pulse text-cyan-400 dark:text-cyan-400">$</span>
+          ) : null}
+          <span className="text-gradient-blue-green">{terminalTitle}</span>
+        </div>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+            className="terminal-control-button"
+            aria-label={isAutoPlaying ? "Pause auto-rotation" : "Enable auto-rotation"}
+          >
+            {isAutoPlaying ? <Pause size={14} /> : <Play size={14} />}
+          </button>
+          <button
+            onClick={() => {
+              setClickCount(count => {
+                if (count + 1 >= 5) {
+                  triggerGlitch();
+                  setEasterEggActive(true);
+                  setTimeout(() => setEasterEggActive(false), 3000);
+                  return 0;
                 }
-              </span>
-            </div>
-            
-            <div className="mt-2">
-              {typedText}
-              {/* Blinking cursor at the end of typed text */}
-              <span className="inline-block w-2 h-4 ml-0.5 bg-blue-400 animate-blink"></span>
-            </div>
-          </pre>
-        </div>
-
-        {/* Terminal Bottom Controls */}
-        <div className="bg-gray-800 p-1.5 flex items-center justify-between rounded-b-xl">
-          <div className="flex items-center space-x-1.5">
-            <button
-              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-              className={`p-1.5 rounded-md ${isAutoPlaying ? 'bg-green-600/40 text-green-500' : 'bg-slate-700/50 text-slate-400'} hover:bg-slate-700/80`}
-              title={isAutoPlaying ? "Auto-playing enabled" : "Auto-playing disabled"}
-            >
-              {isAutoPlaying ? (
-                <Pause className="h-3 w-3" />
-              ) : (
-                <Play className="h-3 w-3" />
-              )}
-            </button>
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => {
-                const prevIndex = currentSnippetIndex === 0 ? codeSnippets.length - 1 : currentSnippetIndex - 1;
-                handleTabClick(prevIndex);
-              }}
-              className="p-1.5 rounded-md bg-slate-700/50 text-slate-400 hover:bg-slate-700/80"
-              title="Previous snippet"
-            >
-              <ChevronLeft className="h-3 w-3" />
-            </button>
-            
-            <span className="text-xs text-slate-300 font-mono">{currentSnippetIndex + 1}/{codeSnippets.length}</span>
-            
-            <button
-              onClick={() => {
-                const nextIndex = (currentSnippetIndex + 1) % codeSnippets.length;
-                handleTabClick(nextIndex);
-              }}
-              className="p-1.5 rounded-md bg-slate-700/50 text-slate-400 hover:bg-slate-700/80"
-              title="Next snippet"
-            >
-              <ChevronRight className="h-3 w-3" />
-            </button>
-          </div>
+                return count + 1;
+              });
+            }}
+            className="terminal-control-button"
+            aria-label="Refresh terminal"
+          >
+            <RefreshCw size={14} />
+          </button>
         </div>
       </div>
 
-      <style jsx global>{`
-        .terminal-window {
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-                      0 4px 6px -2px rgba(0, 0, 0, 0.05),
-                      0 0 0 1px rgba(0, 0, 0, 0.05);
-        }
+      {/* Terminal Tabs with active indicator */}
+      <div className="home-terminal-tabs relative z-10 flex px-2 bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 dark:from-slate-900/90 dark:via-slate-950 dark:to-slate-900/90 border-b-2 border-slate-800/80 dark:border-slate-800/50 overflow-x-auto scrollbar-hide">
+        {terminalTabs.map((tab, index) => (
+          <button
+            key={tab.name}
+            onClick={() => handleTabClick(index)}
+            className={`home-terminal-tab relative ${
+              activeTab === index 
+                ? 'home-terminal-tab-active text-cyan-300 dark:text-cyan-300 border-b-2 border-cyan-500 dark:border-cyan-500 bg-slate-800/70 dark:bg-slate-800/50' 
+                : 'text-gray-400 hover:text-gray-200 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-slate-800/50 dark:hover:bg-slate-800/30'
+            } px-3.5 py-2 text-xs font-mono focus:outline-none transition-all duration-200 whitespace-nowrap`}
+          >
+            <span className="mr-1.5">{tab.icon}</span>
+            <span>{tab.name}</span>
+            {activeTab === index && (
+              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500 dark:from-cyan-400 dark:via-blue-400 dark:to-cyan-400"></span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Terminal Body with enhanced styling */}
+      <div
+        className={`home-terminal-body relative z-10 p-3.5 bg-gradient-to-b from-slate-950 to-slate-900 dark:from-[#0B1120] dark:to-slate-900 font-mono text-sm text-green-400 dark:text-green-400 overflow-auto scrollbar-hide h-72 ${easterEggActive ? 'terminal-glitch' : ''} ${isGlitching ? 'terminal-glitch' : ''}`}
+      >
+        {typedText.split('\n').map((line, idx) => (
+          <div key={idx} className="whitespace-pre-wrap mb-1.5 terminal-line terminal-typing">
+            {line.startsWith('>') ? (
+              <span className="text-cyan-400 dark:text-cyan-400">{line}</span>
+            ) : line.startsWith('minh@ai-lab') ? (
+              <span>
+                <span className="text-green-500 dark:text-green-400">minh@ai-lab</span>
+                <span className="text-gray-400 dark:text-gray-400">:</span>
+                <span className="text-blue-400 dark:text-blue-400">~$</span>
+                <span className="text-white dark:text-gray-200">{line.split('$')[1]}</span>
+              </span>
+            ) : line.startsWith('[RUNNING]') ? (
+              <span className="text-amber-500 dark:text-amber-400">{line}</span>
+            ) : line.startsWith('#') ? (
+              <span className="text-purple-400 dark:text-purple-400">{line}</span>
+            ) : line.includes('const') || line.includes('let') || line.includes('var') || line.includes('function') ? (
+              <span className="text-gradient-code">{line}</span>
+            ) : (
+              <span className="text-gray-300 dark:text-gray-300">{line}</span>
+            )}
+          </div>
+        ))}
+        <div className="inline-block w-2.5 h-5 bg-green-400 dark:bg-green-400 ml-0.5 animate-terminal-cursor"></div>
         
-        .dark .terminal-window {
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 
-                      0 10px 10px -5px rgba(0, 0, 0, 0.2),
-                      0 0 0 1px rgba(255, 255, 255, 0.05);
-        }
-        
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        
-        .animate-blink {
-          animation: blink 1s step-end infinite;
-        }
-        
-        .terminal-glitch {
-          animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both;
-        }
-        
-        @keyframes glitch {
-          0% {
-            transform: translate(0);
-          }
-          10% {
-            transform: translate(-2px, 2px);
-          }
-          20% {
-            transform: translate(2px, -2px);
-          }
-          30% {
-            transform: translate(-2px, 2px);
-          }
-          40% {
-            transform: translate(2px, -2px);
-          }
-          50% {
-            transform: translate(-2px, 2px);
-          }
-          60% {
-            transform: translate(2px, -2px);
-          }
-          70% {
-            transform: translate(-2px, 2px);
-          }
-          80% {
-            transform: translate(2px, -2px);
-          }
-          90% {
-            transform: translate(-2px, 0);
-          }
-          100% {
-            transform: translate(0);
-          }
-        }
-      `}</style>
+        {/* AI "thinking" indicator */}
+        {isAiThinking && (
+          <div className="ai-thinking mt-2">
+            <div className="flex space-x-1">
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Terminal Controls with gradient hover */}
+      <div className="home-terminal-tabs relative z-10 flex justify-between p-2 border-t-2 border-slate-800/80 dark:border-slate-800/50 bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 dark:from-slate-900/90 dark:via-slate-950 dark:to-slate-900/90">
+        <div className="flex space-x-1">
+          <button
+            onClick={() => {
+              const prevIndex = (currentSnippetIndex - 1 + codeSnippets.length) % codeSnippets.length;
+              handleTabClick(prevIndex);
+            }}
+            className="terminal-nav-button"
+            aria-label="Previous snippet"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <button
+            onClick={() => {
+              const nextIndex = (currentSnippetIndex + 1) % codeSnippets.length;
+              handleTabClick(nextIndex);
+            }}
+            className="terminal-nav-button"
+            aria-label="Next snippet"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+        <div className="text-xs text-cyan-500/80 dark:text-cyan-400/80 font-mono bg-slate-800/30 px-2 py-0.5 rounded border border-slate-700/40">
+          <span className="text-gradient-cyan">{currentSnippetIndex + 1}/{codeSnippets.length}</span>
+        </div>
+      </div>
+
+      {/* Terminal glow effect */}
+      <div className="absolute inset-0 border-glow opacity-20 pointer-events-none"></div>
     </div>
   );
 };
@@ -501,7 +486,7 @@ export default function HomeClient() {
   };
   
   return (
-    <main className="w-full flex flex-col flex-grow relative z-10">
+    <main className="w-full flex flex-col flex-grow relative z-10 dark:bg-slate-900">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 items-center">
           {/* Left column - Introduction */}
@@ -510,7 +495,7 @@ export default function HomeClient() {
             <div className="space-y-1">
               <h1 className="text-4xl sm:text-5xl font-bold font-mono tracking-tight">
                 <motion.span 
-                  className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500"
+                  className="home-hero-title bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
@@ -519,7 +504,7 @@ export default function HomeClient() {
                 </motion.span>
               </h1>
               <motion.p 
-                className="text-xl text-slate-600 dark:text-slate-300 font-medium"
+                className="home-hero-subtitle text-xl text-slate-600 dark:text-slate-300 font-medium"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -529,17 +514,17 @@ export default function HomeClient() {
 
               {/* Currently building badge */}
               <motion.div 
-                className="inline-flex items-center mt-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 shadow-sm"
+                className="home-hero-badge inline-flex items-center mt-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 shadow-sm"
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
                 <span className="relative flex h-2 w-2 mr-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                  <span className="home-hero-badge-dot relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                 </span>
-                <span className="text-sm text-slate-600 dark:text-slate-300 font-mono">
-                  Currently building: <span className="text-blue-600 dark:text-blue-400">AI Chatbot + Agent + RAG</span>
+                <span className="home-hero-badge-text text-sm text-slate-600 dark:text-slate-300 font-mono">
+                  Currently building: <span className="home-hero-badge-highlight text-blue-600 dark:text-blue-400">AI Chatbot + Agent + RAG</span>
                 </span>
               </motion.div>
             </div>
@@ -569,7 +554,7 @@ export default function HomeClient() {
               {/* About Me */}
               <Link
                 href="/about"
-                className="group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-blue-500/30"
+                className="home-cta-button home-cta-primary group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-blue-500/30"
               >
                 <span className="relative z-10">About Me</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -579,7 +564,7 @@ export default function HomeClient() {
               {/* Blog */}
               <Link
                 href="/blog"
-                className="group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-indigo-500/30"
+                className="home-cta-button home-cta-secondary group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-indigo-500/30"
               >
                 <span className="relative z-10">Read Blog</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -589,7 +574,7 @@ export default function HomeClient() {
               {/* Contact */}
               <Link
                 href="/contact"
-                className="group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-green-500/30"
+                className="home-cta-button home-cta-tertiary group relative inline-flex items-center gap-2 px-5 py-2.5 font-mono text-sm font-semibold rounded-lg bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-all shadow-md hover:shadow-green-500/30"
               >
                 <span className="relative z-10">Contact</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -616,9 +601,9 @@ export default function HomeClient() {
                   <Link
                     key={tag}
                     href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="group inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/70 border border-slate-300/50 dark:border-blue-900/30 text-slate-700 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-blue-300/50 dark:hover:border-blue-800/40 transition-all cursor-pointer font-mono hover:shadow-sm hover:scale-105 transform"
+                    className="home-tag group inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/70 border border-slate-300/50 dark:border-blue-900/30 text-slate-700 dark:text-slate-300 text-xs hover:bg-slate-200 dark:hover:bg-slate-700 hover:border-blue-300/50 dark:hover:border-blue-800/40 transition-all cursor-pointer font-mono hover:shadow-sm hover:scale-105 transform"
                   >
-                    <span className="mr-1.5 w-1.5 h-1.5 rounded-full bg-blue-500/70 group-hover:scale-110 transition-transform"></span>
+                    <span className="home-tag-dot mr-1.5 w-1.5 h-1.5 rounded-full bg-blue-500/70 group-hover:scale-110 transition-transform"></span>
                     <span className="group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{tag}</span>
                   </Link>
                 ))}
@@ -630,7 +615,7 @@ export default function HomeClient() {
           <div className="md:col-span-5 flex flex-col">
             {/* Unified card to visually connect profile and terminal */}
             <motion.div 
-              className="rounded-2xl overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-900/95 dark:to-slate-800/90 border border-slate-300 dark:border-slate-700/60 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-blue-600/10 dark:hover:shadow-blue-900/10 ring-1 ring-slate-300/70 dark:ring-slate-700/50"
+              className="home-profile-card rounded-2xl overflow-hidden bg-gradient-to-b from-slate-50 to-white dark:from-slate-900/95 dark:to-slate-800/90 border border-slate-300 dark:border-slate-700/60 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-blue-600/10 dark:hover:shadow-blue-900/10 ring-1 ring-slate-300/70 dark:ring-slate-700/50"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -707,12 +692,12 @@ export default function HomeClient() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.5 }}
             >
-              <div className="flex gap-2 p-1.5 rounded-full bg-slate-100 dark:bg-slate-800/90 backdrop-blur-sm shadow-md border border-slate-300 dark:border-slate-700/50">
+              <div className="home-social-container flex gap-2 p-1.5 rounded-full bg-slate-100 dark:bg-slate-800/90 backdrop-blur-sm shadow-md border border-slate-300 dark:border-slate-700/50">
                 <a 
                   href={process.env.NEXT_PUBLIC_GITHUB_URL || ""} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
+                  className="home-social-button p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
                   aria-label="GitHub"
                 >
                   <Github className="h-4 w-4" />
@@ -721,7 +706,7 @@ export default function HomeClient() {
                   href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
+                  className="home-social-button p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="h-4 w-4" />
@@ -731,7 +716,7 @@ export default function HomeClient() {
                     href={process.env.NEXT_PUBLIC_HUGGINGFACE_URL} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
+                    className="home-social-button p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
                     aria-label="HuggingFace"
                   >
                     <svg viewBox="0 0 95 88" fill="currentColor" className="h-4 w-4">
@@ -741,7 +726,7 @@ export default function HomeClient() {
                 )}
                 <Link
                   href="/blog" 
-                  className="p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
+                  className="home-social-button p-2 rounded-full bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-110 hover:shadow-sm"
                   aria-label="Blog"
                 >
                   <Code className="h-4 w-4" />
@@ -753,7 +738,7 @@ export default function HomeClient() {
         
         {/* Improved separator for content sections */}
         <motion.div 
-          className="mt-16 mb-10"
+          className="light-mode-divider mt-16 mb-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}

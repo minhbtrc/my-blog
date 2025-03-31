@@ -10,7 +10,7 @@ export type ThemeProps = {
 }
 
 export default function Theme({ className }: ThemeProps) {
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
   const [isMounted, setIsMounted] = useState(false)
   
   useEffect(() => {
@@ -20,7 +20,7 @@ export default function Theme({ className }: ThemeProps) {
   const MotionIcon = useMemo(() => {
     if (!isMounted) return motion.div;
     
-    switch (theme) {
+    switch (resolvedTheme) {
       case 'light':
         return motion(Sun)
       case 'dark':
@@ -28,19 +28,25 @@ export default function Theme({ className }: ThemeProps) {
       default:
         return motion(Monitor)
     }
-  }, [theme, isMounted])
+  }, [resolvedTheme, isMounted])
 
-  const onTheme = useCallback(() => {
+  const toggleTheme = useCallback(() => {
     if (!isMounted) return;
-    if (theme === 'system') return setTheme('light')
-    if (theme === 'light') return setTheme('dark')
-    return setTheme('system')
-  }, [theme, setTheme, isMounted])
+    const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+    setTheme(newTheme)
+    document.documentElement.classList.remove('dark', 'light')
+    document.documentElement.classList.add(newTheme)
+  }, [resolvedTheme, setTheme, isMounted])
+
+  if (!isMounted) return null;
 
   return (
     <button
-      className={clsx('btn btn-square btn-xs btn-ghost', className)}
-      onClick={onTheme}
+      className={clsx('btn btn-square btn-xs', 
+        resolvedTheme === 'dark' ? 'btn-ghost text-cyan-400' : 'btn-ghost text-blue-600',
+        className)}
+      onClick={toggleTheme}
+      aria-label="Toggle theme"
     >
       <MotionIcon
         className="w-3 h-3"

@@ -59,12 +59,12 @@ export default function AboutContent() {
 
   return (
     <motion.div 
-      className="w-full max-w-full relative z-10"
+      className="w-full max-w-full relative"
       initial="hidden"
       animate={mounted ? "show" : "hidden"}
       variants={containerVariants}
     >
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-2 space-y-6">
         {/* Header */}
         <motion.div 
           className="flex flex-col md:flex-row gap-8 items-center md:items-start"

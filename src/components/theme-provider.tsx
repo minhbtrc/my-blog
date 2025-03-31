@@ -5,20 +5,27 @@ import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { type ThemeProviderProps } from 'next-themes/dist/types'
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  // Always use dark theme
+  // Support system preference by default
   React.useEffect(() => {
     const root = window.document.documentElement
-    root.classList.remove('light')
-    root.classList.add('dark')
-    localStorage.setItem('theme', 'dark')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const savedTheme = localStorage.getItem('theme')
+    
+    if (savedTheme) {
+      root.classList.remove('light', 'dark')
+      root.classList.add(savedTheme)
+    } else {
+      root.classList.remove('light', 'dark')
+      root.classList.add(prefersDark ? 'dark' : 'light')
+      localStorage.setItem('theme', prefersDark ? 'dark' : 'light')
+    }
   }, [])
 
-  // Create a provider that enforces dark mode
   return (
     <NextThemesProvider
       attribute="class"
-      defaultTheme="dark"
-      forcedTheme="dark"
+      defaultTheme="system"
+      enableSystem
     >
       {children}
     </NextThemesProvider>

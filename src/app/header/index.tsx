@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu as MenuIcon, X, Home, BookOpen, User, Mail, Terminal, Command, Code, ArrowRight } from 'lucide-react'
 import clsx from 'clsx'
 import PlayButton from './playButton'
+import Theme from './theme'
 
 const navItems = [
   { name: 'Home', href: '/', icon: Home },
@@ -104,6 +105,9 @@ export default function Header() {
           <div className="flex items-center gap-2">
             {mounted && <PlayButton />}
             
+            {/* Theme Toggle */}
+            <Theme />
+            
             {/* Contact button */}
             <Link 
               href="/contact" 
@@ -126,6 +130,9 @@ export default function Header() {
         {/* Mobile Menu Button */}
         <div className="flex items-center md:hidden">
           {mounted && <PlayButton />}
+          
+          {/* Mobile Theme Toggle */}
+          <Theme />
           
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
