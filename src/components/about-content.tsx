@@ -64,33 +64,33 @@ export default function AboutContent() {
       animate={mounted ? "show" : "hidden"}
       variants={containerVariants}
     >
-      <div className="max-w-4xl mx-auto px-4 py-2 space-y-6">
+      <div className="max-w-4xl mx-auto space-y-4">
         {/* Header */}
         <motion.div 
-          className="flex flex-col md:flex-row gap-8 items-center md:items-start"
+          className="flex flex-col md:flex-row gap-6 items-center md:items-start"
           variants={itemVariants}
         >
           <motion.div 
-            className="w-40 h-40 relative rounded-lg overflow-hidden shadow-md border border-slate-300 dark:border-blue-900/40 bg-white dark:bg-slate-800/60"
+            className="w-32 h-32 relative rounded-lg overflow-hidden shadow-md border border-slate-300 dark:border-blue-900/40 bg-white dark:bg-slate-800/60"
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
-          <Image
-            src="/new_profile.png"
-            alt="Minh Bui Tran Cong"
-            width={160}
-            height={160}
-            className="object-cover w-full h-full"
-            unoptimized={true}
-            priority={true}
-          />
-          {/* Code-like overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-800/20 dark:to-[#0e1628]/70 pointer-events-none"></div>
+            <Image
+              src="/new_profile.png"
+              alt="Minh Bui Tran Cong"
+              width={128}
+              height={128}
+              className="object-cover w-full h-full"
+              unoptimized={true}
+              priority={true}
+            />
+            {/* Code-like overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-800/20 dark:to-[#0e1628]/70 pointer-events-none"></div>
           </motion.div>
 
           <motion.div className="flex-1 text-center md:text-left" variants={itemVariants}>
             <motion.h1 
-              className="text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-500 font-mono"
+              className="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-500 font-mono"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
@@ -103,15 +103,15 @@ export default function AboutContent() {
               Minh Bui Tran Cong
             </motion.h1>
             <motion.p 
-              className="text-xl text-slate-800 dark:text-slate-300 mb-4 flex items-center justify-center md:justify-start gap-2"
+              className="text-lg text-slate-800 dark:text-slate-300 mb-3 flex items-center justify-center md:justify-start gap-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: mounted ? 0.3 : 0 }}
             >
-            <Terminal className="w-5 h-5 text-blue-700/80 dark:text-cyan-400/70" />
-            <span className="font-mono">AI.Engineer()</span>
+              <Terminal className="w-4 h-4 text-blue-700/80 dark:text-cyan-400/70" />
+              <span className="font-mono">AI.Engineer()</span>
               <motion.span 
-                className="inline-flex items-center justify-center w-5 h-5 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-800 dark:text-white text-xs border border-slate-300 dark:border-blue-900/40"
+                className="inline-flex items-center justify-center w-4 h-4 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-800 dark:text-white text-[10px] border border-slate-300 dark:border-blue-900/40"
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ 
                   delay: mounted ? 0.5 : 0, 
@@ -125,119 +125,107 @@ export default function AboutContent() {
               </motion.span>
             </motion.p>
             <motion.p 
-              className="text-slate-700 dark:text-slate-400 max-w-2xl mb-6 font-light"
+              className="text-sm text-slate-700 dark:text-slate-400 max-w-2xl mb-4 font-light"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: mounted ? 0.4 : 0 }}
             >
-            AI Engineer with expertise in machine learning and deep learning, specializing in natural language processing (NLP) and Transformer-based architectures. Passionate about optimizing LLM performance using advanced techniques and frameworks.
+              AI Engineer with expertise in machine learning and deep learning, specializing in natural language processing (NLP) and Transformer-based architectures. Passionate about optimizing LLM performance using advanced techniques and frameworks.
             </motion.p>
             
             <motion.div 
-              className="flex flex-wrap gap-3 justify-center md:justify-start"
+              className="flex flex-wrap gap-2 justify-center md:justify-start"
               variants={itemVariants}
             >
               <motion.div
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-            {/* <Link 
-              href="mailto:contact@example.com"
-              className="inline-flex items-center px-4 py-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-700/40 dark:hover:border-blue-800/40 transition-all text-sm font-mono gap-2 shadow-sm" 
-            >
-              <Mail className="w-4 h-4" />
-              contact.me()
-            </Link> */}
+                <a
+                  href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center px-3 py-1.5 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-slate-800 dark:text-slate-300 hover:text-blue-700 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-blue-800/40 transition-all text-xs font-mono gap-1.5 shadow-sm" 
+                >
+                  <SiGithub className="w-3.5 h-3.5" />
+                  github
+                </a>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
               >
-            <a
-              href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center px-4 py-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-slate-800 dark:text-slate-300 hover:text-blue-700 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-blue-800/40 transition-all text-sm font-mono gap-2 shadow-sm" 
-            >
-              <SiGithub className="w-4 h-4" />
-              github
-            </a>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-              >
-            <a
-              href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""}
-              target="_blank"
-              rel="noreferrer" 
-              className="inline-flex items-center px-4 py-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-slate-800 dark:text-slate-300 hover:text-blue-700 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-blue-800/40 transition-all text-sm font-mono gap-2 shadow-sm" 
-            >
-              <SiLinkedin className="w-4 h-4" />
-              linkedin
-            </a>
+                <a
+                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""}
+                  target="_blank"
+                  rel="noreferrer" 
+                  className="inline-flex items-center px-3 py-1.5 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-slate-800 dark:text-slate-300 hover:text-blue-700 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-400 dark:hover:border-blue-800/40 transition-all text-xs font-mono gap-1.5 shadow-sm" 
+                >
+                  <SiLinkedin className="w-3.5 h-3.5" />
+                  linkedin
+                </a>
               </motion.div>
             </motion.div>
           </motion.div>
         </motion.div>
 
-      {/* Bio Section */}
+        {/* Bio Section */}
         <motion.section 
-          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md mt-12"
+          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-4 backdrop-blur-sm shadow-md mt-6"
           variants={itemVariants}
           whileHover={{ 
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 8px 20px -5px rgba(0, 0, 0, 0.1), 0 6px 8px -6px rgba(0, 0, 0, 0.1)",
             translateY: -2 
           }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
         >
           <motion.h2 
-            className="text-2xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
+            className="text-xl font-bold mb-3 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: mounted ? 0.5 : 0 }}
           >
-          <Code className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
-          about.me()
+            <Code className="w-4 h-4 text-blue-800/80 dark:text-cyan-400/70" />
+            about.me()
           </motion.h2>
           <motion.div 
-            className="text-slate-700 dark:text-slate-300 space-y-4 font-light"
+            className="text-sm text-slate-700 dark:text-slate-300 space-y-3 font-light"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: mounted ? 0.6 : 0 }}
           >
             <p>
               AI Engineer by day, LLM whisperer by night. I work with Transformers (the model kind, not the robot kind) to build cool things like question generators, sentiment detectors, and data diggers. Big fan of LangChain, clever hacks, and shipping stuff that works.
-          </p>
-          <p>
+            </p>
+            <p>
               When I&apos;m not wrangling models, I&apos;m reading AI papers, pretending to be productive with a book, or chasing a football like it owes me money.
             </p>
           </motion.div>
         </motion.section>
 
-      {/* Experience */}
+        {/* Experience */}
         <motion.section 
-          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md"
+          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-4 backdrop-blur-sm shadow-md"
           variants={itemVariants}
           whileHover={{ 
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 8px 20px -5px rgba(0, 0, 0, 0.1), 0 6px 8px -6px rgba(0, 0, 0, 0.1)",
             translateY: -2 
           }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
         >
           <motion.h2 
-            className="text-2xl font-bold mb-6 border-b border-slate-300 dark:border-blue-900/30 pb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
+            className="text-xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: mounted ? 0.7 : 0 }}
           >
-          <Briefcase className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
-          work.experience()
+            <Briefcase className="w-4 h-4 text-blue-800/80 dark:text-cyan-400/70" />
+            work.experience()
           </motion.h2>
           
           {/* Timeline container */}
           <motion.div 
-            className="relative pl-8 before:content-[''] before:absolute before:left-3 before:top-2 before:bottom-3 before:w-0.5 before:bg-gradient-to-b before:from-blue-600 before:via-cyan-500 before:to-indigo-500 dark:before:from-cyan-400 dark:before:via-blue-500 dark:before:to-indigo-400 space-y-8"
+            className="relative pl-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-3 before:w-0.5 before:bg-gradient-to-b before:from-blue-600 before:via-cyan-500 before:to-indigo-500 dark:before:from-cyan-400 dark:before:via-blue-500 dark:before:to-indigo-400 space-y-6"
             variants={containerVariants}
           >
             
@@ -407,29 +395,29 @@ export default function AboutContent() {
           </motion.div>
         </motion.section>
 
-      {/* Education */}
+        {/* Education */}
         <motion.section 
-          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md"
+          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-4 backdrop-blur-sm shadow-md"
           variants={itemVariants}
           whileHover={{ 
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 8px 20px -5px rgba(0, 0, 0, 0.1), 0 6px 8px -6px rgba(0, 0, 0, 0.1)",
             translateY: -2 
           }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
         >
           <motion.h2 
-            className="text-2xl font-bold mb-6 border-b border-slate-300 dark:border-blue-900/30 pb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
+            className="text-xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: mounted ? 1.1 : 0 }}
+            transition={{ delay: mounted ? 0.9 : 0 }}
           >
-          <GraduationCap className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
-          education.history()
+            <GraduationCap className="w-4 h-4 text-blue-800/80 dark:text-cyan-400/70" />
+            education.history()
           </motion.h2>
           
           {/* Timeline container */}
           <motion.div 
-            className="relative pl-8 before:content-[''] before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-gradient-to-b before:from-indigo-500 before:to-blue-600 dark:before:from-indigo-400 dark:before:to-blue-500 space-y-8"
+            className="relative pl-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-gradient-to-b before:from-indigo-500 before:to-blue-600 dark:before:from-indigo-400 dark:before:to-blue-500 space-y-6"
             variants={containerVariants}
           >
             
@@ -547,22 +535,22 @@ export default function AboutContent() {
 
         {/* Projects */}
         <motion.section 
-          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md"
+          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-4 backdrop-blur-sm shadow-md"
           variants={itemVariants}
           whileHover={{ 
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 8px 20px -5px rgba(0, 0, 0, 0.1), 0 6px 8px -6px rgba(0, 0, 0, 0.1)",
             translateY: -2 
           }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
         >
           <motion.h2 
-            className="text-2xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
+            className="text-xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: mounted ? 1.6 : 0 }}
           >
-          <Database className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
-          projects.showcase()
+            <Database className="w-4 h-4 text-blue-800/80 dark:text-cyan-400/70" />
+            projects.showcase()
           </motion.h2>
           <motion.div 
             className="space-y-6"
@@ -584,7 +572,7 @@ export default function AboutContent() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: mounted ? 1.8 : 0 }}
                 >
-                <Book className="w-5 h-5" />
+                  <Book className="w-5 h-5" />
                 </motion.div>
               </motion.div>
               <motion.div 
@@ -605,7 +593,7 @@ export default function AboutContent() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: mounted ? 2.0 : 0 }}
                 >
-                {['AI', 'LLM', 'Chatbot'].map(tag => (
+                  {['AI', 'LLM', 'Chatbot'].map(tag => (
                     <motion.span 
                       key={tag} 
                       className="px-2 py-0.5 bg-blue-50 dark:bg-slate-800/70 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900/40 rounded-md text-xs font-mono"
@@ -613,7 +601,7 @@ export default function AboutContent() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: mounted ? 2.1 + (tag === 'AI' ? 0.1 : tag === 'LLM' ? 0.2 : 0.3) : 0 }}
                     >
-                    {tag}
+                      {tag}
                     </motion.span>
                   ))}
                 </motion.div>
@@ -623,18 +611,18 @@ export default function AboutContent() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: mounted ? 2.2 : 0 }}
                 >
-                Developed a chatbot using the Langchain framework, integrated with Vertex AI or OpenAI API. Implemented MongoDB for memory management, utilized Gradio and Langchain UI, and incorporated Microsoft Presidio for data anonymization.
+                  Developed a chatbot using the Langchain framework, integrated with Vertex AI or OpenAI API. Implemented MongoDB for memory management, utilized Gradio and Langchain UI, and incorporated Microsoft Presidio for data anonymization.
                 </motion.p>
                 <motion.a 
-                href="https://github.com/minhbtrc/langchain-chatbot" 
-                target="_blank" 
-                rel="noreferrer"
-                className="text-blue-800 dark:text-cyan-400 inline-flex items-center mt-2 font-mono text-sm transition-colors"
+                  href="https://github.com/minhbtrc/langchain-chatbot" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="text-blue-800 dark:text-cyan-400 inline-flex items-center mt-2 font-mono text-sm transition-colors"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: mounted ? 2.3 : 0 }}
-              >
-                view.project()
+                >
+                  view.project()
                   <motion.span 
                     className="w-4 h-4 ml-1"
                     initial={{ opacity: 0 }}
@@ -661,7 +649,7 @@ export default function AboutContent() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: mounted ? 2.5 : 0 }}
                 >
-                <Book className="w-5 h-5" />
+                  <Book className="w-5 h-5" />
                 </motion.div>
               </motion.div>
               <motion.div 
@@ -682,7 +670,7 @@ export default function AboutContent() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: mounted ? 2.7 : 0 }}
                 >
-                {['AI', 'NLP', 'Healthcare'].map(tag => (
+                  {['AI', 'NLP', 'Healthcare'].map(tag => (
                     <motion.span 
                       key={tag} 
                       className="px-2 py-0.5 bg-blue-50 dark:bg-slate-800/70 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900/40 rounded-md text-xs font-mono"
@@ -690,7 +678,7 @@ export default function AboutContent() {
                       animate={{ opacity: 1 }}
                       transition={{ delay: mounted ? 2.8 + (tag === 'AI' ? 0.1 : tag === 'NLP' ? 0.2 : 0.3) : 0 }}
                     >
-                    {tag}
+                      {tag}
                     </motion.span>
                   ))}
                 </motion.div>
@@ -700,31 +688,31 @@ export default function AboutContent() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: mounted ? 2.9 : 0 }}
                 >
-                Led the development of a consultancy chatbot for SARS-COVID-2 patients, providing symptom assessment and self-care advice. Implemented machine learning models (KNN, SVM) for Intent Classification and developed a Named Entity Recognition system using PhoBERT and CRF.
+                  Led the development of a consultancy chatbot for SARS-COVID-2 patients, providing symptom assessment and self-care advice. Implemented machine learning models (KNN, SVM) for Intent Classification and developed a Named Entity Recognition system using PhoBERT and CRF.
                 </motion.p>
               </motion.div>
             </motion.div>
           </motion.div>
         </motion.section>
 
-      {/* Skills */}
+        {/* Skills */}
         <motion.section 
-          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md"
+          className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-4 backdrop-blur-sm shadow-md"
           variants={itemVariants}
           whileHover={{ 
-            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 8px 20px -5px rgba(0, 0, 0, 0.1), 0 6px 8px -6px rgba(0, 0, 0, 0.1)",
             translateY: -2 
           }}
           transition={{ type: "spring", stiffness: 400, damping: 20 }}
         >
           <motion.h2 
-            className="text-2xl font-bold mb-6 border-b border-slate-300 dark:border-blue-900/30 pb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
+            className="text-xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-indigo-700 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: mounted ? 1.6 : 0 }}
           >
-          <Code className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
-          skills.technologies()
+            <Code className="w-4 h-4 text-blue-800/80 dark:text-cyan-400/70" />
+            skills.technologies()
           </motion.h2>
           
           <motion.div 
@@ -741,8 +729,8 @@ export default function AboutContent() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: mounted ? 1.7 : 0 }}
               >
-              <Code className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
-              frameworks.libraries()
+                <Code className="w-4 h-4 text-blue-800/80 dark:text-cyan-400/70" />
+                frameworks.libraries()
               </motion.h3>
               
               <motion.div 
@@ -786,8 +774,8 @@ export default function AboutContent() {
                 animate={{ opacity: 1 }}
                 transition={{ delay: mounted ? 1.7 : 0 }}
               >
-              <Database className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
-              databases.tools()
+                <Database className="w-4 h-4 text-blue-800/80 dark:text-cyan-400/70" />
+                databases.tools()
               </motion.h3>
               
               <motion.div 
@@ -822,9 +810,9 @@ export default function AboutContent() {
         </motion.section>
 
         {/* Certifications */}
-        <section className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md">
-          <h2 className="text-2xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-blue-800 dark:text-cyan-400 font-mono flex items-center gap-2">
-            <Award className="w-5 h-5 text-blue-800/80 dark:text-cyan-400/70" />
+        <section className="bg-white dark:bg-slate-800/20 border border-slate-300 dark:border-blue-900/20 rounded-lg p-4 backdrop-blur-sm shadow-md">
+          <h2 className="text-xl font-bold mb-4 border-b border-slate-300 dark:border-blue-900/30 pb-2 text-blue-800 dark:text-cyan-400 font-mono flex items-center gap-2">
+            <Award className="w-4 h-4 text-blue-800/80 dark:text-cyan-400/70" />
             certifications()
           </h2>
           

@@ -207,16 +207,16 @@ const RegularPostCard = ({ post, index }) => (
     transition={{ duration: 0.4, delay: index * 0.1 }}
   >
     {/* Terminal-inspired header */}
-    <div className="bg-gray-50 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-700/70 py-2 px-4 flex items-center justify-between shadow-sm">
+    <div className="bg-gray-50 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-200 dark:border-slate-700/70 py-1.5 px-3 flex items-center justify-between shadow-sm">
       <div className="flex items-center space-x-1.5">
-        <div className="w-3 h-3 rounded-full bg-red-500/40 dark:bg-red-500 ring-1 ring-red-600/30 dark:ring-red-700 shadow-sm group-hover:animate-pulse"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500/40 dark:bg-yellow-500 ring-1 ring-yellow-600/30 dark:ring-yellow-700 shadow-sm group-hover:animate-pulse delay-75"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500/40 dark:bg-green-500 ring-1 ring-green-600/30 dark:ring-green-700 shadow-sm group-hover:animate-pulse delay-150"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-red-500/40 dark:bg-red-500 ring-1 ring-red-600/30 dark:ring-red-700 shadow-sm group-hover:animate-pulse"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/40 dark:bg-yellow-500 ring-1 ring-yellow-600/30 dark:ring-yellow-700 shadow-sm group-hover:animate-pulse delay-75"></div>
+        <div className="w-2.5 h-2.5 rounded-full bg-green-500/40 dark:bg-green-500 ring-1 ring-green-600/30 dark:ring-green-700 shadow-sm group-hover:animate-pulse delay-150"></div>
       </div>
       <div className="flex items-center">
-        <span className="text-xs font-mono text-gray-500 dark:text-gray-400 mr-2 bg-gray-100/80 dark:bg-slate-700/70 px-2 py-0.5 rounded shadow-inner">~/blog</span>
+        <span className="text-[11px] font-mono text-gray-500 dark:text-gray-400 mr-2 bg-gray-100/80 dark:bg-slate-700/70 px-2 py-0.5 rounded shadow-inner">~/blog</span>
         <motion.div 
-          className="px-2 py-0.5 bg-blue-500/90 text-white text-xs font-medium rounded-md flex items-center shadow-sm"
+          className="px-1.5 py-0.5 bg-blue-500/90 text-white text-[11px] font-medium rounded flex items-center shadow-sm"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
@@ -226,7 +226,7 @@ const RegularPostCard = ({ post, index }) => (
       </div>
     </div>
 
-    <div className="p-6 bg-white dark:bg-slate-800/80 backdrop-blur-md transition-colors duration-300 relative z-10">
+    <div className="p-4 bg-white dark:bg-slate-800/80 backdrop-blur-md transition-colors duration-300 relative z-10">
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/0 via-blue-500/40 to-blue-500/0"></div>
       
       {/* Status badges */}
@@ -297,25 +297,25 @@ const RegularPostCard = ({ post, index }) => (
         })}
       </div>
 
-      <div className="flex items-center justify-between bg-gray-50 dark:bg-slate-900/60 p-3 rounded-md border border-gray-200 dark:border-slate-700 mt-6 backdrop-blur-md">
-        <div className="flex items-center text-sm font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-slate-800/90 px-2.5 py-1 rounded-md border border-gray-200 dark:border-slate-700">
+      <div className="flex items-center justify-between bg-gray-50 dark:bg-slate-900/60 p-2 rounded-md border border-gray-200 dark:border-slate-700 mt-4 backdrop-blur-md">
+        <div className="flex items-center text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-slate-800/90 px-2 py-0.5 rounded-md border border-gray-200 dark:border-slate-700">
           <span className="text-green-600 dark:text-green-400 font-bold">$</span>
-          <span className="ml-1.5">read-article --title {post.title.split(' ')[0].toLowerCase()} --open</span>
+          <span className="ml-1">read-article --title {post.title.split(' ')[0].toLowerCase()} --open</span>
           <span className="ml-1 animate-blink">|</span>
         </div>
 
         <Link 
           href={post.route || `/blog/${post.slug}`}
-          className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group-hover:underline bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all duration-200 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+          className="inline-flex items-center text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group-hover:underline bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all duration-200 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
         >
           <span>Execute</span>
-          <ArrowRight className="h-4 w-4 ml-1.5 group-hover:translate-x-1.5 transition-transform duration-300" />
+          <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
         </Link>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 bg-gray-50 dark:bg-slate-900/80 border-t border-gray-200 dark:border-slate-700/50 py-1.5 px-3 flex items-center justify-between text-[10px] font-mono text-gray-500 dark:text-gray-400 backdrop-blur-sm">
+      <div className="absolute bottom-0 left-0 right-0 bg-gray-50 dark:bg-slate-900/80 border-t border-gray-200 dark:border-slate-700/50 py-1 px-2 flex items-center justify-between text-[10px] font-mono text-gray-500 dark:text-gray-400 backdrop-blur-sm">
         <div className="flex items-center">
-          <div className="w-2 h-2 rounded-full bg-green-500 mr-1.5 shadow-sm animate-pulse"></div>
+          <div className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1 shadow-sm animate-pulse"></div>
           <motion.span
             animate={{ opacity: [0.7, 1, 0.7] }}
             transition={{ repeat: Infinity, duration: 2 }}
@@ -323,26 +323,8 @@ const RegularPostCard = ({ post, index }) => (
             Ready
           </motion.span>
         </div>
-        <span className="bg-gray-100 dark:bg-slate-800/50 px-1.5 py-0.5 rounded">
-          {Math.floor(Math.random() * 200) + 350} Lines
-        </span>
+        
       </div>
-      
-      {/* Add a subtle diagonal pattern overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0wIDYwTDYwIDBIMzBMMCA1MFoiIGZpbGw9IiM1MDkwQzA0MCIvPgo8L3N2Zz4=')] opacity-5 mix-blend-soft-light pointer-events-none z-[-1]"></div>
-      
-      {/* Scan line animation */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent z-[-1] pointer-events-none opacity-0 group-hover:opacity-100"
-        animate={{ 
-          y: ["100%", "-100%"]
-        }}
-        transition={{ 
-          repeat: Infinity, 
-          duration: 2, 
-          ease: "linear"
-        }}
-      />
     </div>
   </motion.div>
 );
@@ -353,19 +335,19 @@ const RegularPostsSection = ({ posts, hasFeatured }) => {
   
   return (
     <motion.section
-      className="mb-16 w-full max-w-none"
+      className="mb-8 w-full max-w-none"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
     >
-      <div className="flex items-center mb-6">
-        <BookOpen className="h-5 w-5 text-blue-500 dark:text-blue-400 mr-2" />
-        <h2 className="text-2xl font-bold text-gray-100 dark:text-slate-100">
+      <div className="flex items-center mb-4">
+        <BookOpen className="h-4 w-4 text-blue-500 dark:text-blue-400 mr-2" />
+        <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">
           {hasFeatured ? 'All Articles' : 'Articles'}
         </h2>
       </div>
       
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4">
         {posts.map((post, index) => (
           <RegularPostCard 
             key={post.route || post.slug} 
@@ -524,9 +506,9 @@ function BlogPageContent() {
   );
   
   return (
-    <main className="bg-white dark:bg-slate-900 relative pb-16">
+    <main className="min-h-screen bg-white dark:bg-slate-900 relative py-8">
       <CodeSymbolsBackground />
-      <div className="max-w-4xl mx-auto space-y-10">
+      <div className="max-w-4xl mx-auto px-4 space-y-6">
         <SearchBar
           onFilterToggle={() => setFilterOpen(prev => !prev)}
           filterOpen={filterOpen}
@@ -548,10 +530,7 @@ function BlogPageContent() {
         ) : filteredBlogs.length === 0 ? (
           <EmptyState onClear={() => setSelectedTags([])} />
         ) : (
-          <>
-            {/* <ResultsCount count={featuredPosts.length + regularPosts.length} /> */}
-            <RegularPostsSection posts={regularPosts} />
-          </>
+          <RegularPostsSection posts={regularPosts} />
         )}
       </div>
     </main>
