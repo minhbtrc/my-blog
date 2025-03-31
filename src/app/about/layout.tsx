@@ -7,7 +7,7 @@ export default function AboutLayout({
   children: React.ReactNode
 }) {
   return (
-    <PageContainer maxWidth="full" withPadding={false}>
+    <PageContainer maxWidth="7xl" withPadding={true} className="code-bubbles">
       {children}
     </PageContainer>
   )

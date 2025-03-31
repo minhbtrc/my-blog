@@ -45,10 +45,11 @@ export default function ClientLayout({
   useEffect(() => {
     setMounted(true)
     
-    // Update the HTML class based on the theme
+    // Update the theme attributes based on the resolved theme
     if (resolvedTheme) {
       document.documentElement.classList.remove('light', 'dark')
       document.documentElement.classList.add(resolvedTheme)
+      document.body.setAttribute('data-theme', resolvedTheme === 'dark' ? 'dark' : 'light')
     }
     
     const handleScroll = () => {
@@ -97,6 +98,9 @@ export default function ClientLayout({
     if (!mounted) return;
     
     const createMatrixCodeRain = () => {
+      if (resolvedTheme !== 'dark') return; // Only create matrix effect in dark mode
+      
+      // Create canvas element
       const canvas = document.createElement('canvas');
       canvas.className = 'matrix-code';
       document.body.appendChild(canvas);
@@ -174,54 +178,49 @@ export default function ClientLayout({
   ]
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className={mounted && resolvedTheme === 'dark' ? 'code-bg-dark' : 'code-bg-light'}>
-        {/* Light particles effect (only in dark mode) */}
-        {mounted && resolvedTheme === 'dark' && (
-          <div className="light-particles">
-            {[...Array(15)].map((_, i) => (
-              <div 
-                key={i}
-                className="light-particle"
-                style={{
-                  width: `${Math.random() * 200 + 50}px`,
-                  height: `${Math.random() * 200 + 50}px`,
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDuration: `${Math.random() * 30 + 15}s`,
-                  animationDelay: `${Math.random() * 5}s`,
-                }}
-              />
-            ))}
-          </div>
-        )}
-        
-        {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
-          <div className="hidden">
-            <ReactPlayer
-              ref={playerRef}
-              url={process.env.NEXT_PUBLIC_LISTEN_URL}
-              playing={isPlaying && hasInteracted}
-              loop
-              volume={0.7}
-              muted={false}
-              controls={false}
-              onError={(e) => console.error("Player error:", e)}
-            />
-          </div>
-        )}
-        
-        <ThemeProvider 
-          attribute="class" 
-          defaultTheme="dark" 
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <MotionConfig reducedMotion="user">
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <MotionConfig reducedMotion="user">
+        <div className="flex flex-col min-h-screen bg-white dark:bg-slate-900">
+          <div className={`w-full h-full min-h-screen ${mounted && resolvedTheme === 'dark' ? 'code-bg-dark' : 'code-bg-light'} bg-white dark:bg-slate-900`}>
+            {/* Light particles effect (only in dark mode) */}
+            {mounted && resolvedTheme === 'dark' && (
+              <div className="light-particles">
+                {[...Array(15)].map((_, i) => (
+                  <div 
+                    key={i}
+                    className="light-particle"
+                    style={{
+                      width: `${Math.random() * 200 + 50}px`,
+                      height: `${Math.random() * 200 + 50}px`,
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      animationDuration: `${Math.random() * 30 + 15}s`,
+                      animationDelay: `${Math.random() * 5}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            
+            {mounted && process.env.NEXT_PUBLIC_LISTEN_URL && (
+              <div className="hidden">
+                <ReactPlayer
+                  ref={playerRef}
+                  url={process.env.NEXT_PUBLIC_LISTEN_URL}
+                  playing={isPlaying && hasInteracted}
+                  loop
+                  volume={0.7}
+                  muted={false}
+                  controls={false}
+                  onError={(e) => console.error("Player error:", e)}
+                />
+              </div>
+            )}
+            
             {/* Progress bar for page transitions */}
             <NextProgressBar
               height="3px"
-              color="rgb(59, 130, 246)"
+              color={resolvedTheme === 'dark' ? '#22d3ee' : '#3b82f6'}
               options={{ showSpinner: false }}
               shallowRouting
             />
@@ -255,8 +254,8 @@ export default function ClientLayout({
                       </Link>
                     ))}
                     
-                    {/* Theme toggle
-                    <ThemeToggle /> */}
+                    {/* Theme toggle */}
+                    <ThemeToggle />
                     
                     {/* Music toggle */}
                     {process.env.NEXT_PUBLIC_LISTEN_URL && mounted && (
@@ -424,76 +423,57 @@ export default function ClientLayout({
             <div className="relative z-30">
               <Footer />
             </div>
-          </MotionConfig>
-        </ThemeProvider>
+          </div>
 
-        {/* NProgress bar for page transitions */}
-        <NextProgressBar
-          height="4px"
-          color={resolvedTheme === 'dark' ? '#22d3ee' : '#3b82f6'}
-          options={{ showSpinner: false }}
-          shallowRouting
-        />
-      </div>
-    </div>
+          {/* NProgress bar for page transitions */}
+          <NextProgressBar
+            height="4px"
+            color={resolvedTheme === 'dark' ? '#22d3ee' : '#3b82f6'}
+            options={{ showSpinner: false }}
+            shallowRouting
+          />
+        </div>
+      </MotionConfig>
+    </ThemeProvider>
   )
 }
 
 function ThemeToggle({ isMobile = false }: { isMobile?: boolean }) {
-  const { resolvedTheme, setTheme } = useTheme()
-  const mounted = typeof window !== 'undefined'
-  
-  // Ensure we're handling correctly on mount
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
   useEffect(() => {
-    if (mounted) {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      const currentTheme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light')
-      document.documentElement.classList.toggle('dark', currentTheme === 'dark')
-    }
-  }, [mounted])
-  
-  // Handle toggle with proper HTML class updates
+    setMounted(true)
+  }, [])
+
   const toggleTheme = () => {
-    const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+    const newTheme = theme === 'dark' ? 'light' : 'dark'
     setTheme(newTheme)
-    document.documentElement.classList.remove('dark', 'light')
-    document.documentElement.classList.add(newTheme)
+    document.body.setAttribute('data-theme', newTheme === 'dark' ? 'dark' : 'light')
   }
-  
-  if (!mounted) {
-    return (
-      <button 
-        className={`p-2 rounded-md bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 transition-all theme-transition ${
-          isMobile ? 'w-full justify-center text-sm' : ''
-        }`}
-        aria-label="Toggle dark mode"
-      >
-        <Moon className="h-4 w-4" />
-      </button>
-    )
-  }
-  
+
+  if (!mounted) return null
+
   return (
     <button
       onClick={toggleTheme}
-      className={`p-2 rounded-md theme-transition ${
-        resolvedTheme === 'dark' 
-          ? 'bg-slate-800/70 border border-blue-900/30 text-cyan-400 hover:text-cyan-300 hover:bg-slate-800 hover:border-blue-800/40' 
-          : 'bg-white dark:bg-slate-800/70 border border-slate-300 dark:border-blue-900/30 text-blue-700 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-blue-700/40 dark:hover:border-blue-800/40'
-      } transition-all flex items-center shadow-sm ${
-        isMobile ? 'w-full justify-center text-sm gap-2' : ''
-      }`}
-      aria-label="Toggle dark mode"
+      className={clsx(
+        'rounded-lg p-2 transition-colors duration-200',
+        'hover:bg-slate-100 dark:hover:bg-slate-800',
+        'focus:outline-none focus:ring-2 focus:ring-sky-500',
+        isMobile ? 'w-full flex items-center gap-3 px-3 py-2' : ''
+      )}
+      aria-label="Toggle theme"
     >
-      {resolvedTheme === 'dark' ? (
+      {theme === 'dark' ? (
         <>
-          <Sun className="h-4 w-4" />
-          {isMobile && <span className="font-mono">theme.light()</span>}
+          <Sun className="h-5 w-5 text-amber-500" />
+          {isMobile && <span>Light Mode</span>}
         </>
       ) : (
         <>
-          <Moon className="h-4 w-4" />
-          {isMobile && <span className="font-mono">theme.dark()</span>}
+          <Moon className="h-5 w-5 text-slate-800" />
+          {isMobile && <span>Dark Mode</span>}
         </>
       )}
     </button>

@@ -202,7 +202,7 @@ export default function ContactPage() {
   }
   
   return (
-    <div className="w-full h-full max-w-full mx-auto relative z-10">
+    <div className="w-full h-full max-w-full mx-auto relative z-10 bg-white dark:bg-slate-900">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

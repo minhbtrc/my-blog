@@ -39,7 +39,6 @@ export function PageContainer({
   return (
     <div className="relative min-h-screen w-full">
       {/* CodeBubbles provides the animated background elements */}
-      {withBackground && <CodeBubbles />}
       
       {/* Main content container with proper z-index to stay above background */}
       <div className={`w-full flex flex-${flexDirection} ${justifyContent} ${withPadding ? 'px-4 py-12 sm:py-16' : ''} relative z-10 ${className}`}>

@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 // Enhanced blog data with more examples
 const FALLBACK_BLOGS = [
@@ -104,7 +105,10 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
             <Input
               type="text"
               placeholder="Search articles... (Ctrl+K)"
-              className="w-full py-3 pl-10 pr-12 bg-gray-800/80 dark:bg-slate-800/80 border-0 rounded-md text-base transition-all duration-300 focus:border-blue-400 dark:focus:border-cyan-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 shadow-inner font-mono text-gray-300"
+              className={cn(
+                "w-full py-3 pl-10 pr-12 bg-gray-800/80 dark:bg-slate-800/80 border-0 rounded-md text-base transition-all duration-300",
+                "focus:border-blue-400 dark:focus:border-cyan-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 shadow-inner font-mono text-gray-300"
+              )}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -118,11 +122,12 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
           <motion.button
             onClick={onFilterToggle}
             whileTap={{ scale: 0.95 }}
-            className={`px-3 py-3 rounded-md flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md ${
+            className={cn(
+              "px-3 py-3 rounded-md flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md",
               filterOpen 
                 ? 'bg-blue-900/60 dark:bg-blue-900/30 text-blue-400 dark:text-blue-400 ring-2 ring-blue-800 dark:ring-blue-900'
                 : 'bg-gray-800/90 dark:bg-slate-700/90 text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-blue-900/20 hover:text-blue-400 dark:hover:text-blue-400'
-            } border border-gray-700 dark:border-slate-700/80 font-mono`}
+            )}
           >
             <Filter className={`h-4 w-4 mr-2 transition-transform duration-300 ${filterOpen ? 'rotate-180' : ''}`} />
             <span className="text-sm font-medium">filter</span>
@@ -189,236 +194,12 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
   );
 };
 
-const CategoryTabs = () => {
-  return (
-    <motion.section 
-      className="bg-white/5 dark:bg-slate-800/5 border border-gray-700/30 dark:border-blue-900/20 rounded-lg p-6 backdrop-blur-sm shadow-md mb-10"
-      initial="hidden"
-      animate="visible"
-      variants={fadeIn}
-      whileHover={{ 
-        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
-        translateY: -2 
-      }}
-      transition={{ delay: 0.4 }}
-    >
-      <motion.h2 
-        className="text-xl font-bold mb-4 border-b border-gray-700/30 dark:border-blue-900/30 pb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500 dark:from-cyan-400 dark:to-blue-400 font-mono flex items-center gap-2"
-        variants={fadeIn}
-      >
-        <Code className="h-5 w-5 text-blue-400 dark:text-cyan-400" />
-        browse.categories()
-      </motion.h2>
-      
-      <div className="flex items-center gap-3 pb-2 overflow-x-auto hide-scrollbar">
-        <motion.button
-          className="px-4 py-3 text-gray-300 dark:text-slate-300 font-medium rounded-md bg-gray-900 dark:bg-slate-700/60 shadow-sm border border-gray-700 dark:border-slate-600 font-mono flex-shrink-0"
-          whileHover={{ 
-            backgroundColor: "rgba(17, 24, 39, 1)",
-            boxShadow: "0 0 15px 1px rgba(59, 130, 246, 0.3)"
-          }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="flex items-center">
-            <FileText className="h-5 w-5 mr-2 text-blue-400 dark:text-blue-400" />
-            <span className="text-green-400 dark:text-green-400 mr-1">$</span>
-            <span>all-posts</span>
-          </div>
-        </motion.button>
-        
-        <motion.button
-          className="px-4 py-3 text-gray-400 dark:text-slate-400 font-medium rounded-md hover:bg-gray-700 dark:hover:bg-slate-700/40 font-mono flex-shrink-0"
-          whileHover={{ 
-            backgroundColor: "rgba(55, 65, 81, 1)",
-            boxShadow: "0 0 12px 1px rgba(192, 132, 252, 0.2)"
-          }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="flex items-center">
-            <BrainCircuit className="h-5 w-5 mr-2 text-purple-400 dark:text-purple-400" />
-            <span className="text-purple-400 dark:text-purple-400 mr-1">$</span>
-            <span>ai-logs</span>
-          </div>
-        </motion.button>
-        
-        <motion.button
-          className="px-4 py-3 text-gray-400 dark:text-slate-400 font-medium rounded-md hover:bg-gray-700 dark:hover:bg-slate-700/40 font-mono flex-shrink-0"
-          whileHover={{ 
-            backgroundColor: "rgba(55, 65, 81, 1)",
-            boxShadow: "0 0 12px 1px rgba(34, 211, 238, 0.2)"
-          }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="flex items-center">
-            <Terminal className="h-5 w-5 mr-2 text-cyan-400 dark:text-cyan-400" />
-            <span className="text-cyan-400 dark:text-cyan-400 mr-1">$</span>
-            <span>debug-notes</span>
-          </div>
-        </motion.button>
-        
-        <motion.button
-          className="px-4 py-3 text-gray-400 dark:text-slate-400 font-medium rounded-md hover:bg-gray-700 dark:hover:bg-slate-700/40 font-mono flex-shrink-0"
-          whileHover={{ 
-            backgroundColor: "rgba(55, 65, 81, 1)",
-            boxShadow: "0 0 12px 1px rgba(16, 185, 129, 0.2)"
-          }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="flex items-center">
-            <Map className="h-5 w-5 mr-2 text-emerald-400 dark:text-emerald-400" />
-            <span className="text-emerald-400 dark:text-emerald-400 mr-1">$</span>
-            <span>field-notes</span>
-          </div>
-        </motion.button>
-      </div>
-    </motion.section>
-  )
-};
-
-const StickyTagBar = ({ scrolled, tags, selectedTags, onTagClick }) => {
-  return (
-    <div 
-      className={`fixed top-16 left-0 right-0 z-20 bg-gray-900/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-gray-700 dark:border-slate-800 shadow-sm py-2 px-4 transition-all duration-300 transform ${
-        scrolled ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
-      }`}
-    >
-      <div className="w-full max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto pb-2 hide-scrollbar px-4 md:px-8 lg:px-12">
-        <div className="flex items-center bg-gray-800 dark:bg-slate-800/60 px-2 py-1 rounded-md border border-gray-700 dark:border-slate-700 mr-1 shadow-sm">
-          <span className="text-green-400 dark:text-green-400 font-mono text-xs mr-1.5 font-bold">$</span>
-          <span className="text-sm font-medium text-gray-300 dark:text-slate-400 whitespace-nowrap font-mono">explore</span>
-        </div>
-        
-        {tags.map((tag) => (
-          <Badge 
-            key={tag} 
-            variant={selectedTags.includes(tag) ? "default" : "secondary"} 
-            className={`cursor-pointer transition-all hover:scale-105 whitespace-nowrap ${
-              selectedTags.includes(tag) 
-                ? 'bg-blue-900/60 dark:bg-blue-900/40 text-blue-300 dark:text-blue-300 border border-blue-800 dark:border-blue-800/60' 
-                : 'bg-gray-700 dark:bg-slate-700 text-gray-300 dark:text-gray-300 hover:bg-gray-600 dark:hover:bg-slate-600 border border-gray-600 dark:border-slate-600'
-            }`}
-            onClick={() => onTagClick(tag)}
-          >
-            <Hash className="h-3 w-3 mr-1" />
-            {tag}
-          </Badge>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const ResultsCount = ({ count }) => (
-  <div className="mb-8 flex items-center">
-    <div className="bg-gray-800 dark:bg-blue-900/20 text-gray-300 dark:text-blue-300 px-3 py-1.5 rounded-md text-sm font-medium flex items-center border border-gray-700 dark:border-blue-800/30 font-mono shadow-sm">
-      <span className="text-green-400 dark:text-green-400 mr-1.5 font-bold">$</span>
-      <span className="mr-1.5">find</span>
-      <BookMarked className="h-4 w-4 mr-2 text-blue-400 dark:text-blue-400" />
-      <span className="text-blue-400 dark:text-blue-400">{count}</span>
-      <span className="ml-1 text-gray-300">{count === 1 ? 'article' : 'articles'}</span>
-    </div>
-  </div>
-);
-
-const FeaturedPostCard = ({ post }) => (
-  <motion.div 
-    className="relative overflow-hidden card border-l-4 border-l-blue-500 dark:border-l-blue-600 border-t border-r border-b border-gray-200 dark:border-slate-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 animate-fade-in hover:translate-y-[-2px]"
-    whileHover={cardHover.hover}
-    initial="rest"
-    whileTap={{ scale: 0.98 }}
-    variants={cardHover}
-  >
-    {/* Terminal-inspired header */}
-    <div className="bg-gray-800 dark:bg-slate-800/80 border-b border-gray-700 dark:border-slate-700 py-2 px-4 flex items-center justify-between shadow-sm">
-      <div className="flex items-center space-x-1.5">
-        <div className="w-3 h-3 rounded-full bg-red-500 ring-1 ring-red-700 dark:ring-red-700 shadow-sm"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500 ring-1 ring-yellow-700 dark:ring-yellow-700 shadow-sm"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500 ring-1 ring-green-700 dark:ring-green-700 shadow-sm"></div>
-      </div>
-      <div className="flex items-center">
-        <span className="text-xs font-mono text-gray-300 dark:text-gray-400 mr-2 bg-gray-700/80 dark:bg-slate-700/70 px-2 py-0.5 rounded shadow-inner">~/blog/featured</span>
-        <motion.div 
-          className="px-2 py-0.5 bg-blue-500/90 text-white text-xs font-medium rounded flex items-center shadow-sm"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          <Sparkles className="h-3 w-3 mr-1" />
-          <span>Featured</span>
-        </motion.div>
-      </div>
-    </div>
-    
-    {/* Content with glassmorphism */}
-    <div className="p-6 bg-gray-950/95 dark:bg-slate-800/95 backdrop-blur-sm transition-colors duration-300 relative z-10">
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <div className="flex items-center text-xs text-gray-300 dark:text-slate-400 mb-3 space-x-4">
-            <span className="flex items-center">
-              <Calendar className="h-3.5 w-3.5 mr-1" />
-              {formatDate(post.date)}
-            </span>
-            <span className="flex items-center">
-              <Clock className="h-3.5 w-3.5 mr-1" />
-              {post.readingTime}
-            </span>
-          </div>
-          
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-100 dark:text-slate-100 mb-3 group-hover:text-blue-400 dark:group-hover:text-blue-400 transition-colors">
-            {post.title}
-          </h2>
-        </div>
-      </div>
-      
-      <div className="pl-3 border-l-2 border-blue-800 dark:border-blue-800 mb-4">
-        <p className="text-gray-300 dark:text-slate-400">
-          {post.description}
-        </p>
-      </div>
-      
-      <div className="flex flex-wrap gap-2 mb-4">
-        {post.tags && post.tags.slice(0, 3).map((tag) => (
-          <span 
-            key={tag}
-            className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-md bg-blue-900/40 dark:bg-blue-900/20 text-blue-300 dark:text-blue-300 transition-colors border border-blue-800/60 dark:border-blue-800/30"
-          >
-            <Hash className="h-3 w-3 mr-1" />
-            {tag}
-          </span>
-        ))}
-      </div>
-      
-      <div className="flex items-center justify-between">
-        <div className="flex items-center text-sm font-mono text-gray-300 dark:text-gray-400 bg-gray-800 dark:bg-slate-700/30 px-2 py-1 rounded-md border border-gray-700 dark:border-slate-700">
-          <span className="text-green-400 dark:text-green-400 font-bold">$</span>
-          <span className="ml-1">/read-article</span>
-        </div>
-        
-        <Link 
-          href={post.route || `/blog/${post.slug}`}
-          className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors group-hover:underline"
-        >
-          <span>Read article</span>
-          <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
-        </Link>
-      </div>
-      
-      {/* Terminal status line */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gray-800 dark:bg-slate-700/30 border-t border-gray-700 dark:border-slate-700 py-1 px-3 flex items-center justify-between text-[10px] font-mono text-gray-300 dark:text-gray-400">
-        <div className="flex items-center">
-          <div className="w-2 h-2 rounded-full bg-green-500 mr-1.5 shadow-sm"></div>
-          <span>Ready</span>
-        </div>
-        <span>{Math.floor(Math.random() * 1000) + 100} lines</span>
-      </div>
-    </div>
-  </motion.div>
-);
-
 const RegularPostCard = ({ post, index }) => (
-  <motion.div 
-    className="relative overflow-hidden card border-l-4 border-l-blue-500 dark:border-l-blue-600 border-t border-r border-b border-gray-200 dark:border-slate-700 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 animate-fade-in group"
+  <motion.div
+    className="flex flex-col overflow-hidden rounded-lg shadow transition-all duration-300
+               border border-gray-200 bg-white hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 group relative"
     whileHover={{ 
-      scale: 1.01, 
+      scale: 1.02, 
       y: -5,
       boxShadow: "0 0 15px 2px rgba(52, 211, 153, 0.2)"
     }}
@@ -426,198 +207,102 @@ const RegularPostCard = ({ post, index }) => (
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.4, delay: index * 0.1 }}
   >
-    {/* Terminal-inspired header */}
-    <div className="bg-gray-800/90 dark:bg-slate-800/90 backdrop-blur-md border-b border-gray-700/70 dark:border-slate-700/70 py-2 px-4 flex items-center justify-between shadow-sm">
-      <div className="flex items-center space-x-1.5">
-        <div className="w-3 h-3 rounded-full bg-red-500 ring-1 ring-red-700 dark:ring-red-700 shadow-sm group-hover:animate-pulse"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500 ring-1 ring-yellow-700 dark:ring-yellow-700 shadow-sm group-hover:animate-pulse delay-75"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500 ring-1 ring-green-700 dark:ring-green-700 shadow-sm group-hover:animate-pulse delay-150"></div>
+    {/* Terminal header (fixed height) */}
+    <div className="flex items-center justify-between border-b px-4 py-2
+                    bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-700">
+      <div className="flex gap-1.5">
+        <div className="h-3 w-3 rounded-full bg-red-500 group-hover:animate-pulse"></div>
+        <div className="h-3 w-3 rounded-full bg-yellow-500 group-hover:animate-pulse delay-75"></div>
+        <div className="h-3 w-3 rounded-full bg-green-500 group-hover:animate-pulse delay-150"></div>
       </div>
-      <div className="flex items-center">
-        <span className="text-xs font-mono text-gray-300 dark:text-gray-400 mr-2 bg-gray-700/80 dark:bg-slate-700/70 px-2 py-0.5 rounded shadow-inner">~/blog</span>
-        <motion.div 
-          className="px-2 py-0.5 bg-blue-600/90 text-white text-xs font-medium rounded-md flex items-center shadow-sm"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          <FileText className="h-3 w-3 mr-1" />
-          <span>Post</span>
-        </motion.div>
-      </div>
+      <span className="font-mono text-xs text-gray-500 dark:text-slate-400">
+        ~/blog
+      </span>
     </div>
 
-    <div className="p-6 bg-gradient-to-b from-gray-950/80 to-gray-900/80 dark:from-slate-800/80 dark:to-slate-800/70 backdrop-blur-md transition-colors duration-300 relative z-10 border border-white/5">
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/0 via-blue-500/40 to-blue-500/0"></div>
-      
-      {/* Status badges */}
-      {new Date(post.date) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) && (
-        <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-md transform rotate-3 shadow-lg z-20 group-hover:scale-110 transition-transform">
-          🆕 NEW
-        </div>
-      )}
-      
-      {/* Trending badge for our example */}
-      {post.title.includes("ChatGPT") && (
-        <div className="absolute top-3 right-3 bg-orange-500/90 text-white text-xs font-bold px-2 py-0.5 rounded-md shadow-md z-20 flex items-center">
-          <span className="mr-1">🚀</span> TRENDING
-        </div>
-      )}
-      
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <div className="flex items-center text-xs text-gray-300 dark:text-slate-400 mb-3 space-x-4">
-            <span className="flex items-center">
-              <Calendar className="h-3.5 w-3.5 mr-1 text-blue-400" />
-              {formatDate(post.date)}
-            </span>
-            <span className="flex items-center">
-              <Clock className="h-3.5 w-3.5 mr-1 text-blue-400" />
-              {post.readingTime}
-            </span>
-          </div>
-
-          <h2 className="text-xl sm:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-300 dark:from-slate-100 dark:to-slate-300 mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-400 group-hover:to-cyan-400 transition-all duration-300">
-            {post.title}
-          </h2>
-        </div>
+    {/* Main content (expandable) */}
+    <div className="flex flex-col flex-1 p-6">
+      <div className="mb-4 flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
+        <Calendar className="h-4 w-4 text-blue-500" />
+        {formatDate(post.date)}
+        <Clock className="h-4 w-4 text-blue-500" />
+        {post.readingTime}
       </div>
 
-      <div className="pl-3 border-l-2 border-blue-600 dark:border-blue-600 mb-4 bg-blue-900/10 dark:bg-blue-900/10 p-3 rounded-r-md backdrop-blur-sm">
-        <p className="text-gray-300 dark:text-slate-300 typing-animation">
-          {post.description}
-        </p>
+      {/* Title - Flexible */}
+      <h2 className="mb-3 text-xl font-bold text-gray-800 dark:text-slate-200 flex-grow">
+        {post.title}
+      </h2>
+
+      {/* Description - Fixed lines (line-clamp for consistent height) */}
+      <p className="mb-4 text-sm text-gray-600 dark:text-slate-400 line-clamp-2 flex-grow">
+        {post.description}
+      </p>
+
+      {/* Tags - Fixed height */}
+      <div className="flex flex-wrap gap-2 mt-auto">
+        {post.tags?.map((tag) => (
+          <motion.span
+            key={tag}
+            className="inline-flex items-center rounded border px-2 py-0.5 text-xs border-gray-200 bg-gray-100 text-blue-600 dark:border-slate-700 dark:bg-slate-700 dark:text-blue-400 cursor-pointer"
+            whileHover={{ 
+              boxShadow: "0 0 8px 1px rgba(59, 130, 246, 0.5)",
+              y: -1,
+              scale: 1.05
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <Hash className="mr-1 h-3 w-3" />
+            {tag}
+          </motion.span>
+        ))}
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        {post.tags?.slice(0, 3).map((tag) => {
-          // Define emoji icon for each tag
-          const tagIcons = {
-            'ai': '🧠',
-            'development': '💻',
-            'cursor': '🖱️',
-            'gpt4': '🤖',
-            'nextjs': '⚡',
-            'langchain': '⛓️',
-            'privacy': '🔒'
-          };
-          
-          return (
-            <motion.span 
-              key={tag}
-              className="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-blue-900/40 dark:bg-blue-900/30 text-blue-300 dark:text-blue-200 transition-colors border border-blue-800/60 dark:border-blue-700/50 hover:bg-blue-800/50 hover:border-blue-600 hover:scale-105 transform"
-              whileHover={{ 
-                boxShadow: "0 0 8px 1px rgba(59, 130, 246, 0.5)",
-                y: -1
-              }}
-            >
-              <span className="mr-1">{tagIcons[tag] || <Hash className="h-3 w-3" />}</span>
-              {tag}
-            </motion.span>
-          );
-        })}
-      </div>
-
-      <div className="flex items-center justify-between bg-gray-800/60 dark:bg-slate-900/60 p-3 rounded-md border border-gray-700/40 dark:border-slate-700/40 mt-6 backdrop-blur-md">
-        <div className="flex items-center text-sm font-mono text-gray-300 dark:text-gray-400 bg-gray-800/90 dark:bg-slate-800/90 px-2.5 py-1 rounded-md border border-gray-700 dark:border-slate-700">
-          <span className="text-green-400 dark:text-green-400 font-bold">$</span>
+      {/* Action Bar - fixed height */}
+      <div className="mt-6 flex items-center justify-between border-t pt-4 border-gray-200 dark:border-slate-700">
+        <div className="font-mono text-xs text-gray-500 dark:text-slate-400 bg-gray-50 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-gray-200 dark:border-slate-700 flex items-center">
+          <span className="text-green-500">$</span>
           <span className="ml-1.5">read-article --title {post.title.split(' ')[0].toLowerCase()} --open</span>
           <span className="ml-1 animate-blink">|</span>
         </div>
 
-        <Link 
+        <Link
           href={post.route || `/blog/${post.slug}`}
-          className="inline-flex items-center text-sm font-medium text-blue-400 dark:text-blue-300 hover:text-blue-300 dark:hover:text-blue-200 transition-colors group-hover:underline bg-blue-900/20 dark:bg-blue-900/30 px-3 py-1 rounded-md hover:bg-blue-900/40 transition-all duration-200 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
+          className="inline-flex items-center rounded bg-blue-500 px-3 py-1 text-xs text-white hover:bg-blue-600 transition hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
         >
-          <span>Execute</span>
-          <ArrowRight className="h-4 w-4 ml-1.5 group-hover:translate-x-1.5 transition-transform duration-300" />
+          Execute <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1.5 transition-transform duration-300" />
         </Link>
       </div>
-
-      <div className="absolute bottom-0 left-0 right-0 bg-gray-800/90 dark:bg-slate-900/80 border-t border-gray-700 dark:border-slate-700/50 py-1.5 px-3 flex items-center justify-between text-[10px] font-mono text-gray-300 dark:text-gray-400 backdrop-blur-sm">
-        <div className="flex items-center">
-          <div className="w-2 h-2 rounded-full bg-green-500 mr-1.5 shadow-sm animate-pulse"></div>
-          <motion.span
-            animate={{ opacity: [0.7, 1, 0.7] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-          >
-            Ready
-          </motion.span>
-        </div>
-        <span className="bg-gray-700/50 dark:bg-slate-700/50 px-1.5 py-0.5 rounded">
-          {Math.floor(Math.random() * 200) + 350} Lines
-        </span>
-      </div>
-      
-      {/* Add a subtle diagonal pattern overlay */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0wIDYwTDYwIDBIMzBMMCA1MFoiIGZpbGw9IiM1MDkwQzA0MCIvPgo8L3N2Zz4=')] opacity-5 mix-blend-soft-light pointer-events-none z-[-1]"></div>
-      
-      {/* Scan line animation */}
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent z-[-1] pointer-events-none opacity-0 group-hover:opacity-100"
-        animate={{ 
-          y: ["100%", "-100%"]
-        }}
-        transition={{ 
-          repeat: Infinity, 
-          duration: 2, 
-          ease: "linear"
-        }}
-      />
     </div>
+
+    {/* Scan line animation */}
+    <motion.div 
+      className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent z-[-1] pointer-events-none opacity-0 group-hover:opacity-100"
+      animate={{ y: ["100%", "-100%"] }}
+      transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+    />
   </motion.div>
 );
 
-const FeaturedPostsSection = ({ posts }) => {
-  if (!posts.length) return null;
-  
-  return (
-    <motion.section
-      className="mb-16 w-full max-w-none"
-      initial="hidden"
-      animate="visible"
-      variants={staggerContainer}
-    >
-      <div className="flex items-center mb-6">
-        <TrendingUp className="h-6 w-6 text-yellow-500 dark:text-yellow-400 mr-2" />
-        <h2 className="text-2xl font-bold text-gray-100 dark:text-slate-100">
-          Featured Posts
-        </h2>
-        <div className="ml-3 px-2 py-0.5 bg-yellow-500/20 border border-yellow-500/30 rounded text-yellow-400 text-xs font-medium">
-          PINNED
-        </div>
-      </div>
-      
-      <div className="grid md:grid-cols-1 gap-8">
-        {posts.map((post, index) => (
-          <FeaturedPostCard 
-            key={post.route || post.slug} 
-            post={post}
-            index={index}
-          />
-        ))}
-      </div>
-    </motion.section>
-  );
-};
 
 const RegularPostsSection = ({ posts, hasFeatured }) => {
   if (!posts.length) return null;
   
   return (
     <motion.section
-      className="mb-16 w-full max-w-none"
+      className="mb-8 w-full max-w-none"
       initial="hidden"
       animate="visible"
       variants={staggerContainer}
     >
-      <div className="flex items-center mb-6">
-        <BookOpen className="h-5 w-5 text-blue-500 dark:text-blue-400 mr-2" />
-        <h2 className="text-2xl font-bold text-gray-100 dark:text-slate-100">
+      <div className="flex items-center mb-4">
+        <BookOpen className="h-4 w-4 text-blue-500 dark:text-blue-400 mr-2" />
+        <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">
           {hasFeatured ? 'All Articles' : 'Articles'}
         </h2>
       </div>
       
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4">
         {posts.map((post, index) => (
           <RegularPostCard 
             key={post.route || post.slug} 
@@ -629,158 +314,6 @@ const RegularPostsSection = ({ posts, hasFeatured }) => {
     </motion.section>
   );
 };
-
-const ScrollToTopButton = ({ scrolled }) => (
-  <motion.button
-    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-    className={`fixed bottom-6 right-6 w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 text-white shadow-lg flex items-center justify-center transform transition-all duration-300 ${
-      scrolled ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-10 opacity-0 scale-90'
-    }`}
-    whileHover={{ 
-      scale: 1.1,
-      boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.5)"
-    }}
-    whileTap={{ scale: 0.95 }}
-  >
-    <div className="relative">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-up">
-        <path d="m18 15-6-6-6 6"/>
-      </svg>
-      
-      <motion.div 
-        className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      />
-    </div>
-  </motion.button>
-);
-
-const FooterSection = () => (
-  <footer className="border-t border-gray-800 mt-16 py-6 bg-gray-900/80 backdrop-blur-sm w-full">
-    <div className="w-full max-w-7xl mx-auto px-6 md:px-8 lg:px-12">
-      <div className="flex flex-col md:flex-row justify-between items-center">
-        <motion.div 
-          className="flex flex-col items-center md:items-start mb-4 md:mb-0"
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="text-sm font-mono flex items-center text-gray-400">
-            <span className="text-green-400 font-bold mr-1.5">$</span>
-            <motion.span
-              initial={{ width: 0, opacity: 0 }}
-              whileInView={{ width: "auto", opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="overflow-hidden"
-            >
-              whoami
-            </motion.span>
-            <motion.span 
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 1, repeat: Infinity, repeatDelay: 0.5 }}
-              className="text-gray-300 ml-1"
-            >
-              _
-            </motion.span>
-          </div>
-          <motion.div 
-            className="mt-2 font-mono text-xs flex items-center text-gray-300"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-          >
-            <span className="bg-gray-800 px-3 py-1 rounded border border-gray-700 shadow-sm">
-              minh@ai-engineer ~
-            </span>
-          </motion.div>
-        </motion.div>
-        
-        <div className="flex space-x-3">
-          <motion.div
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Link href={process.env.NEXT_PUBLIC_GITHUB_URL || ""} className="text-gray-400 hover:text-gray-300 transition-colors">
-              <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-github"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
-              </div>
-            </Link>
-          </motion.div>
-          
-          <motion.div
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Link href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""} className="text-gray-400 hover:text-gray-300 transition-colors">
-              <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
-              </div>
-            </Link>
-          </motion.div>
-          
-          {process.env.NEXT_PUBLIC_HUGGINGFACE_URL && (
-            <motion.div
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Link href={process.env.NEXT_PUBLIC_HUGGINGFACE_URL} className="text-gray-400 hover:text-gray-300 transition-colors">
-                <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
-                  <svg viewBox="0 0 95 88" width="18" height="18" fill="currentColor">
-                    <path d="M47.2119 0C26.7279 0 10.1255 16.7482 10.1255 37.4223C10.1255 43.5567 11.8306 49.2766 14.8211 54.2455L0 86.5839H25.5591L32.2099 69.608C36.9538 71.6223 41.9637 72.8446 47.2119 72.8446C67.696 72.8446 84.2984 56.0964 84.2984 35.4223C84.2984 15.8304 67.696 0 47.2119 0ZM26.1682 47.4522C22.1547 47.4522 18.8905 44.1879 18.8905 40.1744C18.8905 36.1608 22.1547 32.8966 26.1682 32.8966C30.1817 32.8966 33.446 36.1608 33.446 40.1744C33.446 44.1879 30.1817 47.4522 26.1682 47.4522ZM47.2119 39.2589C50.2204 39.2589 52.6591 36.8201 52.6591 33.8117C52.6591 30.8033 50.2204 28.3645 47.2119 28.3645C44.2035 28.3645 41.7647 30.8033 41.7647 33.8117C41.7647 36.8201 44.2035 39.2589 47.2119 39.2589ZM68.2557 47.4522C64.2422 47.4522 60.9779 44.1879 60.9779 40.1744C60.9779 36.1608 64.2422 32.8966 68.2557 32.8966C72.2692 32.8966 75.5334 36.1608 75.5334 40.1744C75.5334 44.1879 72.2692 47.4522 68.2557 47.4522Z" />
-                  </svg>
-                </div>
-              </Link>
-            </motion.div>
-          )}
-          
-          <motion.div
-            whileHover={{ y: -2 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Link href="/rss" className="text-gray-400 hover:text-gray-300 transition-colors">
-              <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gray-800 hover:bg-gray-700 border border-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-rss"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
-              </div>
-            </Link>
-          </motion.div>
-        </div>
-      </div>
-      
-      <motion.div 
-        className="mt-6 pt-4 border-t border-gray-800 flex flex-col items-center"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 1 }}
-      >
-        <div className="text-[10px] font-mono text-gray-500 flex items-center">
-          <span className="text-gray-400">exit_code=</span>
-          <motion.span 
-            className="text-green-400"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.2 }}
-          >
-            0
-          </motion.span> 
-          <span className="mx-1">•</span> 
-          <span className="text-blue-400">{new Date().getFullYear()}</span>
-        </div>
-        <motion.div 
-          className="mt-2 text-xs font-mono text-gray-500"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          <span className="bg-gray-800 px-2 py-0.5 rounded text-[10px]">v0.2.1-alpha</span>
-        </motion.div>
-      </motion.div>
-    </div>
-  </footer>
-);
 
 // Loading skeleton component
 const LoadingState = () => {
@@ -928,7 +461,9 @@ function BlogPageContent() {
   );
   
   return (
-      <div className="max-w-4xl mx-auto space-y-10">
+    <main className="min-h-screen bg-white dark:bg-slate-900 relative py-8">
+      <CodeSymbolsBackground />
+      <div className="max-w-4xl mx-auto px-4 space-y-6">
         <SearchBar
           onFilterToggle={() => setFilterOpen(prev => !prev)}
           filterOpen={filterOpen}
@@ -950,12 +485,10 @@ function BlogPageContent() {
         ) : filteredBlogs.length === 0 ? (
           <EmptyState onClear={() => setSelectedTags([])} />
         ) : (
-          <>
-            {/* <ResultsCount count={featuredPosts.length + regularPosts.length} /> */}
-            <RegularPostsSection posts={regularPosts} />
-          </>
+          <RegularPostsSection posts={regularPosts} />
         )}
       </div>
+    </main>
   );
 }
 

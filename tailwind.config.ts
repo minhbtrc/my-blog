@@ -32,29 +32,29 @@ const config: Config = {
         light: {
           'color-scheme': 'light',
           // Main colors
-          primary: '#343433',
-          'primary-content': '#ffffff',
-          secondary: '#b2a79a',
-          'secondary-content': '#000000',
+          primary: '#3b82f6',           // Vibrant blue for primary actions
+          'primary-content': '#ffffff', // White text on primary color
+          secondary: '#0ea5e9',         // Bright sky blue for secondary elements
+          'secondary-content': '#ffffff', // White text on secondary color
           // Subsidised colors
-          accent: '#6187fe',
-          'accent-content': '#d4deff',
-          neutral: '#747485',
-          'neutral-content': '#ffffff',
+          accent: '#6366f1',            // Indigo for accent elements
+          'accent-content': '#ffffff',  // White text on accent color  
+          neutral: '#64748b',           // Medium slate for neutral elements
+          'neutral-content': '#ffffff', // White text on neutral color
           // Informative colors
-          info: '#e9f2ff',
-          'info-content': '#0086fc',
-          success: '#e3eee2',
-          'success-content': '#00C454',
-          error: '#fff0f0',
-          'error-content': '#ff4e4e',
-          warning: '#fefae6',
-          'warning-content': '#f6c30f',
+          info: '#e0f2fe',              // Light blue background for info
+          'info-content': '#0369a1',    // Deep blue text on info background
+          success: '#dcfce7',           // Light green background for success
+          'success-content': '#15803d', // Deep green text on success background
+          error: '#fee2e2',             // Light red background for errors
+          'error-content': '#b91c1c',   // Deep red text on error background
+          warning: '#fef3c7',           // Light yellow background for warnings
+          'warning-content': '#b45309', // Deep amber text on warning background
           // Base colors
-          'base-100': '#ffffff',
-          'base-200': '#fbfaf9',
-          'base-300': '#f7f4f3',
-          'base-content': '#474645',
+          'base-100': '#ffffff',        // Pure white for primary backgrounds
+          'base-200': '#f8fafc',        // Very light slate for secondary backgrounds
+          'base-300': '#f1f5f9',        // Light slate for tertiary backgrounds
+          'base-content': '#1e293b',    // Deep slate for text
         },
         dark: {
           'color-scheme': 'dark',

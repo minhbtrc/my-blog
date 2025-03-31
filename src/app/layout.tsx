@@ -3,6 +3,9 @@ import { Inter, JetBrains_Mono, Fira_Code, Source_Code_Pro } from 'next/font/goo
 import { Analytics } from '@vercel/analytics/react'
 import ClientLayout from '../components/ClientLayout'
 import './globals.css'
+import '../styles/colors.css'
+import '../styles/theme.css'
+import '../styles/animations.css'
 
 // Define the fonts
 const inter = Inter({
@@ -46,7 +49,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.className} ${jetbrainsMono.variable} ${firaCode.variable} ${sourceCodePro.variable}`}
     >
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-white dark:bg-slate-900`}>
         <ClientLayout>{children}</ClientLayout>
         <Analytics />
       </body>
