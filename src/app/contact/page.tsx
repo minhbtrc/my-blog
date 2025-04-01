@@ -7,6 +7,7 @@ import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
 import { Button } from '@/components/ui/button'
 import Head from 'next/head'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
+import Link from 'next/link'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -165,6 +166,67 @@ export default function ContactPage() {
       @keyframes blink {
         from, to { opacity: 1; }
         50% { opacity: 0; }
+      }
+      
+      .coffee-steam {
+        position: absolute;
+        top: -6px;
+        right: 10px;
+        pointer-events: none;
+      }
+      
+      .coffee-steam::before,
+      .coffee-steam::after {
+        content: '';
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(245, 158, 11, 0.3);
+        filter: blur(2px);
+        animation: steamRise 3s infinite ease-in-out;
+      }
+      
+      .coffee-steam::before {
+        left: -5px;
+        animation-delay: 0.25s;
+      }
+      
+      .coffee-steam::after {
+        left: 5px;
+        animation-delay: 0.75s;
+      }
+      
+      @keyframes steamRise {
+        0% {
+          transform: translateY(0) scale(1);
+          opacity: 0;
+        }
+        30% {
+          opacity: 0.3;
+        }
+        70% {
+          opacity: 0.3;
+        }
+        100% {
+          transform: translateY(-15px) scale(1.5);
+          opacity: 0;
+        }
+      }
+      
+      @keyframes wiggle {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        50% { transform: rotate(0deg); }
+        75% { transform: rotate(10deg); }
+      }
+      
+      .animate-coffee-wiggle {
+        animation: wiggle 1s ease-in-out;
+      }
+      
+      .group:hover .animate-coffee-wiggle {
+        animation: wiggle 1s ease-in-out infinite;
       }
       
       .python-string {
@@ -513,9 +575,43 @@ export default function ContactPage() {
                 </motion.a>
               </motion.div>
               
-              <motion.div variants={item} className="flex items-center gap-3 pt-2">
-                <Coffee className="w-4 h-4 flex-shrink-0 text-emerald-600 dark:text-blue-400" />
-                <span className="text-gray-700 dark:text-gray-300">Available for async chats & coffee.</span>
+              <motion.div variants={item} className="flex flex-col items-start gap-2 pt-3">
+                <motion.div 
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="relative group"
+                >
+                  <div className="coffee-steam opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <Link 
+                    href={process.env.NEXT_PUBLIC_BUYMEACOFFEE_URL || "https://www.buymeacoffee.com/minhbtc"}
+                    target="_blank"
+                    rel="noreferrer" 
+                    className="group flex items-center gap-2.5 py-2.5 px-4 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 dark:from-amber-500/80 dark:to-amber-600/80 dark:hover:from-amber-500 dark:hover:to-amber-600 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                  >
+                    <div className="relative">
+                      <Coffee className="w-5 h-5 text-white group-hover:animate-coffee-wiggle" />
+                      <motion.div
+                        className="absolute -top-3 left-1/2 transform -translate-x-1/2"
+                        animate={{
+                          y: [-3, -6, -3],
+                          opacity: [0, 0.7, 0],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          repeatType: "loop"
+                        }}
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full bg-white/70 blur-sm" />
+                      </motion.div>
+                    </div>
+                    <span className="font-medium group-hover:text-white/95">Buy me a coffee</span>
+                  </Link>
+                  <div className="absolute inset-0 -z-10 rounded-full bg-amber-200/30 dark:bg-amber-700/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-pulse"></div>
+                </motion.div>
+                <span className="text-sm text-gray-600 dark:text-gray-400 ml-2 italic">
+                  ☕ Your support fuels my code!
+                </span>
               </motion.div>
               
               <div className="text-emerald-500 dark:text-blue-400">"""</div>
