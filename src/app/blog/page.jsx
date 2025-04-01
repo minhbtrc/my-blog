@@ -229,9 +229,9 @@ const BlogPost = ({ post, index }) => (
       <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors">
         <span className="font-mono text-purple-400">post</span>
         <span className="font-mono text-muted-foreground">(</span>
-        <span className="font-mono text-yellow-300">"</span>
-        <span className="text-yellow-300">{post.title}</span>
-        <span className="font-mono text-yellow-300">"</span>
+        <span className="font-mono text-emerald-400">"</span>
+        <span className="text-emerald-500 dark:text-emerald-400">{post.title}</span>
+        <span className="font-mono text-emerald-400">"</span>
         <span className="font-mono text-muted-foreground">)</span>
       </h3>
       
