@@ -44,7 +44,7 @@ const TerminalHero = () => {
 
 > Hello world 👋 I create AI tools that understand language, extract insights, and protect privacy.
 
-minh@ai-lab:~$ cat skills.txt
+minhbtc@ai-eng:~$ cat skills.txt
 > 🧠 LLMs, NLP, Vector DB
 > 🔍 RAG, Extraction, Context
 > 🛠️ Python, JS, FastAPI
@@ -56,13 +56,13 @@ minh@ai-lab:~$ cat skills.txt
 > Framework: LangChain
 > Caffeine levels: OPTIMAL
 
-minh@ai-lab:~$ launch project --name "PDF Reader" --goal "Turn messy documents into clean data"
+minhbtc@ai-eng:~$ launch project --name "PDF Reader" --goal "Turn messy documents into clean data"
 > Initializing PDF processing pipeline...
 > Loading document parsers...
 > Configuring extraction templates...
 > Project ready!
 
-minh@ai-lab:~$ start pipeline --input "PDF" --output "Structured Info" --tech "LLMs + LangFlow"
+minhbtc@ai-eng:~$ start pipeline --input "PDF" --output "Structured Info" --tech "LLMs + LangFlow"
 > Pipeline running:
 > [RUNNING] Document ingestion ████████████ 100%
 > [RUNNING] Context processing ████████████ 100%
@@ -70,37 +70,37 @@ minh@ai-lab:~$ start pipeline --input "PDF" --output "Structured Info" --tech "L
     
     `> I like building things that work – fast, useful, and simple for others to use.
 
-minh@ai-lab:~$ echo "Code > Slides. I prefer shipping real solutions over just talking about them."
+minhbtc@ai-eng:~$ echo "Code > Slides. I prefer shipping real solutions over just talking about them."
 > Code > Slides. I prefer shipping real solutions over just talking about them.
 
-minh@ai-lab:~$ alias hobbies="AI papers, strong coffee, and weekend football ⚽"
+minhbtc@ai-eng:~$ alias hobbies="AI papers, strong coffee, and weekend football ⚽"
 > alias created
 
-minh@ai-lab:~$ hobbies
+minhbtc@ai-eng:~$ hobbies
 > AI papers, strong coffee, and weekend football ⚽
 
-minh@ai-lab:~$ echo "Always learning. Always building. Sometimes chasing a football like it owes me something."
+minhbtc@ai-eng:~$ echo "Always learning. Always building. Sometimes chasing a football like it owes me something."
 > Always learning. Always building. Sometimes chasing a football like it owes me something.
 
-minh@ai-lab:~$ deploy --project "Real-world AI" --mission "Make LLMs useful, private, and practical."
+minhbtc@ai-eng:~$ deploy --project "Real-world AI" --mission "Make LLMs useful, private, and practical."
 > Deployment successful!
 > Mission status: ONGOING`,
     
-    `minh@ai-lab:~$ cat values.txt
+    `minhbtc@ai-eng:~$ cat values.txt
 > 🔒 Privacy matters - especially with user data
 > 🤝 Simplicity over complexity
 > ⚡ Speed and reliability count
 > 📚 Constant learning is non-negotiable
 
-minh@ai-lab:~$ echo "Good AI isn't magic. It's built, tested, improved, and shared."
+minhbtc@ai-eng:~$ echo "Good AI isn't magic. It's built, tested, improved, and shared."
 > Good AI isn't magic. It's built, tested, improved, and shared.
 
-minh@ai-lab:~$ grep -i "philosophy" ./mindset.md
+minhbtc@ai-eng:~$ grep -i "philosophy" ./mindset.md
 > "Less hype. More helpful AI."
 > "Let the models do the talking. I just build the system."
 > "Minh BTC — I turn language into code, and code into products."
 
-minh@ai-lab:~$ ./current_project.sh
+minhbtc@ai-eng:~$ ./current_project.sh
 [RUNNING] AI Chatbot + Agent + RAG System
 ▓▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 78%
 
@@ -402,9 +402,9 @@ minh@ai-lab:~$ ./current_project.sh
           <div key={idx} className="whitespace-pre-wrap mb-1.5 terminal-line terminal-typing">
             {line.startsWith('>') ? (
               <span className="text-cyan-400 dark:text-cyan-400">{line}</span>
-            ) : line.startsWith('minh@ai-lab') ? (
+            ) : line.startsWith('minhbtc@ai-eng') ? (
               <span>
-                <span className="text-green-500 dark:text-green-400">minh@ai-lab</span>
+                <span className="text-green-500 dark:text-green-400">minhbtc@ai-eng</span>
                 <span className="text-gray-400 dark:text-gray-400">:</span>
                 <span className="text-blue-400 dark:text-blue-400">~$</span>
                 <span className="text-white dark:text-gray-200">{line.split('$')[1]}</span>

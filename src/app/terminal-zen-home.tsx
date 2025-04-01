@@ -54,7 +54,7 @@ export default function TerminalZenHome() {
             // Start the command prompt typing
             setTypingCommand(true)
             let commandIndex = 0
-            const command = "minh@ai-lab:~$ echo "
+            const command = "minhbtc@ai-eng:~$ echo "
             
             const commandInterval = setInterval(() => {
               if (commandIndex < command.length) {
@@ -243,7 +243,7 @@ export default function TerminalZenHome() {
                 )}></span>
                 <span role="status">
                   {/* Status text changes based on time of day */}
-                  {new Date().getHours() < 12 ? "🌅 Morning coding" : 
+                  {new Date().getHours() < 12 ? "☕ Morning coding" : 
                    new Date().getHours() < 17 ? "💻 Now coding" : 
                    new Date().getHours() < 22 ? "🌙 Evening hacking" : 
                    "🌠 Late night coding"}

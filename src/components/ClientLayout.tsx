@@ -344,15 +344,15 @@ export default function ClientLayout({
               {/* Terminal path display */}
               <Link href="/" className="group">
                 <span className="text-xs font-mono text-base-content/70">
-                  <span className="text-primary">[minh@ai-lab]</span>
+                  <span className="text-primary">[minhbtc@ai-eng]</span>
                   <span className="text-base-content/60 mx-1">-</span>
                   <span className="text-primary">[{typedPath}]</span>
-                  <span 
+                  {/* <span 
                     className={cn(
                       "inline-block w-2 h-4 align-middle ml-1 bg-primary",
                       cursorVisible ? "opacity-100" : "opacity-0"
                     )}
-                  />
+                  /> */}
                 </span>
               </Link>
             </div>
@@ -494,7 +494,7 @@ export default function ClientLayout({
                         <span className="flex items-center gap-2">
                           <Terminal className="h-4 w-4 text-primary" />
                           <span className="text-primary text-sm">
-                            minh@ai-lab:~$ _
+                          minhbtc@ai-eng:~$ _
                           </span>
                         </span>
                       </Link>

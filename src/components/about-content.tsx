@@ -102,7 +102,7 @@ export default function AboutContent() {
               >
                 <p className="font-mono text-muted-foreground mb-4 flex items-center gap-2 justify-center md:justify-start">
                   <span className="text-muted-foreground font-mono inline-flex items-center">
-                    minh@ai-lab:~$<span className="inline-block w-2 h-4 bg-primary/70 ml-1 animate-pulse"></span>
+                  minhbtc@ai-eng:~$<span className="inline-block w-2 h-4 bg-primary/70 ml-1 animate-pulse"></span>
                   </span> 
                   <span>AI Engineer</span>
                 </p>

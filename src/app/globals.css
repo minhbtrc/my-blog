@@ -130,7 +130,59 @@
 
 /* Terminal styling */
 .terminal-background {
-  @apply bg-gray-50 dark:bg-gray-900/50 backdrop-blur-sm border border-emerald-100 dark:border-gray-800;
+  @apply bg-gray-50/90 dark:bg-gray-900/50 backdrop-blur-sm border border-emerald-100 dark:border-gray-800 shadow-sm;
+}
+
+.terminal-glow {
+  box-shadow: 0 0 20px rgba(5, 150, 105, 0.1);
+}
+
+.docstring {
+  @apply rounded-md border border-emerald-100 dark:border-gray-800 bg-white/80 dark:bg-gray-900/30 backdrop-blur-sm shadow-sm;
+}
+
+/* Python syntax highlighting */
+.python-keyword {
+  @apply text-gray-600 dark:text-blue-400 font-medium;
+}
+
+.python-function {
+  @apply text-emerald-700 dark:text-yellow-300 font-medium;
+}
+
+.python-comment {
+  @apply text-emerald-600 dark:text-green-400;
+}
+
+.python-param {
+  @apply text-teal-700 dark:text-red-400;
+}
+
+.python-string {
+  @apply text-amber-600 dark:text-green-300;
+}
+
+.python-bracket {
+  @apply text-gray-500 dark:text-gray-400;
+}
+
+.python-cursor {
+  @apply animate-blink text-emerald-700 dark:text-blue-400;
+}
+
+/* Animation for cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s infinite;
+}
+
+/* Form input focus effects */
+input:focus, textarea:focus {
+  @apply ring-1 ring-emerald-200 dark:ring-blue-900/30;
 }
 
 /* Dark/light mode transition */

@@ -94,7 +94,7 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
     >
       <div className="flex items-center gap-2 border-b border-muted/30 py-2">
         <div className="flex items-center text-muted-foreground text-sm font-mono">
-          minh@ai-lab:~$
+        minhbtc@ai-eng:~$
         </div>
         <div className="relative flex-1">
           <Input
@@ -268,7 +268,7 @@ const ShellView = ({ posts }) => (
     animate="show"
   >
     <motion.div variants={item} className="text-muted-foreground mb-4">
-      <span className="text-blue-400">minh@ai-lab:~$</span> cat posts.txt
+      <span className="text-blue-400">minhbtc@ai-eng:~$</span> cat my_posts.txt
     </motion.div>
     
     {posts.map((post, index) => (

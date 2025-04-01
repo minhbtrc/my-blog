@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { Mail, MapPin, Send, Terminal, Code, MessageSquare, Sparkles, Coffee, Play } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
 import { Button } from '@/components/ui/button'
+import Head from 'next/head'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -16,7 +18,11 @@ export default function ContactPage() {
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [focusedField, setFocusedField] = useState<string | null>(null)
   const [showEmoji, setShowEmoji] = useState(false)
+  const [showCursor, setShowCursor] = useState(true)
   const formRef = useRef<HTMLFormElement>(null)
+  
+  // Check if screen is mobile size
+  const isMobile = useMediaQuery('(max-width: 768px)')
   
   // Array of placeholder messages for the message field
   const messagePlaceholders = [
@@ -53,10 +59,7 @@ export default function ContactPage() {
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
   
   const handleFocus = (fieldName: string) => {
@@ -246,20 +249,39 @@ export default function ContactPage() {
     }
   }, [])
   
+  useEffect(() => {
+    // Set a random cursor blink interval
+    const interval = setInterval(() => {
+      if (focusedField || formStatus !== 'idle') return;
+      setShowCursor(prev => !prev);
+    }, 530);
+    
+    return () => clearInterval(interval);
+  }, [focusedField, formStatus]);
+  
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.15,
+        delayChildren: 0.3,
       }
     }
-  }
+  };
   
   const item = {
     hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0 }
-  }
+    show: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        type: 'spring', 
+        stiffness: 100,
+        damping: 10
+      } 
+    }
+  };
   
   return (
     <motion.div 
@@ -268,15 +290,15 @@ export default function ContactPage() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <main className="max-w-3xl mx-auto py-16 space-y-16 font-mono text-[15px] leading-relaxed">
+      <main className={`max-w-4xl mx-auto py-8 md:py-16 px-4 font-mono text-${isMobile ? '14' : '15'}px leading-relaxed`}>
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-5 gap-16 md:gap-24"
+          className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-12"
           variants={container}
           initial="hidden"
           animate="show"
         >
           {/* Python Script Section (left side) */}
-          <motion.div className="md:col-span-3 space-y-5 p-6 rounded-md terminal-glow terminal-background">
+          <motion.div className="lg:col-span-3 space-y-4 md:space-y-5 p-4 md:p-6 rounded-md terminal-glow terminal-background">
             <motion.div variants={item}>
               <span className="python-comment"># Get in touch with MinhBTC</span>
             </motion.div>
@@ -285,16 +307,16 @@ export default function ContactPage() {
               <span className="python-keyword">from</span> <span className="python-function">minh_lab</span> <span className="python-keyword">import</span> <span className="python-function">send_message</span>
             </motion.div>
             
-            <form ref={formRef} onSubmit={handleSubmit} className="space-y-8 mt-6">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 mt-4">
               <motion.div variants={item} className="space-y-2">
                 <div>
                   <span className="python-function">send_message</span>
                   <span className="python-bracket">(</span>
                 </div>
                 
-                <div className="ml-4 space-y-4">
+                <div className="ml-4 space-y-5">
                   <div className="flex items-start">
-                    <label className="python-param w-20 pt-2">name</label>
+                    <label className={`python-param ${isMobile ? 'w-14' : 'w-16'} pt-2 flex-shrink-0`}>name</label>
                     <span className="mr-2 pt-2">=</span>
                     <div className="relative flex-1">
                       <span className="python-string absolute left-0 top-0 pointer-events-none">"</span>
@@ -317,7 +339,7 @@ export default function ContactPage() {
                   </div>
                   
                   <div className="flex items-start">
-                    <label className="python-param w-20 pt-2">email</label>
+                    <label className={`python-param ${isMobile ? 'w-14' : 'w-16'} pt-2 flex-shrink-0`}>email</label>
                     <span className="mr-2 pt-2">=</span>
                     <div className="relative flex-1">
                       <span className="python-string absolute left-0 top-0 pointer-events-none">"</span>
@@ -340,7 +362,7 @@ export default function ContactPage() {
                   </div>
                   
                   <div className="flex items-start">
-                    <label className="python-param w-20 pt-2">message</label>
+                    <label className={`python-param ${isMobile ? 'w-14' : 'w-16'} pt-2 flex-shrink-0`}>message</label>
                     <span className="mr-2 pt-2">=</span>
                     <div className="relative flex-1">
                       <span className="python-string absolute left-0 top-0 pointer-events-none">"</span>
@@ -350,7 +372,7 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('message')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900 h-24 resize-none"
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900 min-h-24 h-32 resize-none"
                         placeholder={getRandomPlaceholder(messagePlaceholders)}
                         required
                       ></textarea>
@@ -362,21 +384,21 @@ export default function ContactPage() {
                   </div>
                 </div>
                 
-                <div>
+                <div className="mt-1">
                   <span className="python-bracket">)</span>
-                  {!focusedField && formStatus === 'idle' && (
+                  {!focusedField && formStatus === 'idle' && showCursor && (
                     <span className="python-cursor ml-1">█</span>
                   )}
                 </div>
               </motion.div>
               
-              <motion.div variants={item} className="flex items-center gap-2">
+              <motion.div variants={item} className="flex justify-end mt-4">
                 <motion.button 
                   type="submit" 
-                  className="flex items-center gap-2 border border-emerald-200 dark:border-muted/30 bg-emerald-50 dark:bg-muted/10 hover:bg-emerald-100 dark:hover:bg-muted/20 text-emerald-800 dark:text-current px-3 py-1.5 rounded text-sm transition-all"
+                  className="flex items-center gap-2 border border-emerald-200 dark:border-muted/30 bg-emerald-50 dark:bg-muted/10 hover:bg-emerald-100 dark:hover:bg-muted/20 text-emerald-800 dark:text-current px-4 py-2 rounded-md text-sm transition-all shadow-sm hover:shadow"
                   disabled={formStatus === 'submitting'}
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.02, y: -1 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <Play className="w-3.5 h-3.5" />
                   {formStatus === 'submitting' ? (
@@ -384,24 +406,24 @@ export default function ContactPage() {
                       <span>exec()</span>
                       <div className="flex space-x-1 ml-2">
                         <motion.div 
-                          className="w-1 h-1 rounded-full bg-current"
-                          animate={{ y: [0, -2, 0] }}
+                          className="w-1.5 h-1.5 rounded-full bg-current"
+                          animate={{ y: [0, -3, 0] }}
                           transition={{ duration: 0.6, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
                         />
                         <motion.div 
-                          className="w-1 h-1 rounded-full bg-current"
-                          animate={{ y: [0, -2, 0] }}
+                          className="w-1.5 h-1.5 rounded-full bg-current"
+                          animate={{ y: [0, -3, 0] }}
                           transition={{ duration: 0.6, repeat: Infinity, repeatType: "loop", ease: "easeInOut", delay: 0.2 }}
                         />
                         <motion.div 
-                          className="w-1 h-1 rounded-full bg-current"
-                          animate={{ y: [0, -2, 0] }}
+                          className="w-1.5 h-1.5 rounded-full bg-current"
+                          animate={{ y: [0, -3, 0] }}
                           transition={{ duration: 0.6, repeat: Infinity, repeatType: "loop", ease: "easeInOut", delay: 0.4 }}
                         />
                       </div>
                     </div>
                   ) : (
-                    <span>exec() # In development</span>
+                    <span>exec("Not working yet")</span>
                   )}
                 </motion.button>
               </motion.div>
@@ -435,64 +457,65 @@ export default function ContactPage() {
           </motion.div>
           
           {/* Docstring Section (right side) */}
-          <motion.div className="md:col-span-2 space-y-6">
+          <motion.div className="lg:col-span-2 space-y-4">
             <motion.div 
               variants={item}
-              className="docstring space-y-6 text-gray-700 dark:text-muted-foreground"
+              className="docstring space-y-6 text-gray-700 dark:text-muted-foreground p-4"
             >
               <div className="text-emerald-500 dark:text-blue-400">"""</div>
               
               <motion.div 
                 variants={item} 
-                className="space-y-4"
+                className="space-y-6"
               >
-                
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  <p>
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-4 h-4 flex-shrink-0 text-emerald-600 dark:text-blue-400" />
+                  <p className="text-gray-700 dark:text-gray-300">
                     Ho Chi Minh City, Vietnam
                   </p>
                 </div>
+                
+                <p className="text-sm text-gray-600 dark:text-gray-400 ml-7">
+                  I'm available for consulting, technical advisory roles and project collaborations.
+                </p>
               </motion.div>
-              
-              <motion.div variants={item} className="py-2"></motion.div>
               
               <motion.div 
                 variants={item}
-                className="space-y-4"
+                className="space-y-4 pt-2"
               >
                 <motion.a
-                  href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
+                  href={process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/minhbtc"}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex items-center gap-2"
+                  className="group flex items-center gap-3"
                   whileHover={{ x: 3 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <SiGithub className="w-4 h-4" />
-                  <span className="group-hover:text-foreground transition-colors">
+                  <SiGithub className="w-4 h-4 text-emerald-600 dark:text-blue-400" />
+                  <span className="group-hover:text-emerald-700 dark:group-hover:text-blue-300 transition-colors">
                     github.com/minhbtc
                   </span>
                 </motion.a>
                 
                 <motion.a
-                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""}
+                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com/in/minhbtc"}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex items-center gap-2"
+                  className="group flex items-center gap-3"
                   whileHover={{ x: 3 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <SiLinkedin className="w-4 h-4" />
-                  <span className="group-hover:text-foreground transition-colors">
+                  <SiLinkedin className="w-4 h-4 text-emerald-600 dark:text-blue-400" />
+                  <span className="group-hover:text-emerald-700 dark:group-hover:text-blue-300 transition-colors">
                     linkedin.com/in/minhbtc
                   </span>
                 </motion.a>
               </motion.div>
               
-              <motion.div variants={item} className="flex items-center gap-1.5 pt-2">
-                <Coffee className="w-3.5 h-3.5" />
-                <span>Available for async chats & coffee.</span>
+              <motion.div variants={item} className="flex items-center gap-3 pt-2">
+                <Coffee className="w-4 h-4 flex-shrink-0 text-emerald-600 dark:text-blue-400" />
+                <span className="text-gray-700 dark:text-gray-300">Available for async chats & coffee.</span>
               </motion.div>
               
               <div className="text-emerald-500 dark:text-blue-400">"""</div>
