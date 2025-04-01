@@ -1,6 +1,5 @@
 import Image from 'next/image'
-import Link from 'next/link'
-import { Terminal, Code, Sparkles, ArrowRight, Monitor, Package, Zap, BookOpen, Lightbulb, Users, Eye, ArrowLeft } from 'lucide-react'
+import { Terminal, Code, Sparkles, ArrowRight, Monitor, Zap, BookOpen, Lightbulb, Eye, Calendar, Clock } from 'lucide-react'
 
 export const metadata = {
   title: 'Building a Dev-Centric Blog with ChatGPT & Cursor (from a CSS-Hating AI Engineer)',
@@ -25,9 +24,52 @@ export default function BuildingBlogWithAIPage() {
           <span className="block text-xl text-neutral-600 dark:text-neutral-400 font-normal mt-3">from a CSS-Hating AI Engineer</span>
         </h1>
         
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+            ai
+          </span>
+          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
+            cursor
+          </span>
+          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50">
+            gpt4
+          </span>
+          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
+            nextjs
+          </span>
+        </div>
+        
+        {/* Date */}
+        <div className="flex items-center gap-2 mb-6 text-sm text-neutral-600 dark:text-neutral-400">
+          <Calendar size={14} className="text-neutral-500 dark:text-neutral-400" />
+          <time dateTime="2023-08-10">August 10, 2023</time>
+          <span className="mx-2">•</span>
+          <span className="flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5" />
+            10 min read
+          </span>
+        </div>
+        
         <p className="text-xl text-neutral-700 dark:text-neutral-300 leading-relaxed">
           My journey building a modern, developer-centric blog using AI tools like Cursor and GPT-4o, despite limited frontend experience (and a deep fear of CSS).
         </p>
+      </div>
+      
+      {/* Terminal Homepage Screenshot */}
+      <div className="mb-12">
+        <div className="relative rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800 shadow-lg">
+          <Image 
+            src="/images/blog/blog-homepage.png" 
+            alt="Terminal-inspired blog homepage with profile picture" 
+            width={1200} 
+            height={675} 
+            className="w-full h-auto"
+          />
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-neutral-900/80 to-transparent">
+            <p className="text-white text-sm font-mono">Terminal-inspired homepage with profile photo and theme toggle</p>
+          </div>
+        </div>
       </div>
       
       {/* Introduction */}

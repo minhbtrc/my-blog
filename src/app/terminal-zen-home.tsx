@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Sun, Moon, Command } from 'lucide-react'
+import { Command } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import KeyboardShortcut from '@/components/keyboard-shortcut'
 

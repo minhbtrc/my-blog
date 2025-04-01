@@ -2,15 +2,10 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Terminal, Play, Pause, ChevronRight, ChevronLeft, RefreshCw, Code } from 'lucide-react';
+import { ArrowRight, Play, Pause, ChevronRight, ChevronLeft, RefreshCw, Code } from 'lucide-react';
 import { Github, Linkedin } from 'lucide-react';
-import { useState, useEffect, useRef, Suspense } from 'react';
-import React, { Fragment, lazy } from 'react';
-import dynamic from 'next/dynamic';
-import ky from 'ky';
-import useSWR from 'swr';
-
-import Tags from '@/components/tags';
+import { useState, useEffect, useRef } from 'react';
+import React from 'react';
 
 // Terminal Hero Component 
 const TerminalHero = () => {

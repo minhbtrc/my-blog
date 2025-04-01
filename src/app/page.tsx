@@ -1,6 +1,3 @@
-import { headers } from 'next/headers'
-import HomeClient from '@/app/HomeClient';
-import SimplifiedHome from './simplified-home';
 import TerminalZenHome from './terminal-zen-home';
 
 // Force static rendering and set revalidation

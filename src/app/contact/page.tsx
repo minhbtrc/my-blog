@@ -2,10 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { Mail, MapPin, Send, Terminal, Code, MessageSquare, Sparkles, Coffee, Play } from 'lucide-react'
+import { MapPin, Coffee, Play } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
-import { Button } from '@/components/ui/button'
-import Head from 'next/head'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import Link from 'next/link'
 
