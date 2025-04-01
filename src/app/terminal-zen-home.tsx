@@ -198,7 +198,7 @@ export default function TerminalZenHome() {
       )}
       
       {/* Main hero section */}
-      <main className="flex-1 flex items-center justify-center px-4 py-20">
+      <main className="flex-1 flex items-center justify-center px-4">
         <div className="min-h-[80vh] flex flex-col items-center justify-center gap-6 max-w-3xl w-full">
           {/* Side-by-Side Layout Container */}
           <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-16 items-center justify-items-center">

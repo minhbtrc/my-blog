@@ -87,7 +87,7 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
   
   return (
     <motion.div
-      className="max-w-3xl mx-auto mb-8"
+      className="max-w-3xl mx-auto mb-4"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
@@ -139,7 +139,7 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
   
   return (
     <motion.div 
-      className="max-w-3xl mx-auto mb-8 font-mono text-sm border-l-2 border-emerald-300 dark:border-muted/30 pl-4 py-2"
+      className="max-w-3xl mx-auto mb-4 font-mono text-sm border-l-2 border-emerald-300 dark:border-muted/30 pl-4 py-2"
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
@@ -400,12 +400,12 @@ function BlogPageContent() {
   const hasResults = filteredPosts.length > 0;
   
   return (
-    <div className="max-w-3xl mx-auto px-4 py-20">
+    <div className="max-w-3xl mx-auto px-4 pt-8 pb-12">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="mb-6 text-center"
+        className="mb-4 text-center"
       >
         <h1 className="text-2xl font-semibold mb-1">Blog</h1>
         <p className="text-sm text-muted-foreground font-mono">
