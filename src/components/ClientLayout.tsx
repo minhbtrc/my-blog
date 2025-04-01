@@ -5,13 +5,32 @@ import { ThemeProvider } from 'next-themes'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Moon, Sun, Github, Command } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Moon, Sun, Github, Command, Terminal } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { cn } from '../lib/utils'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import Footer from './footer'
+
+// Animation variants for typing effect
+const typingContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08
+    }
+  }
+};
+
+const typingCharacter = {
+  hidden: { opacity: 0 },
+  show: { 
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 20 }
+  }
+};
 
 export default function ClientLayout({
   children,
@@ -21,12 +40,24 @@ export default function ClientLayout({
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showCommandMenu, setShowCommandMenu] = useState(false)
+  const [typedPath, setTypedPath] = useState("")
   const pathname = usePathname()
   const { resolvedTheme, setTheme } = useTheme()
 
   // Track scroll position for sticky header
   const [scrolled, setScrolled] = useState<boolean>(false)
   const prevScrollY = useRef(0)
+  const [cursorVisible, setCursorVisible] = useState(true)
+
+  // Get terminal path based on current pathname
+  const getTerminalPath = () => {
+    if (pathname === '/') return '~/home'
+    if (pathname === '/blog') return '~/blog'
+    if (pathname === '/about') return '~/about'
+    if (pathname === '/contact') return '~/contact'
+    if (pathname?.startsWith('/blog/')) return '~/blog/post'
+    return `~${pathname}`
+  }
 
   useEffect(() => {
     setMounted(true)
@@ -60,11 +91,39 @@ export default function ClientLayout({
     
     window.addEventListener('keydown', handleKeyDown)
     
+    // Blinking cursor effect
+    const cursorInterval = setInterval(() => {
+      setCursorVisible(prev => !prev)
+    }, 600)
+    
     return () => {
       window.removeEventListener("scroll", handleScroll)
       window.removeEventListener('keydown', handleKeyDown)
+      clearInterval(cursorInterval)
     }
   }, [resolvedTheme])
+
+  // Typing animation for terminal path
+  useEffect(() => {
+    if (!mounted) return
+
+    const path = getTerminalPath()
+    setTypedPath("")
+    
+    let currentIndex = 0
+    const pathInterval = setInterval(() => {
+      if (currentIndex < path.length) {
+        setTypedPath(path.substring(0, currentIndex + 1))
+        currentIndex++
+      } else {
+        clearInterval(pathInterval)
+      }
+    }, 30)
+    
+    return () => {
+      clearInterval(pathInterval)
+    }
+  }, [pathname, mounted])
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -82,80 +141,89 @@ export default function ClientLayout({
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <MotionConfig reducedMotion="user">
         <div className="flex flex-col min-h-screen bg-base-100 text-base-content">
-          {/* Header */}
+          {/* Terminal Header */}
           <header
             className={cn(
-              "sticky top-0 z-50 w-full transition-all duration-300 border-b",
+              "sticky top-0 z-50 w-full transition-all duration-300 font-mono border-b border-base-200/10",
               scrolled 
-                ? "backdrop-blur-md bg-base-100/80 border-base-200" 
-                : "bg-transparent border-transparent"
+                ? "bg-base-100/90 backdrop-blur" 
+                : "bg-transparent"
             )}
           >
-            <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
-              {/* Logo */}
-              <Link href="/" className="font-medium text-base text-base-content group">
-                <span className="flex items-center gap-2">
-                  <span className="relative h-8 w-8 overflow-hidden rounded-md bg-primary flex items-center justify-center">
-                    <span className="text-primary-content font-medium">D</span>
+            <div className="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between">
+              {/* Left: Mac buttons + terminal */}
+              <div className="flex items-center gap-3">
+                {/* Mac-style window controls */}
+                <div className="flex gap-1" aria-hidden="true">
+                  <div className="h-2.5 w-2.5 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors"></div>
+                  <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors"></div>
+                  <div className="h-2.5 w-2.5 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors"></div>
+                </div>
+                
+                {/* Terminal path display */}
+                <Link href="/" className="group">
+                  <span className="text-xs font-mono text-base-content/70">
+                    <span className="text-primary">[minh@ai-lab]</span>
+                    <span className="text-base-content/60 mx-1">-</span>
+                    <span className="text-primary">[{typedPath}]</span>
+                    <span 
+                      className={cn(
+                        "inline-block w-2 h-4 align-middle ml-1 bg-primary",
+                        cursorVisible ? "opacity-100" : "opacity-0"
+                      )}
+                    />
                   </span>
-                  <span className="font-mono font-medium tracking-tight">
-                    DevBlog
-                  </span>
-                </span>
-              </Link>
-
-              {/* Command menu trigger (desktop) */}
-              <div className="hidden md:flex items-center">
-                <button 
-                  className="mr-6 text-xs text-base-content/60 hover:text-base-content border border-base-200 rounded-md px-3 py-1.5 flex items-center gap-2"
-                  onClick={() => setShowCommandMenu(true)}
-                >
-                  <Command className="h-3.5 w-3.5" />
-                  <span>Search...</span>
-                  <kbd className="ml-2 font-mono text-[10px] bg-base-200 px-1.5 py-0.5 rounded">⌘K</kbd>
-                </button>
+                </Link>
               </div>
-
-              {/* Desktop Navigation */}
-              <nav className="hidden md:flex items-center space-x-1">
+              
+              {/* Center: Navigation Links */}
+              <nav className="flex items-center gap-6">
                 {navLinks.map((link) => (
                   <Link
                     key={link.path}
                     href={link.path}
                     className={cn(
-                      "relative px-3 py-2 rounded-md text-sm transition-colors",
-                      pathname === link.path
-                        ? "text-primary font-medium"
+                      "text-sm font-medium transition-colors",
+                      pathname === link.path || (link.path !== '/' && pathname?.startsWith(link.path))
+                        ? "text-base-content" 
                         : "text-base-content/70 hover:text-base-content"
                     )}
                   >
-                    <span className="flex items-center gap-2">
-                      {link.label}
+                    <span className="relative">
+                      {link.label.toLowerCase()}
+                      {(pathname === link.path || (link.path !== '/' && pathname?.startsWith(link.path))) && (
+                        <motion.span
+                          className="absolute -bottom-1 left-0 w-full h-px bg-primary"
+                          layoutId="navbar-indicator"
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                      )}
                     </span>
-                    {pathname === link.path && (
-                      <motion.span
-                        className="absolute inset-x-0 bottom-0 h-0.5 bg-primary"
-                        layoutId="navbar-indicator"
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                      />
-                    )}
                   </Link>
                 ))}
-                <div className="ml-2 p-1">
-                  <ThemeToggle />
-                </div>
               </nav>
-
-              {/* Mobile menu button */}
-              <div className="flex md:hidden items-center gap-2">
-                <ThemeToggle isMobile />
+              
+              {/* Right: Theme + Search */}
+              <div className="flex items-center gap-4 text-sm font-mono text-base-content/70">
+                {/* Search Command */}
+                <button 
+                  className="hover:text-base-content transition-colors cursor-pointer"
+                  onClick={() => setShowCommandMenu(true)}
+                >
+                  <span>⌘K</span>
+                </button>
+                
+                {/* Theme Toggle */}
+                <ThemeToggle />
+                
+                {/* Mobile Menu Toggle - Only visible on smaller screens */}
                 <button
                   type="button"
-                  className="rounded-md text-base-content/70 hover:text-base-content"
+                  className="hover:text-base-content cursor-pointer md:hidden"
                   onClick={() => setMobileMenuOpen(true)}
+                  aria-label="Open menu"
                 >
-                  <span className="sr-only">Open menu</span>
-                  <Menu className="h-5 w-5" aria-hidden="true" />
+                  <Menu className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
             </div>
@@ -187,21 +255,19 @@ export default function ClientLayout({
                     leaveFrom="opacity-100 scale-100"
                     leaveTo="opacity-0 scale-95"
                   >
-                    <Dialog.Panel className="w-full max-w-sm rounded-lg bg-base-100 p-6 shadow-lg">
+                    <Dialog.Panel className="w-full max-w-sm rounded-lg bg-base-100 p-6 shadow-lg font-mono">
                       <div className="flex items-center justify-between mb-5">
                         <Link href="/" onClick={() => setMobileMenuOpen(false)}>
                           <span className="flex items-center gap-2">
-                            <span className="relative h-7 w-7 overflow-hidden rounded-md bg-primary flex items-center justify-center">
-                              <span className="text-primary-content font-medium">D</span>
-                            </span>
-                            <span className="font-mono font-medium text-sm">
-                              DevBlog
+                            <Terminal className="h-4 w-4 text-primary" />
+                            <span className="text-primary text-sm">
+                              minh@ai-lab:~$ _
                             </span>
                           </span>
                         </Link>
                         <button
                           type="button"
-                          className="rounded-md text-base-content/70 hover:text-base-content"
+                          className="text-base-content/70 hover:text-base-content"
                           onClick={() => setMobileMenuOpen(false)}
                         >
                           <span className="sr-only">Close menu</span>
@@ -212,7 +278,7 @@ export default function ClientLayout({
                       {/* Command menu trigger (mobile) */}
                       <div className="mb-4">
                         <button 
-                          className="w-full text-sm text-base-content/60 hover:text-base-content border border-base-200 rounded-md px-4 py-2 flex items-center"
+                          className="w-full text-xs text-base-content/60 hover:text-base-content border border-base-200 rounded-md px-4 py-2 flex items-center"
                           onClick={() => {
                             setShowCommandMenu(true)
                             setMobileMenuOpen(false)
@@ -230,16 +296,16 @@ export default function ClientLayout({
                             key={link.path}
                             href={link.path}
                             className={cn(
-                              "block rounded-md px-3 py-2 text-base transition-colors",
+                              "block px-3 py-2 text-xs transition-colors",
                               pathname === link.path
-                                ? "bg-base-200 text-primary font-medium"
-                                : "text-base-content/70 hover:bg-base-200 hover:text-base-content"
+                                ? "text-primary border-l border-primary pl-2" 
+                                : "text-base-content/70 hover:text-base-content hover:border-l hover:border-base-200 hover:pl-2"
                             )}
                             onClick={() => setMobileMenuOpen(false)}
                           >
                             <span className="flex items-center gap-3">
                               {link.icon}
-                              {link.label}
+                              {link.label.toLowerCase()}
                             </span>
                           </Link>
                         ))}
@@ -250,10 +316,10 @@ export default function ClientLayout({
                           href="https://github.com"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center rounded-md px-3 py-2 text-base text-base-content/70 hover:bg-base-200 hover:text-base-content"
+                          className="flex items-center px-3 py-2 text-xs text-base-content/70 hover:text-base-content"
                         >
                           <Github className="mr-3 h-4 w-4" />
-                          GitHub
+                          github
                         </a>
                       </div>
                     </Dialog.Panel>
@@ -263,7 +329,7 @@ export default function ClientLayout({
             </Dialog>
           </Transition>
 
-          {/* Command Menu Modal - Placeholder for now, would implement full search functionality */}
+          {/* Command Menu Modal - Terminal-styled */}
           {mounted && (
             <Transition show={showCommandMenu} as={Fragment}>
               <Dialog as="div" className="relative z-50" onClose={() => setShowCommandMenu(false)}>
@@ -290,21 +356,21 @@ export default function ClientLayout({
                       leaveFrom="opacity-100 scale-100"
                       leaveTo="opacity-0 scale-95"
                     >
-                      <Dialog.Panel className="w-full max-w-md rounded-lg bg-base-100 shadow-lg border border-base-200">
+                      <Dialog.Panel className="w-full max-w-md rounded-lg bg-base-100 shadow-lg border border-base-200 font-mono">
                         <div className="p-2">
                           <div className="flex items-center p-2 border-b border-base-200">
-                            <Command className="h-4 w-4 mr-2 text-base-content/50" />
+                            <span className="text-primary mr-2">$</span>
                             <input 
                               type="text" 
-                              className="w-full bg-transparent focus:outline-none text-base-content" 
-                              placeholder="Search posts, topics..."
+                              className="w-full bg-transparent focus:outline-none text-base-content text-sm" 
+                              placeholder="search posts..."
                               autoFocus
                             />
                             <kbd className="ml-2 font-mono text-xs bg-base-200 px-1.5 py-0.5 rounded text-base-content/60">Esc</kbd>
                           </div>
                           
-                          <div className="py-6 px-2 text-sm text-base-content/60 text-center">
-                            Type to search blog posts and pages
+                          <div className="py-6 px-2 text-xs text-base-content/60 text-center">
+                            # type to search blog posts and pages
                           </div>
                         </div>
                       </Dialog.Panel>
@@ -336,7 +402,7 @@ export default function ClientLayout({
   );
 }
 
-// Simplified theme toggle
+// Simplified theme toggle with terminal-style
 function ThemeToggle({ isMobile = false }: { isMobile?: boolean }) {
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
@@ -348,26 +414,22 @@ function ThemeToggle({ isMobile = false }: { isMobile?: boolean }) {
   return (
     <button
       aria-label="Toggle theme"
-      className={cn(
-        "flex items-center justify-center rounded-md transition-colors",
-        isMobile 
-          ? "text-base-content/70 hover:text-base-content" 
-          : "h-9 w-9 bg-base-200/50 text-base-content hover:bg-base-200"
-      )}
+      className="text-base-content/70 hover:text-base-content transition-all hover:rotate-180 duration-300 cursor-pointer"
       onClick={toggleTheme}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={isDark ? 'dark' : 'light'}
-          initial={{ opacity: 0, rotate: -20 }}
-          animate={{ opacity: 1, rotate: 0 }}
-          exit={{ opacity: 0, rotate: 20 }}
-          transition={{ duration: 0.15 }}
+          initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+          animate={{ opacity: 1, rotate: 0, scale: 1 }}
+          exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
+          transition={{ duration: 0.2 }}
+          className="flex items-center"
         >
           {isDark ? (
-            <Moon className="h-[18px] w-[18px]" />
+            <span className="text-sm">🌙</span>
           ) : (
-            <Sun className="h-[18px] w-[18px]" />
+            <span className="text-sm">☀️</span>
           )}
         </motion.div>
       </AnimatePresence>

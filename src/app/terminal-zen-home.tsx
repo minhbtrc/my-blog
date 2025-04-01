@@ -111,19 +111,8 @@ export default function TerminalZenHome() {
       setShowCursor(prev => !prev)
     }, 530)
     
-    // Handle keyboard command
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        setShowCommandMenu(prev => !prev)
-      }
-    }
-    
-    window.addEventListener('keydown', handleKeyDown)
-    
     return () => {
       clearInterval(cursorInterval)
-      window.removeEventListener('keydown', handleKeyDown)
     }
   }, [mounted])
   
@@ -131,11 +120,6 @@ export default function TerminalZenHome() {
   useEffect(() => {
     setMounted(true)
   }, [])
-  
-  // Toggle theme function
-  const toggleTheme = () => {
-    setTheme(isDark ? 'light' : 'dark')
-  }
   
   // Easter egg shell mode toggle
   const handleNameClick = () => {
@@ -167,41 +151,6 @@ export default function TerminalZenHome() {
           }}
         />
       )}
-      
-      {/* Minimal header - only visible after scrolling */}
-      <header className="fixed top-0 left-0 w-full h-16 z-50 transition-opacity duration-300 opacity-50 hover:opacity-100">
-        <div className="container max-w-3xl mx-auto px-4 h-full flex items-center justify-end">
-          <button 
-            onClick={() => setShowCommandMenu(true)}
-            className={cn(
-              "p-2 mr-4 transition-colors",
-              shellMode 
-                ? "text-green-400/60 hover:text-green-400" 
-                : "text-base-content/60 hover:text-base-content"
-            )}
-            aria-label="Search"
-          >
-            <Command className="h-4 w-4" />
-          </button>
-          
-          <button
-            onClick={toggleTheme}
-            className={cn(
-              "p-2 transition-colors",
-              shellMode 
-                ? "text-green-400/60 hover:text-green-400" 
-                : "text-base-content/60 hover:text-base-content"
-            )}
-            aria-label="Toggle theme"
-          >
-            {isDark ? (
-              <Sun className="h-4 w-4 transition-transform rotate-0 hover:rotate-12" />
-            ) : (
-              <Moon className="h-4 w-4 transition-transform rotate-0 hover:-rotate-12" />
-            )}
-          </button>
-        </div>
-      </header>
       
       {/* Main hero section */}
       <main className="flex-1 flex items-center justify-center px-4 py-20">
@@ -343,51 +292,6 @@ export default function TerminalZenHome() {
           </div>
         </div>
       </footer>
-      
-      {/* Command menu modal */}
-      {showCommandMenu && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center p-4 pt-[20vh]">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowCommandMenu(false)} />
-          <div className={cn(
-            "relative w-full max-w-md rounded-lg overflow-hidden",
-            shellMode
-              ? "bg-black border border-green-500/30"
-              : isDark 
-                ? "bg-zinc-900 shadow-lg border border-zinc-800" 
-                : "bg-white shadow-lg border border-zinc-200"
-          )}>
-            <div className="p-2">
-              <div className={cn(
-                "flex items-center p-2 border-b",
-                shellMode ? "border-green-500/30" : isDark ? "border-zinc-800" : "border-zinc-200"
-              )}>
-                <Command className={cn(
-                  "h-4 w-4 mr-2",
-                  shellMode ? "text-green-400/50" : "text-base-content/50"
-                )} />
-                <input 
-                  type="text" 
-                  className={cn(
-                    "w-full bg-transparent focus:outline-none",
-                    shellMode ? "text-green-400" : "text-base-content",
-                    shellMode && "caret-green-400"
-                  )}
-                  placeholder="Search posts..."
-                  autoFocus
-                />
-                <KeyboardShortcut keys={['Esc']} className="ml-2" />
-              </div>
-              
-              <div className={cn(
-                "py-6 px-2 text-sm text-center",
-                shellMode ? "text-green-400/60" : "text-base-content/60"
-              )}>
-                Type to search blog posts and pages
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       
       {/* Add fade-in keyframes */}
       <style jsx global>{`

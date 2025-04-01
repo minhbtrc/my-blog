@@ -79,7 +79,31 @@ const item = {
   show: { opacity: 1, y: 0 }
 };
 
+// Add typing animation variant
+const typingContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08
+    }
+  }
+};
+
+const typingCharacter = {
+  hidden: { opacity: 0, y: 5 },
+  show: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: "spring", stiffness: 300, damping: 20 }
+  }
+};
+
 const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery, setSearchQuery }) => {
+  // Split the placeholder into characters for typing animation
+  const placeholder = "search_posts.py";
+  const placeholderChars = placeholder.split("");
+  
   return (
     <motion.div
       className="max-w-3xl mx-auto mb-8"
@@ -94,11 +118,37 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
         <div className="relative flex-1">
           <Input
             type="text"
-            placeholder="search_posts.py"
+            placeholder={placeholder}
             className="w-full py-1 px-2 bg-transparent border-0 rounded-none text-sm font-mono text-blue-400 focus-visible:ring-0 focus-visible:ring-offset-0"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+          {!searchQuery && (
+            <motion.div 
+              className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-2 overflow-hidden"
+              variants={typingContainer}
+              initial="hidden"
+              animate="show"
+            >
+              {placeholderChars.map((char, index) => (
+                <motion.span
+                  key={index}
+                  variants={typingCharacter}
+                  className="text-sm font-mono text-blue-400/50"
+                  transition={{ delay: 0.5 + index * 0.05 }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
+          
+          <motion.span 
+            className="absolute right-10 top-1/2 -translate-y-1/2 h-4 w-2 bg-blue-400"
+            animate={{ opacity: [1, 0, 1] }}
+            transition={{ duration: 1, repeat: Infinity }}
+          />
+          
           <div className="absolute inset-y-0 right-2 flex items-center">
             <kbd className="hidden md:inline-flex items-center gap-1 text-[10px] font-mono bg-muted/30 px-1.5 py-0.5 rounded border border-muted/20 text-muted-foreground">
               <span className="text-xs">⌘</span>K
@@ -202,7 +252,7 @@ const FeaturedPost = ({ post }) => (
         {post.description}
       </p>
       
-      <div className="text-xs font-mono text-muted-foreground">
+      <div className="text-xs font-mono text-muted-foreground opacity-60">
         {post.tags.map((tag, i) => (
           <React.Fragment key={tag}>
             <span>{tag}</span>
@@ -225,10 +275,10 @@ const BlogPost = ({ post, index }) => (
   >
     <Link href={post.route} className="block space-y-2 group">
       <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors">
-        <span className="font-mono text-muted-foreground">post</span>
+        <span className="font-mono text-purple-400">post</span>
         <span className="font-mono text-muted-foreground">(</span>
         <span className="font-mono text-yellow-300">"</span>
-        <span>{post.title}</span>
+        <span className="text-yellow-300">{post.title}</span>
         <span className="font-mono text-yellow-300">"</span>
         <span className="font-mono text-muted-foreground">)</span>
       </h3>
@@ -240,7 +290,7 @@ const BlogPost = ({ post, index }) => (
         <span>{post.readingTime}</span>
       </div>
       
-      <div className="text-xs font-mono text-muted-foreground">
+      <div className="text-xs font-mono text-muted-foreground opacity-60">
         <span>•</span>
         {post.tags.map((tag, i) => (
           <React.Fragment key={tag}>
@@ -266,21 +316,23 @@ const ShellView = ({ posts }) => (
     animate="show"
   >
     <motion.div variants={item} className="text-muted-foreground mb-4">
-      <span className="text-blue-400">minh@ai-lab:~$</span> ls blog/
+      <span className="text-blue-400">minh@ai-lab:~$</span> cat posts.txt
     </motion.div>
     
     {posts.map((post, index) => (
       <motion.div 
         key={post.route}
         variants={item}
-        className="flex items-center gap-2"
+        className="flex gap-2 pl-2 border-l border-muted/30 hover:border-blue-400/30 transition-colors"
       >
-        <span className="text-muted-foreground">📄</span>
+        <span className="text-muted-foreground">-</span>
         <Link 
           href={post.route}
           className="hover:text-blue-400 transition-colors truncate"
         >
-          {post.title.toLowerCase().replace(/\s+/g, '-')}.md
+          <span className="text-muted-foreground">{formatDate(post.date).replace(',', '')}</span>
+          <span className="text-muted-foreground mx-1">|</span>
+          <span>{post.title}</span>
         </Link>
       </motion.div>
     ))}
