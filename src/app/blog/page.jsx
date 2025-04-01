@@ -139,19 +139,19 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
   
   return (
     <motion.div 
-      className="max-w-3xl mx-auto mb-8 font-mono text-sm border-l-2 border-muted/30 pl-4 py-2"
+      className="max-w-3xl mx-auto mb-8 font-mono text-sm border-l-2 border-emerald-300 dark:border-muted/30 pl-4 py-2"
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-blue-400">
+        <span className="text-xs text-emerald-600 dark:text-blue-400">
           # Filter by tag
         </span>
         {selectedTags.length > 0 && (
           <button
             onClick={onClearTags}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center"
+            className="text-xs text-gray-500 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground transition-colors flex items-center"
           >
             <X className="h-3 w-3 mr-1" />
             clear
@@ -165,8 +165,8 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
             onClick={() => onTagClick(tag)}
             className={`text-xs font-mono py-0.5 px-2 transition-colors ${
               selectedTags.includes(tag)
-                ? 'text-blue-400 bg-blue-400/10' 
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'text-emerald-600 bg-emerald-50 dark:text-blue-400 dark:bg-blue-400/10' 
+                : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'
             }`}
           >
             {tag}
@@ -322,16 +322,16 @@ const EmptyState = ({ onClear }) => {
 // Toggle view component
 const ViewToggle = ({ viewMode, setViewMode }) => (
   <div className="flex items-center justify-end mb-6 text-xs font-mono">
-    <div className="flex rounded-md overflow-hidden border border-muted/30">
+    <div className="flex rounded-md overflow-hidden border border-emerald-200 dark:border-muted/30">
       <button
         onClick={() => setViewMode('list')}
-        className={`px-3 py-1 ${viewMode === 'list' ? 'bg-blue-400/10 text-blue-400' : 'text-muted-foreground hover:text-foreground'}`}
+        className={`px-3 py-1 ${viewMode === 'list' ? 'bg-emerald-100 text-emerald-700 dark:bg-blue-400/10 dark:text-blue-400' : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'}`}
       >
         List
       </button>
       <button
         onClick={() => setViewMode('shell')}
-        className={`px-3 py-1 ${viewMode === 'shell' ? 'bg-blue-400/10 text-blue-400' : 'text-muted-foreground hover:text-foreground'}`}
+        className={`px-3 py-1 ${viewMode === 'shell' ? 'bg-emerald-100 text-emerald-700 dark:bg-blue-400/10 dark:text-blue-400' : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'}`}
       >
         Shell
       </button>

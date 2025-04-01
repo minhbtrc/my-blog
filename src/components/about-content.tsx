@@ -150,18 +150,7 @@ export default function AboutContent() {
                     LinkedIn
                   </span>
                 </motion.a>
-                <motion.a
-                  href="mailto:contact@example.com"
-                  className="text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2 transition-colors"
-                  whileHover={socialVariants.hover}
-                  whileTap={socialVariants.tap}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <span className="inline-flex items-center gap-1">
-                    <Mail className="w-4 h-4" />
-                    Email
-                  </span>
-                </motion.a>
+                
               </motion.div>
             </div>
           </div>
@@ -187,6 +176,10 @@ export default function AboutContent() {
             <JobCard 
               title="AI Engineer – FPT Software AI Center"
               description="Building AI solutions for enterprise clients"
+              points={[
+                "Research and apply techniques for handling document extraction",
+                "Develop RAG chatbot"
+              ]}
               period="Sep 2024 – Present"
               isCurrent={true}
               delay={0.1}
@@ -196,7 +189,7 @@ export default function AboutContent() {
             <JobCard 
               title="AI Engineer – SPARTAN"
               description="Led development of PDF parsing solutions with LLMs"
-              period="Oct 2023 – Nov 2024"
+              period="Oct 2023 – Dec 2024"
               points={[
                 "Implemented advanced document parsing using large language models",
                 "Created comprehensive pipeline for data mining with seamless integration",
@@ -204,6 +197,30 @@ export default function AboutContent() {
                 "Implemented and improved APIs for robust backend services"
               ]}
               technologies={['LLM', 'Langchain', 'Python', 'FastAPI', 'ONNX']}
+              delay={0.15}
+            />
+
+            {/* J. D. Power */}
+            <JobCard 
+              title="AI Consultant – J. D. Power"
+              description="Developed scalable AI solutions for PDF processing and retrieval-augmented generation (RAG) workflows"
+              period="Oct 2023 – Dec 2024"
+              points={[
+                "Built reusable pipelines for PDF parsing using Azure Document Intelligence, PDFPlumber, and PyMuPDF.",
+                "Applied LLMs (GPT‑3.5, GPT‑4, Llama2) to solve domain-specific tasks.",
+                "Integrated LangChain and LlamaIndex to improve RAG performance.",
+                "Managed deployments with Kubernetes, Helm, Terraform, and GCP.",
+                "Designed scalable APIs and automated workflows for document intelligence."
+              ]}
+              technologies={[
+                'LLMs',
+                'LangChain',
+                'LlamaIndex',
+                'Python',
+                'FastAPI',
+                'Kubernetes',
+                'GCP'
+              ]}
               delay={0.2}
             />
             
@@ -219,7 +236,7 @@ export default function AboutContent() {
                 "Optimized models with ONNX and TorchScript for better performance"
               ]}
               technologies={['pytorch', 'huggingface', 'torchscript', 'onnx', 'langchain']}
-              delay={0.3}
+              delay={0.25}
             />
           </div>
         </ScrollRevealSection>
@@ -240,7 +257,7 @@ export default function AboutContent() {
               institution="Hung Vuong High School for the Gifted"
               period="Aug 2015 – Aug 2018"
               subjects={['advanced math', 'calculus', 'problem solving', 'logic', 'statistics']}
-              delay={0.2}
+              delay={0.15}
             />
           </div>
         </ScrollRevealSection>
@@ -248,6 +265,15 @@ export default function AboutContent() {
         {/* Projects Section */}
         <ScrollRevealSection id="projects" title="Projects">
           <div className="space-y-8">
+            {/* The AI-Driven Blog */}
+            <ProjectCard 
+              title="The AI-Driven Blog"
+              tags={['llm', 'cursor', 'agent']}
+              description="New blog project that heavily uses ChatGPT and Cursor. As a back-end enthusiast who’s no fan of CSS, I relied on these AI tools to help shape both the design and content. From styling advice to layout tweaks, the entire process was an AI-driven collaboration—and it turned out surprisingly well!"
+              url="https://minhbtc.blog"
+              delay={0.1}
+            />
+
             {/* Langchain Chatbot */}
             <ProjectCard 
               title="Langchain Chatbot"
@@ -262,7 +288,7 @@ export default function AboutContent() {
               title="Covid Chatbot"
               tags={['ai', 'nlp', 'healthcare']}
               description="Led the development of a consultancy chatbot for SARS-COVID-2 patients, providing symptom assessment and self-care advice. Implemented machine learning models (KNN, SVM) for Intent Classification and developed a Named Entity Recognition system using PhoBERT and CRF."
-              delay={0.2}
+              delay={0.15}
             />
           </div>
         </ScrollRevealSection>
@@ -296,7 +322,7 @@ export default function AboutContent() {
                 'AWS',
                 'GCP'
               ]}
-              delay={0.2}
+              delay={0.15}
             />
           </div>
         </ScrollRevealSection>
@@ -380,18 +406,6 @@ export default function AboutContent() {
             ))}
           </div>
         </ScrollRevealSection>
-        
-        {/* Footer */}
-        <motion.div 
-          className="text-center text-xs text-muted-foreground pt-6 border-t border-muted"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
-          <p>
-            Crafted in Vietnam • 2025
-          </p>
-        </motion.div>
       </main>
     </motion.div>
   );

@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
-  darkMode: ['selector', '[data-theme="dark"]'],
+  darkMode: ['class', '[data-theme="dark"]'],
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
@@ -48,18 +48,18 @@ const config: Config = {
         light: {
           'color-scheme': 'light',
           // Main colors
-          primary: '#2563eb',           // Blue accent (GitHub-like)
+          primary: '#059669',           // Emerald accent
           'primary-content': '#ffffff', // White text on primary color
-          secondary: '#64748b',         // Slate gray for secondary elements
+          secondary: '#0f766e',         // Teal for secondary elements
           'secondary-content': '#ffffff', // White text on secondary
           // Accent color - using a muted variant of primary
-          accent: '#3b82f6',            // Lighter blue for accent
+          accent: '#10b981',            // Lighter emerald for accent
           'accent-content': '#ffffff',  // White text on accent
           neutral: '#64748b',           // Slate gray for neutral elements
           'neutral-content': '#ffffff', // White text on neutral
           // Informative colors - more subtle
-          info: '#f1f5f9',              // Very light slate for info background
-          'info-content': '#334155',    // Darker slate for info text
+          info: '#f0fdfa',              // Very light teal for info background
+          'info-content': '#134e4a',    // Darker teal for info text
           success: '#f0fdf4',           // Very light green background
           'success-content': '#166534', // Dark green text
           error: '#fef2f2',             // Very light red background

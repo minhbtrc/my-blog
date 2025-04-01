@@ -165,9 +165,9 @@ export default function Tags({
                 >
                   <Link
                     href={`/blog?tag=${encodeURIComponent(tag)}`}
-                    className="inline-flex items-center px-2.5 py-1 rounded-md bg-gray-100 dark:bg-gray-800/70 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-xs hover:bg-gray-200 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-600 transition-all cursor-pointer font-mono"
+                    className="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-50 dark:bg-gray-800/70 border border-emerald-200 dark:border-gray-700 text-emerald-800 dark:text-gray-300 text-xs hover:bg-emerald-100 dark:hover:bg-gray-800 hover:border-emerald-300 dark:hover:border-gray-600 transition-all cursor-pointer font-mono"
                   >
-                    <span className="mr-1.5 w-1.5 h-1.5 rounded-full bg-gray-500/70 dark:bg-gray-500/70"></span>
+                    <span className="mr-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500/70 dark:bg-gray-500/70"></span>
                     {tag}
                   </Link>
                 </motion.div>
@@ -179,8 +179,8 @@ export default function Tags({
                     inline-flex items-center px-2.5 py-1 rounded-md text-xs transition-all font-mono
                     ${
                       isSelected
-                        ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-300 dark:hover:bg-gray-600 shadow-sm'
-                        : 'bg-gray-100/60 dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 hover:text-gray-900 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                        ? 'bg-emerald-100 dark:bg-gray-700 text-emerald-900 dark:text-gray-200 border border-emerald-300 dark:border-gray-600 hover:bg-emerald-200 dark:hover:bg-gray-600 shadow-sm'
+                        : 'bg-gray-50 dark:bg-gray-800/60 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:bg-emerald-50 dark:hover:bg-gray-700/60 hover:text-emerald-800 dark:hover:text-gray-300 hover:border-emerald-200 dark:hover:border-gray-600'
                     }
                   `}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -190,7 +190,7 @@ export default function Tags({
                 >
                   <span 
                     className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                      isSelected ? 'bg-gray-700 dark:bg-gray-300' : 'bg-gray-400 dark:bg-gray-600'
+                      isSelected ? 'bg-emerald-600 dark:bg-gray-300' : 'bg-gray-400 dark:bg-gray-600'
                     }`}
                   ></span>
                   {tag}
@@ -223,14 +223,14 @@ function TagItem({
       className="inline-flex items-center"
     >
       {readOnly ? (
-        <span className="tech-tag font-mono text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800/70 border border-gray-300 dark:border-gray-700 px-2 py-0.5 rounded-md text-xs inline-flex items-center">
+        <span className="tech-tag font-mono text-emerald-800 dark:text-gray-300 bg-emerald-50 dark:bg-gray-800/70 border border-emerald-200 dark:border-gray-700 px-2 py-0.5 rounded-md text-xs inline-flex items-center">
           {tagIcon}
           <span>{tag}</span>
         </span>
       ) : (
         <Link
           href={href}
-          className="tech-tag font-mono text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800/70 border border-gray-300 dark:border-gray-700 px-2 py-0.5 rounded-md text-xs hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-600 transition-all inline-flex items-center"
+          className="tech-tag font-mono text-emerald-800 dark:text-gray-300 bg-emerald-50 dark:bg-gray-800/70 border border-emerald-200 dark:border-gray-700 px-2 py-0.5 rounded-md text-xs hover:bg-emerald-100 dark:hover:bg-gray-700 hover:border-emerald-300 dark:hover:border-gray-600 transition-all inline-flex items-center"
         >
           {tagIcon}
           <span>{tag}</span>

@@ -136,7 +136,7 @@ export default function ContactPage() {
         left: 50%;
         width: 5px;
         height: 5px;
-        background: rgba(59, 130, 246, 0.3);
+        background: rgba(16, 185, 129, 0.3);
         opacity: 1;
         border-radius: 50%;
         transform: scale(1);
@@ -169,24 +169,54 @@ export default function ContactPage() {
       }
       
       .python-keyword {
-        color: #B77EE0; /* Purple for keywords */
+        color: #4B5563; /* Darker gray for keywords in light mode */
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        .python-keyword {
+          color: #B77EE0; /* Purple for keywords in dark mode */
+        }
       }
       
       .python-function {
-        color: #62AEEF; /* Blue for function names */
+        color: #065F46; /* Emerald for function names in light mode */
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        .python-function {
+          color: #62AEEF; /* Blue for function names in dark mode */
+        }
       }
       
       .python-comment {
-        color: #98C379; /* Green for comments */
+        color: #047857; /* Emerald for comments in light mode */
         font-style: italic;
       }
       
+      @media (prefers-color-scheme: dark) {
+        .python-comment {
+          color: #98C379; /* Green for comments in dark mode */
+        }
+      }
+      
       .python-param {
-        color: #E06B74; /* Red for parameter names */
+        color: #0F766E; /* Teal for parameter names in light mode */
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        .python-param {
+          color: #E06B74; /* Red for parameter names in dark mode */
+        }
       }
       
       .python-bracket {
-        color: #ABB2BF; /* Light gray for brackets */
+        color: #6B7280; /* Gray for brackets in light mode */
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        .python-bracket {
+          color: #ABB2BF; /* Light gray for brackets in dark mode */
+        }
       }
       
       input:focus::placeholder, textarea:focus::placeholder {
@@ -194,13 +224,19 @@ export default function ContactPage() {
       }
       
       .terminal-glow {
-        box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        box-shadow: 0 0 15px rgba(5, 150, 105, 0.1);
+        border: 1px solid rgba(5, 150, 105, 0.2);
       }
       
       .docstring {
-        border-left: 2px solid rgba(99, 102, 241, 0.2);
+        border-left: 2px solid rgba(5, 150, 105, 0.3);
         padding-left: 1rem;
+      }
+
+      @media (prefers-color-scheme: light) {
+        .terminal-background {
+          background-color: rgba(240, 253, 250, 0.8);
+        }
       }
     `
     document.head.appendChild(style)
@@ -240,7 +276,7 @@ export default function ContactPage() {
           animate="show"
         >
           {/* Python Script Section (left side) */}
-          <motion.div className="md:col-span-3 space-y-5 bg-background/50 p-6 rounded-md terminal-glow">
+          <motion.div className="md:col-span-3 space-y-5 p-6 rounded-md terminal-glow terminal-background">
             <motion.div variants={item}>
               <span className="python-comment"># Get in touch with MinhBTC</span>
             </motion.div>
@@ -269,7 +305,7 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('name')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-blue-500 focus:outline-none text-yellow-300"
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900"
                         placeholder={getRandomPlaceholder(namePlaceholders)}
                         required
                       />
@@ -292,7 +328,7 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('email')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-blue-500 focus:outline-none text-yellow-300"
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900"
                         placeholder={getRandomPlaceholder(emailPlaceholders)}
                         required
                       />
@@ -314,7 +350,7 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('message')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-blue-500 focus:outline-none text-yellow-300 h-24 resize-none"
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900 h-24 resize-none"
                         placeholder={getRandomPlaceholder(messagePlaceholders)}
                         required
                       ></textarea>
@@ -337,7 +373,7 @@ export default function ContactPage() {
               <motion.div variants={item} className="flex items-center gap-2">
                 <motion.button 
                   type="submit" 
-                  className="flex items-center gap-2 border border-muted/30 bg-muted/10 hover:bg-muted/20 px-3 py-1.5 rounded text-sm transition-all"
+                  className="flex items-center gap-2 border border-emerald-200 dark:border-muted/30 bg-emerald-50 dark:bg-muted/10 hover:bg-emerald-100 dark:hover:bg-muted/20 text-emerald-800 dark:text-current px-3 py-1.5 rounded text-sm transition-all"
                   disabled={formStatus === 'submitting'}
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
@@ -365,7 +401,7 @@ export default function ContactPage() {
                       </div>
                     </div>
                   ) : (
-                    <span>exec()</span>
+                    <span>exec() # In development</span>
                   )}
                 </motion.button>
               </motion.div>
@@ -388,7 +424,7 @@ export default function ContactPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="text-red-400 text-sm space-y-1"
+                    className="text-red-500 dark:text-red-400 text-sm space-y-1"
                   >
                     <div># Error: Failed to send message.</div>
                     <div># Please try again later.</div>
@@ -402,9 +438,9 @@ export default function ContactPage() {
           <motion.div className="md:col-span-2 space-y-6">
             <motion.div 
               variants={item}
-              className="docstring space-y-6 text-muted-foreground"
+              className="docstring space-y-6 text-gray-700 dark:text-muted-foreground"
             >
-              <div className="text-blue-400">"""</div>
+              <div className="text-emerald-500 dark:text-blue-400">"""</div>
               
               <motion.div 
                 variants={item} 
@@ -459,7 +495,7 @@ export default function ContactPage() {
                 <span>Available for async chats & coffee.</span>
               </motion.div>
               
-              <div className="text-blue-400">"""</div>
+              <div className="text-emerald-500 dark:text-blue-400">"""</div>
             </motion.div>
           </motion.div>
         </motion.div>

@@ -134,7 +134,34 @@ export default function TerminalZenHome() {
   
   // Toggle theme function
   const toggleTheme = () => {
-    setTheme(isDark ? 'light' : 'dark')
+    // Use a fallback if theme is undefined
+    const activeTheme = theme || (isDark ? 'dark' : 'light');
+    const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
+    console.log(`Terminal: Switching theme from ${activeTheme} to ${newTheme}`);
+    
+    // First update next-themes state
+    setTheme(newTheme);
+    
+    // Force immediate DOM updates for daisyUI
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+    
+    // Apply theme-specific colors manually to speed up transition
+    if (newTheme === 'light') {
+      document.documentElement.style.setProperty('--base-100', '#ffffff');
+      document.documentElement.style.setProperty('--base-content', '#0f172a');
+      document.documentElement.style.setProperty('--primary', '#059669');
+    } else {
+      document.documentElement.style.setProperty('--base-100', '#0f172a');
+      document.documentElement.style.setProperty('--base-content', '#f8fafc');
+      document.documentElement.style.setProperty('--primary', '#3b82f6');
+    }
+    
+    // Force a repaint to ensure styles are applied immediately
+    document.body.style.display = 'none';
+    document.body.offsetHeight; // Trigger reflow
+    document.body.style.display = '';
   }
   
   // Easter egg shell mode toggle
@@ -151,9 +178,11 @@ export default function TerminalZenHome() {
   
   return (
     <div className={cn(
-      "min-h-screen w-full flex flex-col",
+      "min-h-screen w-full flex flex-col relative",
       shellMode ? "font-mono bg-black text-green-400" : ""
     )}>
+      
+      
       {/* Subtle background grid */}
       {!shellMode && (
         <div 
@@ -349,31 +378,9 @@ export default function TerminalZenHome() {
             </div>
           </div>
           
-          {/* Keyboard shortcut hint */}
-          <div className={cn(
-            "text-xs mt-4",
-            shellMode ? "text-green-400/40" : "text-base-content/40",
-            !showFooter && "opacity-0",
-            showFooter && "animate-fade-in"
-          )}>
-            Press <KeyboardShortcut keys={['cmd', 'K']} className="mx-1.5" /> to search
-          </div>
+          
         </div>
       </main>
-      
-      {/* Footer */}
-      <footer className="py-6">
-        <div className="container max-w-3xl mx-auto px-4">
-          <div className={cn(
-            "text-center text-xs",
-            shellMode ? "text-green-400/40" : "text-base-content/40",
-            !showFooter && "opacity-0",
-            showFooter && "animate-fade-in"
-          )}>
-            Crafted in Vietnam • {new Date().getFullYear()}
-          </div>
-        </div>
-      </footer>
       
       {/* Command menu modal */}
       {showCommandMenu && (

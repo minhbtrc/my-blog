@@ -40,6 +40,7 @@ export default function RootLayout({
       lang="en"
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrainsMono.variable}`}
+      data-theme="light"
     >
       <body className="font-sans">
         <ParticleBackground />

@@ -4,6 +4,28 @@
 
 /* Base styles */
 @layer base {
+  :root {
+    --base-100: #ffffff;
+    --base-200: #f8fafc;
+    --base-300: #f1f5f9;
+    --base-content: #0f172a;
+    --primary: #059669;
+    --primary-content: #ffffff;
+    --secondary: #0f766e;
+    --accent: #10b981;
+  }
+  
+  .dark {
+    --base-100: #0f172a;
+    --base-200: #1e293b;
+    --base-300: #334155;
+    --base-content: #f8fafc;
+    --primary: #3b82f6;
+    --primary-content: #ffffff;
+    --secondary: #64748b;
+    --accent: #60a5fa;
+  }
+  
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
@@ -18,7 +40,7 @@
   }
   
   ::selection {
-    @apply bg-primary/20 text-primary;
+    @apply bg-emerald-200 dark:bg-primary/20 text-emerald-800 dark:text-primary;
   }
   
   /* Scrollbar styling */
@@ -27,15 +49,15 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-base-200;
+    @apply bg-gray-100 dark:bg-base-200;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-base-300 transition-colors;
+    @apply rounded-full bg-emerald-200 dark:bg-base-300 transition-colors;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-neutral/60;
+    @apply bg-emerald-300 dark:bg-neutral/60;
   }
 }
 
@@ -58,11 +80,11 @@
 }
 
 .prose a {
-  @apply text-primary hover:text-primary/80 transition-colors;
+  @apply text-emerald-600 dark:text-primary hover:text-emerald-700 dark:hover:text-primary/80 transition-colors;
 }
 
 .prose h2, .prose h3, .prose h4 {
-  @apply font-medium text-base-content;
+  @apply font-medium text-gray-800 dark:text-base-content;
 }
 
 /* Article content styling */
@@ -71,11 +93,11 @@
 }
 
 .article-content p {
-  @apply mb-4 leading-relaxed;
+  @apply mb-4 leading-relaxed text-gray-700 dark:text-gray-300;
 }
 
 .article-content a {
-  @apply text-primary hover:text-primary/80 transition-colors;
+  @apply text-emerald-600 dark:text-primary hover:text-emerald-700 dark:hover:text-primary/80 transition-colors;
 }
 
 .article-content ul {
@@ -87,11 +109,11 @@
 }
 
 .article-content li {
-  @apply mb-2;
+  @apply mb-2 text-gray-700 dark:text-gray-300;
 }
 
 .article-content blockquote {
-  @apply border-l-4 border-primary/30 pl-4 italic;
+  @apply border-l-4 border-emerald-300 dark:border-primary/30 pl-4 italic bg-emerald-50 dark:bg-transparent py-0.5;
 }
 
 .article-content pre {
@@ -99,9 +121,25 @@
 }
 
 .article-content code {
-  @apply font-mono text-sm px-1.5 py-0.5 rounded;
+  @apply font-mono text-sm px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-gray-800;
 }
 
 .article-content img {
   @apply rounded-lg max-w-full h-auto my-4;
+}
+
+/* Terminal styling */
+.terminal-background {
+  @apply bg-gray-50 dark:bg-gray-900/50 backdrop-blur-sm border border-emerald-100 dark:border-gray-800;
+}
+
+/* Dark/light mode transition */
+.dark-transition {
+  @apply transition-colors duration-200;
+}
+
+/* Ensure immediate color changes */
+html, body, * {
+  transition-property: background-color, border-color, color, fill, stroke !important;
+  transition-duration: 50ms !important;
 }
