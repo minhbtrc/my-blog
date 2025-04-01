@@ -32,25 +32,6 @@ const FALLBACK_BLOGS = [
     readingTime: "8 min read",
     tags: ["ai", "langchain", "privacy", "development"],
     featured: false
-  },
-  // Adding a few more example posts
-  {
-    route: "/blog/vector-databases",
-    title: "Vector Databases Explained: When and Why You Need Them",
-    description: "A deep dive into vector databases, their relationship with embedding models, and how they power semantic search and RAG applications.",
-    date: "2024-11-10",
-    readingTime: "12 min read",
-    tags: ["ai", "databases", "embeddings", "rag"],
-    featured: false
-  },
-  {
-    route: "/blog/ai-agents-architecture",
-    title: "Designing Reliable AI Agent Architecture",
-    description: "Exploring patterns and anti-patterns for building reliable, deterministic AI agents that can actually accomplish real-world tasks.",
-    date: "2024-10-05",
-    readingTime: "15 min read",
-    tags: ["ai", "agents", "architecture", "langchain"],
-    featured: false
   }
 ];
 

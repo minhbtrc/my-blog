@@ -152,7 +152,7 @@ export default function TerminalZenHome() {
   return (
     <div className={cn(
       "min-h-screen w-full flex flex-col",
-      shellMode ? "font-mono bg-black text-green-400" : isDark ? "bg-gradient-to-br from-zinc-950 to-zinc-900" : "bg-white"
+      shellMode ? "font-mono bg-black text-green-400" : ""
     )}>
       {/* Subtle background grid */}
       {!shellMode && (

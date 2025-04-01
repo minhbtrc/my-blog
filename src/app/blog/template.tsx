@@ -85,7 +85,7 @@ export default function Template({ children }: { children: ReactNode }) {
     <BlogProvider>
       <CommandRegionProvider>
         <SearchProvider>
-          <div className="relative min-h-screen w-full code-bg-light dark:code-bg-dark bg-white dark:bg-slate-900">
+          <div className="relative min-h-screen w-full code-bg-light dark:code-bg-dark">
             <div className="w-full flex flex-col items-center px-4 py-12 sm:py-16 relative z-10">
               <div className="w-full max-w-3xl">
                 {/* Only render client-side components after mounting */}
