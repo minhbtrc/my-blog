@@ -32,7 +32,7 @@ function NavLink({ href }: { href: string }) {
   })
   
   return (
-    <Link className="text-slate-400 hover:text-slate-300 transition-colors" href={href}>
+    <Link className="text-emerald-600 dark:text-teal-400 hover:text-emerald-800 dark:hover:text-teal-300 transition-colors" href={href}>
       {name}
     </Link>
   )
@@ -55,7 +55,7 @@ export default function Navigation() {
       <ul className="flex items-center gap-2">
         {routes.map((route, i) => (
           <li key={route} className="flex items-center">
-            {i > 0 && <span className="mx-2 text-slate-600">/</span>}
+            {i > 0 && <span className="mx-2 text-emerald-400/40 dark:text-teal-600/40">/</span>}
             <NavLink href={route} />
           </li>
         ))}

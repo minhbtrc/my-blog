@@ -186,7 +186,7 @@ class RAGSystem:
     language: "terminal",
     code: `::: MINH BUI TRAN CONG | AI ENGINEER :::
 
-minh@ai-lab:~$ ./about-me.sh
+minhbtc@ai-eng:~$ ./about-me.sh
 
 [INFO] Initializing profile data...
 [INFO] Loading experiences...
@@ -245,7 +245,7 @@ const education = {
 console.log("Always learning, always building!");
 console.log("Let's connect and build something amazing together.")
 
-minh@ai-lab:~$ _`
+minhbtc@ai-eng:~$ _`
   },
   {
     title: "NLP Research Note",
@@ -631,7 +631,7 @@ Ready to begin advanced AI engineering session...
       >
         {/* Terminal Decorations - Path and Prompt */}
         <div className="flex items-center mb-2 text-slate-700 dark:text-slate-400 text-sm">
-          <span className="text-blue-700 dark:text-cyan-400">minh@ai-lab</span>
+          <span className="text-blue-700 dark:text-cyan-400">minhbtc@ai-eng</span>
           <span className="text-slate-500 mx-1">:</span>
           <span className="text-indigo-700 dark:text-blue-400">~/projects</span>
           <span className="text-slate-500 mx-1">$</span>

@@ -47,9 +47,9 @@ function ClientOnly({ children, fallback = null }: { children: React.ReactNode; 
 }
 
 export default function Template({ children }: { children: ReactNode }) {
-  const segments = useSelectedLayoutSegments()
+  const segments = useSelectedLayoutSegments() || []
   const pathname = usePathname()
-  const [isMounted, setIsMounted] = useState(false)
+  const [isMounted, setMounted] = useState(false)
   
   // To avoid hydration mismatch, use a ref to disable effects until mounted
   const effectsDisabled = useRef(true)
@@ -69,7 +69,7 @@ export default function Template({ children }: { children: ReactNode }) {
 
   // Only run effects after component is mounted
   useEffect(() => {
-    setIsMounted(true)
+    setMounted(true)
     effectsDisabled.current = false
     
     // Simplified scroll handler - we don't need to update showProgress state anymore
@@ -85,7 +85,7 @@ export default function Template({ children }: { children: ReactNode }) {
     <BlogProvider>
       <CommandRegionProvider>
         <SearchProvider>
-          <div className="relative min-h-screen w-full code-bg-light dark:code-bg-dark bg-white dark:bg-slate-900">
+          <div className="relative min-h-screen w-full code-bg-light dark:code-bg-dark">
             <div className="w-full flex flex-col items-center px-4 py-12 sm:py-16 relative z-10">
               <div className="w-full max-w-3xl">
                 {/* Only render client-side components after mounting */}
@@ -96,26 +96,26 @@ export default function Template({ children }: { children: ReactNode }) {
                 {/* Side controls for article pages */}
                 {isMounted && !isMainBlogPage && (
                   <div className="fixed top-[50%] -translate-y-[50%] left-0 cursor-pointer group z-30 group">
-                    <div className="flex flex-col transition-all gap-1 group-hover:gap-2 m-1 p-1 group-hover:p-2 group-hover:bg-white dark:group-hover:bg-gray-900 group-hover:rounded-lg group-hover:shadow-lg group-hover:border group-hover:border-gray-200 dark:group-hover:border-blue-900/30">
-                      <span className="w-1 h-1 rounded-full transition-all flex group-hover:hidden bg-gray-400 dark:bg-cyan-800/50" />
-                      <span className="w-1 h-3 rounded-full transition-all flex group-hover:hidden bg-gray-400 dark:bg-cyan-700/50" />
-                      <span className="w-1 h-1 rounded-full transition-all flex group-hover:hidden bg-gray-400 dark:bg-cyan-800/50" />
-                      <span className="w-1 h-1 rounded-full transition-all flex group-hover:hidden bg-gray-400 dark:bg-cyan-800/50" />
-                      <button className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-blue-600 dark:text-cyan-400 hover:text-blue-700 dark:hover:text-cyan-300 p-2 rounded transition-all hidden group-hover:flex">
+                    <div className="flex flex-col transition-all gap-1 group-hover:gap-2 m-1 p-1 group-hover:p-2 group-hover:bg-white dark:group-hover:bg-gray-900 group-hover:rounded-lg group-hover:shadow-lg group-hover:border group-hover:border-gray-200 dark:group-hover:border-gray-700">
+                      <span className="w-1 h-1 rounded-full transition-all flex group-hover:hidden bg-gray-400 dark:bg-gray-600" />
+                      <span className="w-1 h-3 rounded-full transition-all flex group-hover:hidden bg-gray-400 dark:bg-gray-600" />
+                      <span className="w-1 h-1 rounded-full transition-all flex group-hover:hidden bg-gray-400 dark:bg-gray-600" />
+                      <span className="w-1 h-1 rounded-full transition-all flex group-hover:hidden bg-gray-400 dark:bg-gray-600" />
+                      <button className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 p-2 rounded transition-all hidden group-hover:flex">
                         <Play className="w-4 h-4" />
                       </button>
                       <div className="flex flex-col transition-all hidden group-hover:flex">
-                        <FacebookShare className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-blue-600 dark:text-cyan-400 hover:text-blue-700 dark:hover:text-cyan-300 p-2 rounded mb-1" />
-                        <TwitterShare className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-blue-600 dark:text-cyan-400 hover:text-blue-700 dark:hover:text-cyan-300 p-2 rounded" />
+                        <FacebookShare className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 p-2 rounded mb-1" />
+                        <TwitterShare className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 p-2 rounded" />
                       </div>
                       <Link
-                        className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-blue-600 dark:text-cyan-400 hover:text-blue-700 dark:hover:text-cyan-300 p-2 rounded transition-all hidden group-hover:flex"
+                        className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 p-2 rounded transition-all hidden group-hover:flex"
                         href="#question"
                       >
                         <MessageSquareText className="w-4 h-4" />
                       </Link>
                       <Link
-                        className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-blue-600 dark:text-cyan-400 hover:text-blue-700 dark:hover:text-cyan-300 p-2 rounded transition-all hidden group-hover:flex"
+                        className="bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 p-2 rounded transition-all hidden group-hover:flex"
                         href="#suggestion"
                       >
                         <CornerDownRight className="w-4 h-4" />
@@ -157,21 +157,25 @@ export default function Template({ children }: { children: ReactNode }) {
                   {/* Main content */}
                   <div className="prose dark:prose-invert max-w-none 
                   prose-headings:font-bold prose-p:text-gray-700 dark:prose-p:text-slate-300 
-                  prose-headings:text-gray-900 dark:prose-headings:text-slate-200 
+                  prose-headings:text-gray-800 dark:prose-headings:text-gray-200 
                   prose-headings:font-mono prose-headings:mt-8 prose-headings:font-normal 
-                  prose-a:text-blue-600 dark:prose-a:text-cyan-400 hover:prose-a:text-blue-700 dark:hover:prose-a:text-cyan-300 
+                  prose-a:text-gray-700 dark:prose-a:text-gray-300 hover:prose-a:text-gray-900 dark:hover:prose-a:text-gray-100 
                   prose-a:no-underline hover:prose-a:underline prose-headings:tracking-tight 
-                  prose-pre:bg-gray-50 dark:prose-pre:bg-slate-800/30 
-                  prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-blue-900/30 
-                  prose-pre:shadow-md prose-pre:rounded-lg prose-code:text-blue-600 dark:prose-code:text-cyan-300 
+                  prose-pre:bg-gray-50 dark:prose-pre:bg-gray-900/80 
+                  prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-gray-700 
+                  prose-pre:shadow-md prose-pre:rounded-lg prose-code:text-gray-700 dark:prose-code:text-gray-300 
                   prose-code:font-mono prose-code:font-normal prose-pre:font-mono prose-pre:text-sm 
-                  prose-hr:border-gray-200 dark:prose-hr:border-blue-900/20 
-                  prose-img:rounded-lg prose-img:border prose-img:border-gray-200 dark:prose-img:border-blue-900/20 
-                  prose-img:shadow-lg prose-blockquote:border-l-blue-400 dark:prose-blockquote:border-l-cyan-800 
-                  prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-slate-900/30 prose-blockquote:py-1 
+                  prose-hr:border-gray-200 dark:prose-hr:border-gray-700 
+                  prose-img:rounded-lg prose-img:border prose-img:border-gray-200 dark:prose-img:border-gray-700 
+                  prose-img:shadow-lg prose-blockquote:border-l-gray-400 dark:prose-blockquote:border-l-gray-600 
+                  prose-blockquote:bg-gray-50 dark:prose-blockquote:bg-gray-900/50 prose-blockquote:py-1 
                   prose-blockquote:px-4 prose-blockquote:rounded-r-md prose-blockquote:italic 
-                  prose-strong:text-gray-900 dark:prose-strong:text-cyan-100 
-                  prose-li:marker:text-blue-500 dark:prose-li:marker:text-cyan-600">
+                  prose-strong:text-gray-800 dark:prose-strong:text-gray-200 
+                  prose-li:marker:text-gray-500 dark:prose-li:marker:text-gray-500 
+                  [&>h2]:border-b [&>h2]:border-gray-200 dark:[&>h2]:border-gray-700 [&>h2]:pb-1 
+                  [&>h3::before]:content-['#'] [&>h3::before]:text-gray-400 dark:[&>h3::before]:text-gray-500 [&>h3::before]:mr-1 [&>h3::before]:opacity-70
+                  [&>hr]:h-px [&>hr]:bg-gradient-to-r [&>hr]:from-gray-200 [&>hr]:to-gray-300 dark:[&>hr]:from-gray-700 dark:[&>hr]:to-gray-600 [&>hr]:border-0"
+                  data-blog-id="building-blog-with-ai">
                     {children}
                   </div>
                 </div>
@@ -183,19 +187,19 @@ export default function Template({ children }: { children: ReactNode }) {
                     className="w-full max-w-3xl px-4 mb-12"
                   >
                     <div className="flex items-center space-x-2 mb-5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-cyan-500"></div>
-                      <h3 className="text-lg font-mono text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-500 dark:from-cyan-400 dark:to-blue-400">Related Articles</h3>
+                      <div className="w-1.5 h-1.5 rounded-full bg-gray-500 dark:bg-gray-400"></div>
+                      <h3 className="text-lg font-mono text-transparent bg-clip-text bg-gradient-to-r from-gray-700 to-gray-500 dark:from-gray-300 dark:to-gray-400">Related Articles</h3>
                     </div>
                     
                     <div className="space-y-4">
                       {[...routes].reverse().map((route, index) => (
                         <div key={route} className="relative group">
                           {/* Line number */}
-                          <div className="absolute -left-10 top-4 hidden lg:flex items-center justify-end w-6 h-6 text-gray-400 dark:text-slate-600 font-mono text-xs select-none">
+                          <div className="absolute -left-10 top-4 hidden lg:flex items-center justify-end w-6 h-6 text-gray-400 dark:text-gray-500 font-mono text-xs select-none">
                             {String(index + 1).padStart(2, '0')}
                           </div>
                           
-                          <Link href={route} className="block bg-white/95 hover:bg-gray-50/95 dark:bg-slate-800/30 dark:hover:bg-slate-800/40 border border-gray-200 hover:border-gray-300 dark:border-slate-700/50 dark:hover:border-slate-600/80 rounded-lg p-4 transition-all duration-200 backdrop-blur-sm">
+                          <Link href={route} className="block bg-gray-50 hover:bg-gray-100 dark:bg-gray-900/60 dark:hover:bg-gray-900/80 border border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600 rounded-lg p-4 transition-all duration-200 backdrop-blur-sm">
                             <BlogCard route={route} />
                           </Link>
                         </div>

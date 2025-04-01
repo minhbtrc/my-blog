@@ -1,54 +1,35 @@
 import React from 'react';
-import dynamic from 'next/dynamic';
-
-// Dynamic import of CodeBubbles to avoid SSR issues
-const CodeBubbles = dynamic(() => import('./code-bubbles'), { ssr: false });
+import { cn } from '@/lib/utils';
 
 /**
  * PageContainer - A shared layout component used across all pages
- * 
- * This component provides:
- * 1. Consistent background animation with CodeBubbles
- * 2. Flexible layout options with customizable max-width and padding
- * 3. Proper z-index layering to ensure content is above animations
- * 
- * Usage:
- * <PageContainer maxWidth="xl" withPadding={true}>
- *   {children}
- * </PageContainer>
+ * Follows Linear/Vercel-inspired spacing and layout conventions
  */
 interface PageContainerProps {
   children: React.ReactNode;
   className?: string;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl' | 'full';
-  withBackground?: boolean;
   withPadding?: boolean;
-  flexDirection?: 'row' | 'col';
-  justifyContent?: string;
+  centered?: boolean;
 }
 
 export function PageContainer({ 
   children, 
   className = '', 
-  maxWidth = '4xl',
-  withBackground = true,
+  maxWidth = '3xl', // Default to the recommended 3xl max width
   withPadding = true,
-  flexDirection = 'col',
-  justifyContent = ''
+  centered = true,
 }: PageContainerProps) {
   return (
-    <div className="relative min-h-screen w-full">
-      {/* CodeBubbles provides the animated background elements */}
-      
-      {/* Main content container with proper z-index to stay above background */}
-      <div className={`w-full flex flex-${flexDirection} ${justifyContent} ${withPadding ? 'px-4 py-12 sm:py-16' : ''} relative z-10 ${className}`}>
-        {maxWidth !== 'full' ? (
-          <div className={`w-full max-w-${maxWidth}`}>
-            {children}
-          </div>
-        ) : (
-          children
-        )}
+    <div className="w-full">
+      <div className={cn(
+        "mx-auto w-full",
+        maxWidth !== 'full' && `max-w-${maxWidth}`,
+        withPadding && "px-4 sm:px-6 lg:px-8 py-6 sm:py-10",
+        centered && "flex flex-col items-center",
+        className
+      )}>
+        {children}
       </div>
     </div>
   );

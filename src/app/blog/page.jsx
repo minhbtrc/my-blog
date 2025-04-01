@@ -7,14 +7,11 @@ import React, {
   useRef,
   useMemo 
 } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from 'next-themes';
-import { Search, X, Filter, Code, BookOpen, Tag, Clock, Calendar, ArrowRight, Hash, BookMarked, Sparkles, TrendingUp, FileText, BrainCircuit, Terminal, Map } from "lucide-react";
+import { Search, X, Filter, ArrowRight, Clock, Calendar, Play, Terminal, Pin } from "lucide-react";
 import Link from 'next/link';
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 // Enhanced blog data with more examples
 const FALLBACK_BLOGS = [
@@ -34,8 +31,8 @@ const FALLBACK_BLOGS = [
     date: "2024-12-15",
     readingTime: "8 min read",
     tags: ["ai", "langchain", "privacy", "development"],
-    featured: true
-  },
+    featured: false
+  }
 ];
 
 // Helper to format dates nicely
@@ -48,106 +45,91 @@ function formatDate(dateString) {
 }
 
 // Animation variants
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: "easeOut"
-    }
-  }
-};
-
-const staggerContainer = {
+const container = {
   hidden: { opacity: 0 },
-  visible: {
+  show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2
+      staggerChildren: 0.1
     }
   }
 };
 
-const cardHover = {
-  rest: { scale: 1, y: 0 },
-  hover: { 
-    scale: 1.02, 
-    y: -5,
-    transition: { type: "spring", stiffness: 400, damping: 17 }
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0 }
+};
+
+// Add typing animation variant
+const typingContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08
+    }
+  }
+};
+
+const typingCharacter = {
+  hidden: { opacity: 0, y: 5 },
+  show: { 
+    opacity: 1, 
+    y: 0,
+    transition: { type: "spring", stiffness: 300, damping: 20 }
   }
 };
 
 const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery, setSearchQuery }) => {
+  // Split the placeholder into characters for typing animation
+  const placeholder = "search_posts.py";
+  const placeholderChars = placeholder.split("");
   
   return (
     <motion.div
-      className="max-w-2xl mx-auto mb-10"
-      initial="hidden"
-      animate="visible"
-      variants={fadeIn}
-      transition={{ delay: 0.3 }}
+      className="max-w-3xl mx-auto mb-8"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
     >
-      <div className="relative group">
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-cyan-500/30 rounded-lg blur-lg -z-10"
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        />
-        <div className="bg-white/10 dark:bg-slate-800/30 backdrop-blur-md p-1 rounded-lg shadow-sm border border-gray-700/50 dark:border-slate-700/50 flex items-center gap-2">
-          <div className="relative flex-1">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-gray-400 dark:text-blue-400" />
-            </div>
-            <Input
-              type="text"
-              placeholder="Search articles... (Ctrl+K)"
-              className={cn(
-                "w-full py-3 pl-10 pr-12 bg-gray-800/80 dark:bg-slate-800/80 border-0 rounded-md text-base transition-all duration-300",
-                "focus:border-blue-400 dark:focus:border-cyan-500 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-cyan-500/20 shadow-inner font-mono text-gray-300"
-              )}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-              <kbd className="hidden md:inline-flex items-center gap-1 text-[10px] font-medium bg-gray-700 dark:bg-slate-700 px-1.5 py-0.5 rounded border border-gray-600 dark:border-slate-600 text-gray-300 dark:text-gray-400">
-                <span className="text-xs">⌘</span>K
-              </kbd>
-            </div>
-          </div>
-          
-          <motion.button
-            onClick={onFilterToggle}
-            whileTap={{ scale: 0.95 }}
-            className={cn(
-              "px-3 py-3 rounded-md flex items-center justify-center transition-all duration-300 shadow-sm hover:shadow-md",
-              filterOpen 
-                ? 'bg-blue-900/60 dark:bg-blue-900/30 text-blue-400 dark:text-blue-400 ring-2 ring-blue-800 dark:ring-blue-900'
-                : 'bg-gray-800/90 dark:bg-slate-700/90 text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-blue-900/20 hover:text-blue-400 dark:hover:text-blue-400'
-            )}
-          >
-            <Filter className={`h-4 w-4 mr-2 transition-transform duration-300 ${filterOpen ? 'rotate-180' : ''}`} />
-            <span className="text-sm font-medium">filter</span>
-            {selectedTagsCount > 0 && (
-              <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-xs text-white"
-              >
-                {selectedTagsCount}
-              </motion.span>
-            )}
-          </motion.button>
+      <div className="flex items-center gap-2 border-b border-muted/30 py-2">
+        <div className="flex items-center text-muted-foreground text-sm font-mono">
+        minhbtc@ai-eng:~$
         </div>
+        <div className="relative flex-1">
+          <Input
+            type="text"
+            placeholder={placeholder}
+            className="w-full py-1 px-2 bg-transparent border-0 rounded-none text-sm font-mono text-blue-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          
+          
+        </div>
+        
+        <motion.button
+          onClick={onFilterToggle}
+          whileTap={{ scale: 0.95 }}
+          className={`px-2 py-1 rounded text-xs font-mono flex items-center ${
+            filterOpen 
+              ? 'text-blue-400'
+              : 'text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Filter className={`h-3.5 w-3.5 mr-1 transition-transform duration-300 ${filterOpen ? 'rotate-180' : ''}`} />
+          <span>filter</span>
+          {selectedTagsCount > 0 && (
+            <motion.span 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-400/20 text-[10px] text-blue-400"
+            >
+              {selectedTagsCount}
+            </motion.span>
+          )}
+        </motion.button>
       </div>
-      
-      {/* CALL TO ACTION TEXT */}
-      <p className="text-xs text-gray-400 dark:text-gray-500 text-center mt-2 font-mono">
-        🧭 Start with featured posts or try <kbd className="px-1.5 py-0.5 bg-gray-800 dark:bg-slate-800 rounded text-gray-400">Ctrl + K</kbd> to search
-      </p>
     </motion.div>
   );
 };
@@ -156,377 +138,364 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
   if (!isOpen) return null;
   
   return (
-    <div className="mt-4 p-5 bg-gray-800/95 dark:bg-slate-800/80 border border-gray-700 dark:border-slate-700/80 rounded-lg shadow-lg backdrop-blur-sm animate-in fade-in-50 duration-300 text-gray-300 max-w-2xl mx-auto mb-10">
+    <motion.div 
+      className="max-w-3xl mx-auto mb-8 font-mono text-sm border-l-2 border-emerald-300 dark:border-muted/30 pl-4 py-2"
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+    >
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-medium text-gray-300 dark:text-slate-300 flex items-center font-mono">
-          <Tag className="h-4 w-4 mr-2 text-blue-400" />
-          <span className="text-green-400 dark:text-green-400 mr-1.5 font-bold">$</span>
-          filter --tags
-        </h3>
+        <span className="text-xs text-emerald-600 dark:text-blue-400">
+          # Filter by tag
+        </span>
         {selectedTags.length > 0 && (
           <button
             onClick={onClearTags}
-            className="text-xs text-blue-400 hover:text-blue-300 dark:text-blue-400 dark:hover:text-blue-300 font-medium hover:underline transition-all flex items-center font-mono"
+            className="text-xs text-gray-500 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground transition-colors flex items-center"
           >
             <X className="h-3 w-3 mr-1" />
             clear
           </button>
         )}
       </div>
-      <div className="flex flex-wrap gap-2 mt-3">
+      <div className="flex flex-wrap gap-2 mt-2">
         {tags.map((tag) => (
-          <Badge 
+          <button 
             key={tag}
-            variant={selectedTags.includes(tag) ? "default" : "secondary"} 
-            className={`cursor-pointer transition-all duration-300 hover:scale-105 ${
-              selectedTags.includes(tag)
-                ? 'bg-blue-900/60 dark:bg-blue-900/40 text-blue-300 dark:text-blue-300 border border-blue-800 dark:border-blue-800/60 shadow-sm' 
-                : 'bg-gray-700 dark:bg-slate-700 text-gray-300 dark:text-gray-300 hover:bg-gray-600 dark:hover:bg-slate-600 border border-gray-600 dark:border-slate-600'
-            }`}
             onClick={() => onTagClick(tag)}
+            className={`text-xs font-mono py-0.5 px-2 transition-colors ${
+              selectedTags.includes(tag)
+                ? 'text-emerald-600 bg-emerald-50 dark:text-blue-400 dark:bg-blue-400/10' 
+                : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'
+            }`}
           >
-            <Hash className="h-3 w-3 mr-1" />
             {tag}
-          </Badge>
+          </button>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-const RegularPostCard = ({ post, index }) => (
+const FeaturedPost = ({ post }) => (
   <motion.div
-    className="flex flex-col overflow-hidden rounded-lg shadow transition-all duration-300
-               border border-gray-200 bg-white hover:bg-gray-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 group relative"
-    whileHover={{ 
-      scale: 1.02, 
-      y: -5,
-      boxShadow: "0 0 15px 2px rgba(52, 211, 153, 0.2)"
-    }}
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4, delay: index * 0.1 }}
+    variants={item}
+    className="mb-8 border-l-2 border-blue-400/50 pl-4 space-y-2"
   >
-    {/* Terminal header (fixed height) */}
-    <div className="flex items-center justify-between border-b px-4 py-2
-                    bg-gray-100 dark:bg-slate-900 border-gray-200 dark:border-slate-700">
-      <div className="flex gap-1.5">
-        <div className="h-3 w-3 rounded-full bg-red-500 group-hover:animate-pulse"></div>
-        <div className="h-3 w-3 rounded-full bg-yellow-500 group-hover:animate-pulse delay-75"></div>
-        <div className="h-3 w-3 rounded-full bg-green-500 group-hover:animate-pulse delay-150"></div>
-      </div>
-      <span className="font-mono text-xs text-gray-500 dark:text-slate-400">
-        ~/blog
-      </span>
+    <div className="flex items-center gap-2">
+      <Pin className="h-3.5 w-3.5 text-blue-400" />
+      <span className="text-blue-400 text-xs font-mono">Featured</span>
     </div>
-
-    {/* Main content (expandable) */}
-    <div className="flex flex-col flex-1 p-6">
-      <div className="mb-4 flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
-        <Calendar className="h-4 w-4 text-blue-500" />
-        {formatDate(post.date)}
-        <Clock className="h-4 w-4 text-blue-500" />
-        {post.readingTime}
+    
+    <Link href={post.route} className="block space-y-2 group">
+      <div className="text-xs font-mono text-muted-foreground flex items-center gap-2">
+        <Calendar className="h-3 w-3" />
+        <span>{formatDate(post.date)}</span>
+        <span>•</span>
+        <Clock className="h-3 w-3" />
+        <span>{post.readingTime}</span>
       </div>
-
-      {/* Title - Flexible */}
-      <h2 className="mb-3 text-xl font-bold text-gray-800 dark:text-slate-200 flex-grow">
+      
+      <h2 className="text-xl md:text-2xl font-semibold group-hover:text-blue-400 transition-colors">
         {post.title}
       </h2>
-
-      {/* Description - Fixed lines (line-clamp for consistent height) */}
-      <p className="mb-4 text-sm text-gray-600 dark:text-slate-400 line-clamp-2 flex-grow">
+      
+      <p className="text-sm text-muted-foreground">
         {post.description}
       </p>
-
-      {/* Tags - Fixed height */}
-      <div className="flex flex-wrap gap-2 mt-auto">
-        {post.tags?.map((tag) => (
-          <motion.span
-            key={tag}
-            className="inline-flex items-center rounded border px-2 py-0.5 text-xs border-gray-200 bg-gray-100 text-blue-600 dark:border-slate-700 dark:bg-slate-700 dark:text-blue-400 cursor-pointer"
-            whileHover={{ 
-              boxShadow: "0 0 8px 1px rgba(59, 130, 246, 0.5)",
-              y: -1,
-              scale: 1.05
-            }}
-            transition={{ duration: 0.2 }}
-          >
-            <Hash className="mr-1 h-3 w-3" />
-            {tag}
-          </motion.span>
+      
+      <div className="text-xs font-mono text-muted-foreground opacity-60">
+        {post.tags.map((tag, i) => (
+          <React.Fragment key={tag}>
+            <span>{tag}</span>
+            {i < post.tags.length - 1 && <span className="mx-1">•</span>}
+          </React.Fragment>
         ))}
       </div>
-
-      {/* Action Bar - fixed height */}
-      <div className="mt-6 flex items-center justify-between border-t pt-4 border-gray-200 dark:border-slate-700">
-        <div className="font-mono text-xs text-gray-500 dark:text-slate-400 bg-gray-50 dark:bg-slate-800 px-2.5 py-1 rounded-md border border-gray-200 dark:border-slate-700 flex items-center">
-          <span className="text-green-500">$</span>
-          <span className="ml-1.5">read-article --title {post.title.split(' ')[0].toLowerCase()} --open</span>
-          <span className="ml-1 animate-blink">|</span>
-        </div>
-
-        <Link
-          href={post.route || `/blog/${post.slug}`}
-          className="inline-flex items-center rounded bg-blue-500 px-3 py-1 text-xs text-white hover:bg-blue-600 transition hover:shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-        >
-          Execute <ArrowRight className="ml-1 h-4 w-4 group-hover:translate-x-1.5 transition-transform duration-300" />
-        </Link>
+      
+      <div className="text-sm text-blue-400 font-mono group-hover:underline underline-offset-4 inline-flex items-center">
+        → Read
       </div>
-    </div>
-
-    {/* Scan line animation */}
-    <motion.div 
-      className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent z-[-1] pointer-events-none opacity-0 group-hover:opacity-100"
-      animate={{ y: ["100%", "-100%"] }}
-      transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-    />
+    </Link>
   </motion.div>
 );
 
-
-const RegularPostsSection = ({ posts, hasFeatured }) => {
-  if (!posts.length) return null;
-  
-  return (
-    <motion.section
-      className="mb-8 w-full max-w-none"
-      initial="hidden"
-      animate="visible"
-      variants={staggerContainer}
-    >
-      <div className="flex items-center mb-4">
-        <BookOpen className="h-4 w-4 text-blue-500 dark:text-blue-400 mr-2" />
-        <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">
-          {hasFeatured ? 'All Articles' : 'Articles'}
-        </h2>
+const BlogPost = ({ post, index }) => (
+  <motion.div
+    variants={item}
+    className="mb-6 border-l border-muted/30 pl-4 space-y-2 hover:border-blue-400/30 transition-colors"
+  >
+    <Link href={post.route} className="block space-y-2 group">
+      <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors">
+        <span className="font-mono text-purple-400">post</span>
+        <span className="font-mono text-muted-foreground">(</span>
+        <span className="font-mono text-yellow-300">"</span>
+        <span className="text-yellow-300">{post.title}</span>
+        <span className="font-mono text-yellow-300">"</span>
+        <span className="font-mono text-muted-foreground">)</span>
+      </h3>
+      
+      <div className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
+        <span>•</span>
+        <span>{formatDate(post.date)}</span>
+        <span>•</span>
+        <span>{post.readingTime}</span>
       </div>
       
-      <div className="grid md:grid-cols-2 gap-4">
-        {posts.map((post, index) => (
-          <RegularPostCard 
-            key={post.route || post.slug} 
-            post={post}
-            index={index}
-          />
+      <div className="text-xs font-mono text-muted-foreground opacity-60">
+        <span>•</span>
+        {post.tags.map((tag, i) => (
+          <React.Fragment key={tag}>
+            <span className="ml-1">{tag}</span>
+            {i < post.tags.length - 1 && <span className="mx-0.5">•</span>}
+          </React.Fragment>
         ))}
       </div>
-    </motion.section>
-  );
-};
+      
+      <div className="text-xs text-blue-400 font-mono group-hover:underline underline-offset-4 inline-flex items-center">
+        <span>•</span>
+        <span className="ml-1">→ Read</span>
+      </div>
+    </Link>
+  </motion.div>
+);
 
-// Loading skeleton component
-const LoadingState = () => {
-  return (
-    <div className="space-y-8">
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white dark:bg-slate-800 rounded-lg p-6 animate-pulse">
-          <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-1/4 mb-4"></div>
-          <div className="h-8 bg-gray-200 dark:bg-slate-700 rounded w-3/4 mb-4"></div>
-          <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-full mb-2"></div>
-          <div className="h-4 bg-gray-200 dark:bg-slate-700 rounded w-2/3"></div>
-        </div>
-      ))}
-    </div>
-  );
-};
+const ShellView = ({ posts }) => (
+  <motion.div
+    className="space-y-1 font-mono text-sm"
+    variants={container}
+    initial="hidden"
+    animate="show"
+  >
+    <motion.div variants={item} className="text-muted-foreground mb-4">
+      <span className="text-blue-400">minhbtc@ai-eng:~$</span> cat my_posts.txt
+    </motion.div>
+    
+    {posts.map((post, index) => (
+      <motion.div 
+        key={post.route}
+        variants={item}
+        className="flex gap-2 pl-2 border-l border-muted/30 hover:border-blue-400/30 transition-colors"
+      >
+        <span className="text-muted-foreground">-</span>
+        <Link 
+          href={post.route}
+          className="hover:text-blue-400 transition-colors truncate"
+        >
+          <span className="text-muted-foreground">{formatDate(post.date).replace(',', '')}</span>
+          <span className="text-muted-foreground mx-1">|</span>
+          <span>{post.title}</span>
+        </Link>
+      </motion.div>
+    ))}
+  </motion.div>
+);
 
-// Empty state when no posts match filters
 const EmptyState = ({ onClear }) => {
   return (
-    <div className="bg-white dark:bg-slate-800/90 border border-gray-700 dark:border-slate-700 rounded-lg p-10 text-center animate-fade-in">
-      <Search className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-      <h3 className="text-xl font-bold text-gray-100 dark:text-white mb-2">No posts found</h3>
-      <p className="text-gray-300 dark:text-gray-400 mb-6 max-w-md mx-auto">
-        We couldn't find any posts matching your criteria. Try adjusting your filters.
-      </p>
-      <Button 
-        onClick={onClear}
-        className="bg-blue-600 hover:bg-blue-700 text-white"
-      >
-        Clear all filters
-      </Button>
-    </div>
+    <motion.div 
+      className="py-8 text-center font-mono"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
+      <div className="text-muted-foreground mb-4 inline-block">
+        <Terminal className="h-10 w-10 mx-auto" />
+      </div>
+      <div className="space-y-2">
+        <div className="text-lg font-semibold">
+          <span className="text-red-400">Error:</span> No posts found
+        </div>
+        <p className="text-xs text-muted-foreground max-w-md mx-auto">
+          # We couldn't find any posts matching your criteria
+        </p>
+        <button 
+          onClick={onClear}
+          className="mt-4 text-blue-400 text-sm hover:underline underline-offset-4"
+        >
+          clear_filters()
+        </button>
+      </div>
+    </motion.div>
   );
 };
 
-// Main blog page component with proper Suspense boundaries
+// Toggle view component
+const ViewToggle = ({ viewMode, setViewMode }) => (
+  <div className="flex items-center justify-end mb-6 text-xs font-mono">
+    <div className="flex rounded-md overflow-hidden border border-emerald-200 dark:border-muted/30">
+      <button
+        onClick={() => setViewMode('list')}
+        className={`px-3 py-1 ${viewMode === 'list' ? 'bg-emerald-100 text-emerald-700 dark:bg-blue-400/10 dark:text-blue-400' : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'}`}
+      >
+        List
+      </button>
+      <button
+        onClick={() => setViewMode('shell')}
+        className={`px-3 py-1 ${viewMode === 'shell' ? 'bg-emerald-100 text-emerald-700 dark:bg-blue-400/10 dark:text-blue-400' : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'}`}
+      >
+        Shell
+      </button>
+    </div>
+  </div>
+);
+
+// Main blog page component
 function BlogPageContent() {
   const { resolvedTheme } = useTheme();
   const [blogs] = useState(FALLBACK_BLOGS);
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
-  const exploreSectionRef = useRef(null);
+  const [viewMode, setViewMode] = useState('list'); // 'list' or 'shell'
   
-  // Track scroll position for sticky tags
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!exploreSectionRef.current) return;
-      const exploreSectionPos = exploreSectionRef.current.getBoundingClientRect().top;
-      setScrolled(exploreSectionPos < 0);
-    };
-    
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Popular tags derived from all blog posts
-  const popularTags = useMemo(() => {
-    const allTags = blogs.flatMap(blog => blog.tags || []);
-    const tagCounts = allTags.reduce((acc, tag) => {
-      acc[tag] = (acc[tag] || 0) + 1;
-      return acc;
-    }, {});
-    
-    return Object.entries(tagCounts)
-      .sort((a, b) => b[1] - a[1])
-      .map(([tag]) => tag);
+  // Get all unique tags
+  const allTags = useMemo(() => {
+    const tags = blogs.flatMap(blog => blog.tags || []);
+    return [...new Set(tags)].sort();
   }, [blogs]);
   
-  useEffect(() => {
-    // Simulate loading data from API
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 600);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Handle tag selection
-  const handleTagClick = (tag) => {
-    setSelectedTags(prevTags => {
-      if (prevTags.includes(tag)) {
-        return prevTags.filter(t => t !== tag);
-      } else {
-        return [...prevTags, tag];
-      }
+  // Filter posts based on search and tags
+  const filteredPosts = useMemo(() => {
+    return blogs.filter(post => {
+      const matchesSearch = searchQuery === "" || 
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (post.tags && post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())));
+      
+      const matchesTags = selectedTags.length === 0 || 
+        (post.tags && selectedTags.every(tag => post.tags.includes(tag)));
+      
+      return matchesSearch && matchesTags;
     });
+  }, [blogs, searchQuery, selectedTags]);
+  
+  // Separate featured posts
+  const featuredPost = useMemo(() => {
+    return filteredPosts.find(post => post.featured);
+  }, [filteredPosts]);
+  
+  const regularPosts = useMemo(() => {
+    return filteredPosts.filter(post => !post.featured);
+  }, [filteredPosts]);
+  
+  // Tag click handler
+  const handleTagClick = (tag) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
   };
   
-  // Filter blogs based on selected tags
-  const filteredBlogs = useMemo(() => {
-    return blogs.filter(blog => {
-      const matchesTag =
-        selectedTags.length === 0 ||
-        selectedTags.some(tag => blog.tags?.includes(tag));
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedTags([]);
+    setSearchQuery("");
+  };
   
-      const matchesSearch =
-        blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        blog.description.toLowerCase().includes(searchQuery.toLowerCase());
+  // Command+K handler
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        document.querySelector('input[type="text"]')?.focus();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
   
-      return matchesTag && matchesSearch;
-    });
-  }, [blogs, selectedTags, searchQuery]);
-  
-  
-  const regularPosts = useMemo(() => filteredBlogs, [filteredBlogs]);
-  
-  // Background elements with code symbols
-  const CodeSymbolsBackground = () => (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20 dark:opacity-25">
-      {Array.from({ length: 10 }).map((_, i) => {
-        const symbols = ["{}", "[]", "()", "</>", "=>", "&&", "||", "//", "/**/", "..."];
-        const size = Math.random() * 20 + 10;
-        const initialX = Math.random() * 100;
-        const initialY = Math.random() * 100;
-        
-        return (
-          <motion.div
-            key={i}
-            className="absolute text-blue-600 dark:text-blue-400 font-mono text-lg"
-            style={{
-              top: `${initialY}%`,
-              left: `${initialX}%`,
-              fontSize: size
-            }}
-            animate={{
-              y: [0, Math.random() * 30 - 15],
-              opacity: [0.3, 0.8, 0.3],
-              rotate: [0, Math.random() * 40 - 20]
-            }}
-            transition={{
-              duration: Math.random() * 7 + 5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            {symbols[i % symbols.length]}
-          </motion.div>
-        );
-      })}
-    </div>
-  );
+  const hasResults = filteredPosts.length > 0;
   
   return (
-    <main className="min-h-screen bg-white dark:bg-slate-900 relative py-8">
-      <CodeSymbolsBackground />
-      <div className="max-w-4xl mx-auto px-4 space-y-6">
-        <SearchBar
-          onFilterToggle={() => setFilterOpen(prev => !prev)}
-          filterOpen={filterOpen}
-          selectedTagsCount={selectedTags.length}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
- 
-        <FilterTags
-          isOpen={filterOpen}
-          tags={popularTags}
-          selectedTags={selectedTags}
-          onTagClick={handleTagClick}
-          onClearTags={() => setSelectedTags([])}
-        />
- 
-        {isLoading ? (
-          <LoadingState />
-        ) : filteredBlogs.length === 0 ? (
-          <EmptyState onClear={() => setSelectedTags([])} />
-        ) : (
-          <RegularPostsSection posts={regularPosts} />
+    <div className="max-w-3xl mx-auto px-4 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="mb-6 text-center"
+      >
+        <h1 className="text-2xl font-semibold mb-1">Blog</h1>
+        <p className="text-sm text-muted-foreground font-mono">
+          # Notes on AI engineering, development, and research
+        </p>
+      </motion.div>
+      
+      {/* Search and filter */}
+      <SearchBar 
+        onFilterToggle={() => setFilterOpen(prev => !prev)}
+        filterOpen={filterOpen}
+        selectedTagsCount={selectedTags.length}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+      
+      <AnimatePresence>
+        {filterOpen && (
+          <FilterTags 
+            isOpen={filterOpen}
+            tags={allTags}
+            selectedTags={selectedTags}
+            onTagClick={handleTagClick}
+            onClearTags={clearFilters}
+          />
         )}
-      </div>
-    </main>
+      </AnimatePresence>
+      
+      {/* Blog content */}
+      {hasResults ? (
+        <>
+          {viewMode === 'list' ? (
+            <>
+              {/* View toggle */}
+              <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
+              
+              {/* Featured post */}
+              {featuredPost && !searchQuery && selectedTags.length === 0 && (
+                <motion.div
+                  initial="hidden"
+                  animate="show"
+                  variants={container}
+                >
+                  <FeaturedPost post={featuredPost} />
+                </motion.div>
+              )}
+              
+              {/* Regular posts */}
+              <motion.div
+                initial="hidden"
+                animate="show"
+                variants={container}
+                className="mb-8"
+              >
+                {regularPosts.map((post, index) => (
+                  <BlogPost key={post.route} post={post} index={index} />
+                ))}
+              </motion.div>
+            </>
+          ) : (
+            <>
+              {/* View toggle */}
+              <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
+              
+              {/* Shell view */}
+              <ShellView posts={filteredPosts} />
+            </>
+          )}
+        </>
+      ) : (
+        <EmptyState onClear={clearFilters} />
+      )}
+    </div>
   );
 }
 
-// Export with proper Suspense wrapper
+// Main export with Suspense
 export default function BlogPage() {
   return (
-    <Suspense fallback={<LoadingState />}>
+    <Suspense fallback={<div className="min-h-screen"></div>}>
       <BlogPageContent />
     </Suspense>
   );
-}
-
-/* Additional animation styles */
-const globalStyles = `
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-.animate-blink {
-  animation: blink 1s infinite;
-}
-
-@keyframes typing {
-  from { width: 0 }
-  to { width: 100% }
-}
-
-.typing-animation {
-  overflow: hidden;
-  white-space: nowrap;
-  animation: typing 1.5s steps(40, end);
-}
-`;
-
-// Add the styles to the document
-if (typeof document !== 'undefined') {
-  const style = document.createElement('style');
-  style.innerHTML = globalStyles;
-  document.head.appendChild(style);
 } 
