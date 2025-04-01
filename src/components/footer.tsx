@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { Github } from 'lucide-react'
-import { cn } from '@/lib/utils'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -13,7 +12,7 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Copyright */}
           <div className="text-xs text-base-content/60">
-            © {year} DevBlog. All rights reserved.
+            © {year} minh.btc. All rights reserved.
           </div>
           
           {/* Links */}
@@ -37,7 +36,7 @@ export default function Footer() {
               About
             </Link>
             <a 
-              href="https://github.com" 
+              href={process.env.NEXT_PUBLIC_GITHUB_URL} 
               target="_blank" 
               rel="noreferrer" 
               className="text-base-content/60 hover:text-base-content transition-colors flex items-center gap-1"

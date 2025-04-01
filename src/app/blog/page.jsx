@@ -104,37 +104,8 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          {!searchQuery && (
-            <motion.div 
-              className="absolute inset-y-0 left-0 flex items-center pointer-events-none pl-2 overflow-hidden"
-              variants={typingContainer}
-              initial="hidden"
-              animate="show"
-            >
-              {placeholderChars.map((char, index) => (
-                <motion.span
-                  key={index}
-                  variants={typingCharacter}
-                  className="text-sm font-mono text-blue-400/50"
-                  transition={{ delay: 0.5 + index * 0.05 }}
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </motion.div>
-          )}
           
-          <motion.span 
-            className="absolute right-10 top-1/2 -translate-y-1/2 h-4 w-2 bg-blue-400"
-            animate={{ opacity: [1, 0, 1] }}
-            transition={{ duration: 1, repeat: Infinity }}
-          />
           
-          <div className="absolute inset-y-0 right-2 flex items-center">
-            <kbd className="hidden md:inline-flex items-center gap-1 text-[10px] font-mono bg-muted/30 px-1.5 py-0.5 rounded border border-muted/20 text-muted-foreground">
-              <span className="text-xs">⌘</span>K
-            </kbd>
-          </div>
         </div>
         
         <motion.button

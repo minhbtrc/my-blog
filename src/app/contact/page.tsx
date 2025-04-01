@@ -410,15 +410,6 @@ export default function ContactPage() {
                 variants={item} 
                 className="space-y-4"
               >
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  <a 
-                    href="mailto:contact@example.com" 
-                    className="hover:text-foreground transition-colors"
-                  >
-                    contact@example.com
-                  </a>
-                </div>
                 
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
@@ -435,7 +426,7 @@ export default function ContactPage() {
                 className="space-y-4"
               >
                 <motion.a
-                  href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
+                  href={process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/minhbt"}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-center gap-2"
@@ -471,16 +462,6 @@ export default function ContactPage() {
               <div className="text-blue-400">"""</div>
             </motion.div>
           </motion.div>
-        </motion.div>
-        
-        {/* Footer */}
-        <motion.div 
-          className="text-center font-mono text-xs text-muted-foreground py-8 border-t border-muted/20"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: 0.2 }}
-        >
-          <span className="python-comment"># crafted in vietnam · 2025</span>
         </motion.div>
       </main>
     </motion.div>

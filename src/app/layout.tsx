@@ -26,7 +26,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'DevBlog - Professional Development Blog',
+  title: 'MinhBTC - Professional Development Blog',
   description: 'A professional blog focusing on software development and technology.',
 }
 
