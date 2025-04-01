@@ -11,6 +11,16 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Apply theme-specific styles for light and dark modes
+ * @param lightModeClasses - Classes to apply in light mode
+ * @param darkModeClasses - Classes to apply in dark mode
+ * @returns Combined class string with theme conditional classes
+ */
+export function themeStyles(lightModeClasses: string, darkModeClasses: string) {
+  return `${lightModeClasses} dark:${darkModeClasses}`
+}
+
+/**
  * Delay by async/await
  * @param ms - milisenconds
  * @returns A promise
