@@ -369,15 +369,6 @@ function BlogPageContent() {
     });
   }, [blogs, searchQuery, selectedTags]);
   
-  // Separate featured posts
-  const featuredPost = useMemo(() => {
-    return filteredPosts.find(post => post.featured);
-  }, [filteredPosts]);
-  
-  const regularPosts = useMemo(() => {
-    return filteredPosts.filter(post => !post.featured);
-  }, [filteredPosts]);
-  
   // Tag click handler
   const handleTagClick = (tag) => {
     setSelectedTags(prev => 
@@ -451,25 +442,14 @@ function BlogPageContent() {
               {/* View toggle */}
               <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
               
-              {/* Featured post */}
-              {featuredPost && !searchQuery && selectedTags.length === 0 && (
-                <motion.div
-                  initial="hidden"
-                  animate="show"
-                  variants={container}
-                >
-                  <FeaturedPost post={featuredPost} />
-                </motion.div>
-              )}
-              
-              {/* Regular posts */}
+              {/* All posts displayed the same way */}
               <motion.div
                 initial="hidden"
                 animate="show"
                 variants={container}
                 className="mb-8"
               >
-                {regularPosts.map((post, index) => (
+                {filteredPosts.map((post, index) => (
                   <BlogPost key={post.route} post={post} index={index} />
                 ))}
               </motion.div>
