@@ -9,7 +9,15 @@ const BLOGS = {
     readingTime: '8 min read',
     tags: ['ai', 'langchain', 'privacy', 'development'],
     children: [],
-  }
+  },
+  'building-blog-with-ai': {
+    title: 'Building a Dev-Centric Blog with ChatGPT & Cursor',
+    description: 'How I built my blog with ChatGPT and Cursor, as an AI engineer, not a frontend developer.',
+    date: '2025-03-29',
+    readingTime: '10 min read',
+    tags: ['ai', 'development', 'cursor', 'gpt4', 'nextjs'],
+    children: [],
+  },
 };
 
 export async function GET(

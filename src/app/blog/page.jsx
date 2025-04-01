@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from 'next-themes';
-import { Search, X, Filter, ArrowRight, Clock, Calendar, Play, Terminal, Pin } from "lucide-react";
+import { X, Filter, Clock, Calendar, Play, Terminal, Pin } from "lucide-react";
 import Link from 'next/link';
 import { Input } from "@/components/ui/input";
 

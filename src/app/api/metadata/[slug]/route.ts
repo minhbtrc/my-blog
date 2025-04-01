@@ -8,6 +8,12 @@ const BLOGS = {
     date: '2023-07-15',
     readingTime: '8 min read',
     tags: ['ai', 'langchain', 'privacy', 'development'],
+  },
+  'building-blog-with-ai': {
+    title: 'Building a Dev-Centric Blog with ChatGPT & Cursor',
+    description: 'How I built my blog with ChatGPT and Cursor, as an AI engineer, not a frontend developer.',
+    date: '2025-03-29',
+    readingTime: '10 min read',
   }
 };
 

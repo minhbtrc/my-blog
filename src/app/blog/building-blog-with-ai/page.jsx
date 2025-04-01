@@ -8,49 +8,13 @@ export const metadata = {
 
 export default function BuildingBlogWithAIPage() {
   return (
-    <article className="max-w-3xl mx-auto px-5 py-12 relative">
-      {/* Subtle background effect */}
-      <div className="absolute top-0 right-0 w-1/3 h-[500px] bg-gradient-to-bl from-blue-100/20 to-transparent dark:from-blue-900/10 -z-10 rounded-full blur-3xl"></div>
-      
+    <article className="prose max-w-none">
       {/* Header section */}
-      <div className="mb-12 border-b border-neutral-200 dark:border-neutral-800 pb-8">
-        <div className="flex items-center mb-4 text-sm font-mono text-neutral-600 dark:text-neutral-400">
-          <Terminal size={14} className="mr-2 text-neutral-500 dark:text-neutral-400" />
-          <span>ai-engineering / blog</span>
-        </div>
-        
+      <div className="mt-6">
         <h1 className="text-4xl font-bold mb-4 text-neutral-900 dark:text-neutral-50 leading-tight">
           Building a Dev-Centric Blog with ChatGPT & Cursor
           <span className="block text-xl text-neutral-600 dark:text-neutral-400 font-normal mt-3">from a CSS-Hating AI Engineer</span>
-        </h1>
-        
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
-            ai
-          </span>
-          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
-            cursor
-          </span>
-          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50">
-            gpt4
-          </span>
-          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
-            nextjs
-          </span>
-        </div>
-        
-        {/* Date */}
-        <div className="flex items-center gap-2 mb-6 text-sm text-neutral-600 dark:text-neutral-400">
-          <Calendar size={14} className="text-neutral-500 dark:text-neutral-400" />
-          <time dateTime="2023-08-10">August 10, 2023</time>
-          <span className="mx-2">•</span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="h-3.5 w-3.5" />
-            10 min read
-          </span>
-        </div>
-        
+        </h1>        
         <p className="text-xl text-neutral-700 dark:text-neutral-300 leading-relaxed">
           My journey building a modern, developer-centric blog using AI tools like Cursor and GPT-4o, despite limited frontend experience (and a deep fear of CSS).
         </p>
