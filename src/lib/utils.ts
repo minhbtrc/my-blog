@@ -50,13 +50,3 @@ export function isMac() {
     ? navigator.userAgent.toLowerCase().includes('mac')
     : true
 }
-
-/**
- * Theme styles helper function
- * @param light - Light theme styles
- * @param dark - Dark theme styles
- * @returns Combined theme styles
- */
-export function themeStyles(light: string, dark: string) {
-  return cn(light, dark)
-}

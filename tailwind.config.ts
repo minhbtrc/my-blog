@@ -16,12 +16,28 @@ const config: Config = {
           from: { opacity: '0', transform: 'scaleX(0.95) scaleY(0.95)' },
           to: { opacity: '1', transform: 'scaleX(1) scaleY(1)' },
         },
+        'fade-in': {
+          from: { opacity: '0' },
+          to: { opacity: '1' },
+        },
+        'blink': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
+        'fade-up': {
+          from: { opacity: '0', transform: 'translateY(10px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'pop-in': 'pop-in 200ms cubic-bezier(0, 0, 0.2, 1)',
+        'fade-in': 'fade-in 300ms ease-in-out',
+        'blink': 'blink 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'fade-up': 'fade-up 400ms ease-out',
       },
       fontFamily: {
-        satoshi: "'Satoshi', sans-serif",
+        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-mono)', 'JetBrains Mono', 'monospace'],
       },
     },
   },
@@ -32,56 +48,56 @@ const config: Config = {
         light: {
           'color-scheme': 'light',
           // Main colors
-          primary: '#3b82f6',           // Vibrant blue for primary actions
+          primary: '#2563eb',           // Blue accent (GitHub-like)
           'primary-content': '#ffffff', // White text on primary color
-          secondary: '#0ea5e9',         // Bright sky blue for secondary elements
-          'secondary-content': '#ffffff', // White text on secondary color
-          // Subsidised colors
-          accent: '#6366f1',            // Indigo for accent elements
-          'accent-content': '#ffffff',  // White text on accent color  
-          neutral: '#64748b',           // Medium slate for neutral elements
-          'neutral-content': '#ffffff', // White text on neutral color
-          // Informative colors
-          info: '#e0f2fe',              // Light blue background for info
-          'info-content': '#0369a1',    // Deep blue text on info background
-          success: '#dcfce7',           // Light green background for success
-          'success-content': '#15803d', // Deep green text on success background
-          error: '#fee2e2',             // Light red background for errors
-          'error-content': '#b91c1c',   // Deep red text on error background
-          warning: '#fef3c7',           // Light yellow background for warnings
-          'warning-content': '#b45309', // Deep amber text on warning background
+          secondary: '#64748b',         // Slate gray for secondary elements
+          'secondary-content': '#ffffff', // White text on secondary
+          // Accent color - using a muted variant of primary
+          accent: '#3b82f6',            // Lighter blue for accent
+          'accent-content': '#ffffff',  // White text on accent
+          neutral: '#64748b',           // Slate gray for neutral elements
+          'neutral-content': '#ffffff', // White text on neutral
+          // Informative colors - more subtle
+          info: '#f1f5f9',              // Very light slate for info background
+          'info-content': '#334155',    // Darker slate for info text
+          success: '#f0fdf4',           // Very light green background
+          'success-content': '#166534', // Dark green text
+          error: '#fef2f2',             // Very light red background
+          'error-content': '#b91c1c',   // Dark red text
+          warning: '#fffbeb',           // Very light amber background
+          'warning-content': '#92400e', // Dark amber text
           // Base colors
           'base-100': '#ffffff',        // Pure white for primary backgrounds
           'base-200': '#f8fafc',        // Very light slate for secondary backgrounds
           'base-300': '#f1f5f9',        // Light slate for tertiary backgrounds
-          'base-content': '#1e293b',    // Deep slate for text
+          'base-content': '#0f172a',    // Very dark slate for text
         },
         dark: {
           'color-scheme': 'dark',
           // Main colors
-          primary: '#e0dcd8',        // Lighter gray for better contrast on black
-          'primary-content': '#1a1a1a', // Near-black for readability on primary
-          secondary: '#7a7268',      // Lighter brown for contrast on base colors
-          'secondary-content': '#f5f5f5', // Off-white for sharp contrast
-          // Subsidised colors
-          accent: '#7a9bff',         // Slightly lighter blue for vibrancy
-          'accent-content': '#ffffff', // White for max contrast (4.8:1)
-          neutral: '#8c8c9e',        // Lighter neutral gray
-          'neutral-content': '#ffffff', // White for readability
+          primary: '#3b82f6',           // Blue accent (more vibrant in dark)
+          'primary-content': '#ffffff', // White text
+          secondary: '#64748b',         // Slate gray (same as light)
+          'secondary-content': '#ffffff', // White text
+          // Accent color
+          accent: '#60a5fa',            // Lighter blue for accent in dark mode
+          'accent-content': '#0f172a',  // Very dark text on light accent
+          neutral: '#475569',           // Darker slate for neutral elements
+          'neutral-content': '#f8fafc', // Very light text
           // Informative colors
-          info: '#4da8ff',           // Brighter blue
-          'info-content': '#ffffff', // White (5.5:1 contrast)
-          success: '#34d174',        // Vibrant green
-          'success-content': '#ffffff', // White (4.6:1)
-          error: '#ff6666',          // Softer red
-          'error-content': '#ffffff', // White (4.5:1)
-          warning: '#ffd700',        // Bright yellow
-          'warning-content': '#1a1a1a', // Dark gray for contrast (9:1)
-          // Base colors
-          'base-100': '#1a1a1a',     // Dark gray instead of pure black
-          'base-200': '#2a2a2a',     // Slightly lighter for depth
-          'base-300': '#3d3d3d',     // More distinction in hierarchy
-          'base-content': '#e6e6e6', // Light gray for text (8:1 on base-100)
+          info: '#1e293b',              // Dark slate for info background
+          'info-content': '#e2e8f0',    // Light slate text
+          success: '#022c22',           // Very dark green background
+          'success-content': '#86efac', // Light green text
+          error: '#450a0a',             // Very dark red background
+          'error-content': '#fecaca',   // Light red text
+          warning: '#451a03',           // Very dark amber background
+          'warning-content': '#fde68a', // Light amber text
+          // Base colors - darker, more modern
+          'base-100': '#0f172a',        // Dark slate for primary background
+          'base-200': '#1e293b',        // Slightly lighter for secondary
+          'base-300': '#334155',        // Medium slate for tertiary
+          'base-content': '#f8fafc',    // Very light slate for text
         },
       },
     ],
