@@ -426,7 +426,7 @@ export default function ContactPage() {
                 className="space-y-4"
               >
                 <motion.a
-                  href={process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/minhbt"}
+                  href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-center gap-2"

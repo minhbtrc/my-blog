@@ -392,7 +392,7 @@ export default function ClientLayout({
                       
                       <div className="mt-6 pt-6 border-t border-base-200">
                         <a
-                          href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
+                          href={process.env.NEXT_PUBLIC_GITHUB_URL}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center px-3 py-2 text-xs text-base-content/70 hover:text-base-content"
