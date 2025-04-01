@@ -26,8 +26,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'MinhBTC - Professional Development Blog',
-  description: 'A professional blog focusing on software development and technology.',
+  title: 'MinhBTC - Personal Blog',
+  description: 'A personal blog focusing on software development and technology.',
 }
 
 export default function RootLayout({

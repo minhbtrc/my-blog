@@ -88,10 +88,10 @@ export default function TerminalZenHome() {
                         }, 400)
                       }, 600)
                     }
-                  }, 25)
+                  }, 10)
                 }, 300)
               }
-            }, 40)
+            }, 15)
           }
         }, 25)
       }
