@@ -5,13 +5,17 @@ import { ThemeProvider } from 'next-themes'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Moon, Sun, Github, Command, Terminal } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Moon, Sun, Github, Command, Terminal, Disc3, Volume2, VolumeX } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { cn } from '../lib/utils'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import Footer from './footer'
+import dynamic from 'next/dynamic'
+
+// Dynamically import ReactPlayer to prevent SSR issues
+const ReactPlayer = dynamic(() => import('react-player/youtube'), { ssr: false })
 
 // Animation variants for typing effect
 const typingContainer = {
@@ -31,6 +35,84 @@ const typingCharacter = {
     transition: { type: "spring", stiffness: 300, damping: 20 }
   }
 };
+
+// PlayButton component for terminal-style music control
+function PlayButton() {
+  const [playing, setPlaying] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [hasInteracted, setHasInteracted] = useState(false)
+  const playerRef = useRef(null)
+  const hasUrl = !!process.env.NEXT_PUBLIC_LISTEN_URL
+  
+  useEffect(() => {
+    setMounted(true)
+    
+    // Check for previous user interaction
+    const hasUserInteracted = localStorage.getItem('music-interaction')
+    if (hasUserInteracted === 'true') {
+      setHasInteracted(true)
+    }
+    
+    // Listen for first interaction
+    const handleFirstInteraction = () => {
+      setHasInteracted(true)
+      localStorage.setItem('music-interaction', 'true')
+    }
+    
+    window.addEventListener('click', handleFirstInteraction, { once: true })
+    
+    return () => {
+      window.removeEventListener('click', handleFirstInteraction)
+    }
+  }, [])
+  
+  const togglePlay = () => {
+    setPlaying(prev => !prev)
+  }
+  
+  if (!mounted || !hasUrl) {
+    return null
+  }
+  
+  return (
+    <>
+      {/* Hidden player */}
+      <div className="fixed top-0 left-0 invisible pointer-events-none">
+        <ReactPlayer
+          ref={playerRef}
+          url={process.env.NEXT_PUBLIC_LISTEN_URL}
+          playing={playing && hasInteracted}
+          loop
+          volume={0.7}
+          muted={false}
+          controls={false}
+          width="0"
+          height="0"
+          onError={(e) => console.error("Player error:", e)}
+        />
+      </div>
+      
+      {/* Button */}
+      <button
+        onClick={togglePlay}
+        className="relative group text-base-content/70 hover:text-base-content transition-colors cursor-pointer"
+        aria-label={playing ? "Pause music" : "Play music"}
+      >
+        <Disc3 
+          className={cn(
+            "h-4 w-4",
+            playing && hasInteracted && "animate-[spin_3s_linear_infinite]"
+          )}
+        />
+        
+        {/* Tooltip on hover */}
+        <span className="hidden group-hover:block absolute top-full mt-1 left-1/2 -translate-x-1/2 text-xs font-mono bg-base-300 text-base-content px-2 py-1 rounded whitespace-nowrap z-50">
+          {playing ? "Pause" : "Listen"} {!hasInteracted && "(Click to enable)"}
+        </span>
+      </button>
+    </>
+  )
+}
 
 export default function ClientLayout({
   children,
@@ -205,13 +287,10 @@ export default function ClientLayout({
               
               {/* Right: Theme + Search */}
               <div className="flex items-center gap-4 text-sm font-mono text-base-content/70">
-                {/* Search Command */}
-                <button 
-                  className="hover:text-base-content transition-colors cursor-pointer"
-                  onClick={() => setShowCommandMenu(true)}
-                >
-                  <span>⌘K</span>
-                </button>
+                {/* Remove Command K button but keep the functionality via keyboard shortcut */}
+                
+                {/* PlayButton - Music control */}
+                <PlayButton />
                 
                 {/* Theme Toggle */}
                 <ThemeToggle />

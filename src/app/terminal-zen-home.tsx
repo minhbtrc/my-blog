@@ -111,8 +111,21 @@ export default function TerminalZenHome() {
       setShowCursor(prev => !prev)
     }, 530)
     
+    // Handle keyboard command - but only set local state to pass to parent
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault()
+        // Using local state to maintain component reactivity,
+        // but the actual command menu is controlled by ClientLayout
+        setShowCommandMenu(prev => !prev)
+      }
+    }
+    
+    window.addEventListener('keydown', handleKeyDown)
+    
     return () => {
       clearInterval(cursorInterval)
+      window.removeEventListener('keydown', handleKeyDown)
     }
   }, [mounted])
   
@@ -267,7 +280,7 @@ export default function TerminalZenHome() {
             </Link>
           </div>
           
-          {/* Keyboard shortcut hint */}
+          {/* Keyboard shortcut hint - keep this to inform users */}
           <div className={cn(
             "text-xs",
             shellMode ? "text-green-400/40" : "text-base-content/40",
