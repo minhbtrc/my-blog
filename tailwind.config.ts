@@ -94,10 +94,10 @@ const config: Config = {
           warning: '#451a03',           // Very dark amber background
           'warning-content': '#fde68a', // Light amber text
           // Base colors - darker, more modern
-          'base-100': '#0f172a',        // Dark slate for primary background
+          'base-100': '#1d232a',        // Dark slate for primary background
           'base-200': '#1e293b',        // Slightly lighter for secondary
           'base-300': '#334155',        // Medium slate for tertiary
-          'base-content': '#f8fafc',    // Very light slate for text
+          'base-content': '#94a3b8',    // Medium slate for better dark mode contrast
         },
       },
     ],
