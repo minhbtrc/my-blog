@@ -11,10 +11,7 @@ A modern markdown blog with beautiful UI and smooth animations, featuring a dual
 - 📱 **Fully Responsive**: Optimized for all devices from mobile to desktop
 - ✨ **Smooth Animations**: Elegant transitions and micro-interactions using Framer Motion
 - 📝 **Markdown/MDX Support**: Write content in Markdown with rich MDX features
-- 🔍 **Full-Text Search**: Fast content search across all blog posts
 - 🏷️ **Tag System**: Organized content with customizable tags
-- 🧩 **Component Showcase**: Demo page featuring all UI components
-- 🖥️ **Terminal-Inspired Home**: Creative terminal-like landing page
 - 📊 **Multiple View Modes**: List and shell view for blog posts
 - 🔗 **Social Integration**: GitHub, LinkedIn, and Buy Me a Coffee links
 
@@ -166,4 +163,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-Made with ❤️ by [MinhBTC](https://github.com/minhbtc)
+Made with ❤️ by [MinhBTC](https://github.com/minhbtc) & GPT-4o & CursorAI
