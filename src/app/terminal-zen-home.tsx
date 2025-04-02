@@ -169,7 +169,7 @@ export default function TerminalZenHome() {
                 }}
               >
                 <Image
-                  src="/new_profile.png"
+                  src="/profile.png"
                   alt="MinhBTC profile"
                   width={160}
                   height={160}

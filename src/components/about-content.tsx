@@ -80,7 +80,7 @@ export default function AboutContent() {
               whileTap={{ scale: 0.95 }}
             >
               <Image
-                src="/new_profile.png"
+                src="/profile.png"
                 alt="Minh Bui Tran Cong"
                 width={96}
                 height={96}
