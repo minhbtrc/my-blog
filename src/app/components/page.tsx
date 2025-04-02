@@ -2,10 +2,16 @@ import React from 'react';
 import Card from '@/components/ui/card';
 import Button from '@/components/ui/button';
 import BlogCard from '@/components/ui/BlogCard';
-import { themeStyles, cn } from '@/lib/utils';
+import { themeStyles } from '@/lib/utils';
 import { 
-  Home, Mail, Heart, Download, ArrowRight, Globe, 
-  MoveRight, Github, Calendar, Clock, Tag 
+  Home,
+  Mail,
+  Heart,
+  Download,
+  ArrowRight,
+  Globe,
+  MoveRight,
+  Github
 } from 'lucide-react';
 
 export default function ComponentsPage() {

@@ -4,12 +4,10 @@ import React, {
   Suspense, 
   useState, 
   useEffect, 
-  useRef,
   useMemo 
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from 'next-themes';
-import { X, Filter, Clock, Calendar, Play, Terminal, Pin } from "lucide-react";
+import { X, Filter, Terminal } from "lucide-react";
 import Link from 'next/link';
 import { Input } from "@/components/ui/input";
 
@@ -68,15 +66,6 @@ const typingContainer = {
     transition: {
       staggerChildren: 0.08
     }
-  }
-};
-
-const typingCharacter = {
-  hidden: { opacity: 0, y: 5 },
-  show: { 
-    opacity: 1, 
-    y: 0,
-    transition: { type: "spring", stiffness: 300, damping: 20 }
   }
 };
 
@@ -176,49 +165,6 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
     </motion.div>
   );
 };
-
-const FeaturedPost = ({ post }) => (
-  <motion.div
-    variants={item}
-    className="mb-8 border-l-2 border-blue-400/50 pl-4 space-y-2"
-  >
-    <div className="flex items-center gap-2">
-      <Pin className="h-3.5 w-3.5 text-blue-400" />
-      <span className="text-blue-400 text-xs font-mono">Featured</span>
-    </div>
-    
-    <Link href={post.route} className="block space-y-2 group">
-      <div className="text-xs font-mono text-muted-foreground flex items-center gap-2">
-        <Calendar className="h-3 w-3" />
-        <span>{formatDate(post.date)}</span>
-        <span>•</span>
-        <Clock className="h-3 w-3" />
-        <span>{post.readingTime}</span>
-      </div>
-      
-      <h2 className="text-xl md:text-2xl font-semibold group-hover:text-blue-400 transition-colors">
-        {post.title}
-      </h2>
-      
-      <p className="text-sm text-muted-foreground">
-        {post.description}
-      </p>
-      
-      <div className="text-xs font-mono text-muted-foreground opacity-60">
-        {post.tags.map((tag, i) => (
-          <React.Fragment key={tag}>
-            <span>{tag}</span>
-            {i < post.tags.length - 1 && <span className="mx-1">•</span>}
-          </React.Fragment>
-        ))}
-      </div>
-      
-      <div className="text-sm text-blue-400 font-mono group-hover:underline underline-offset-4 inline-flex items-center">
-        → Read
-      </div>
-    </Link>
-  </motion.div>
-);
 
 const BlogPost = ({ post, index }) => (
   <motion.div
@@ -341,7 +287,6 @@ const ViewToggle = ({ viewMode, setViewMode }) => (
 
 // Main blog page component
 function BlogPageContent() {
-  const { resolvedTheme } = useTheme();
   const [blogs] = useState(FALLBACK_BLOGS);
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);

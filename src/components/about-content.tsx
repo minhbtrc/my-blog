@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { ArrowRight, Mail, Briefcase, GraduationCap, Book, Award, Code } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
 import { motion, useInView } from 'framer-motion'
+import { certificates } from '@/data/certificates'
 
 export default function AboutContent() {
   const [mounted, setMounted] = useState(false)
@@ -104,7 +104,7 @@ export default function AboutContent() {
                   <span className="text-muted-foreground font-mono inline-flex items-center">
                   minhbtc@ai-eng:~$<span className="inline-block w-2 h-4 bg-primary/70 ml-1 animate-pulse"></span>
                   </span> 
-                  <span>AI Engineer</span>
+                  <span>AI/NLP Engineer</span>
                 </p>
               </motion.div>
               <motion.p 
@@ -161,7 +161,7 @@ export default function AboutContent() {
         <ScrollRevealSection id="about" title="About Me">
           <div className="text-muted-foreground space-y-4">
             <p>
-              AI Engineer by day, LLM whisperer by night. I work with Transformers (the model kind, not the robot kind) to build cool things like question generators, sentiment detectors, and data diggers. Big fan of LangChain, clever hacks, and shipping stuff that works.
+              AI Engineer by day, LLM whisperer by night. I work with Transformers (the model kind, not the robot kind) to build cool things like question generators, sentiment detectors, and data diggers. Big fan of LLM-related tools, clever hacks, and shipping stuff that works.
             </p>
             <p>
               When I'm not wrangling models, I'm reading AI papers, pretending to be productive with a book, or chasing a football like it owes me money.
@@ -289,6 +289,7 @@ export default function AboutContent() {
               tags={['ai', 'nlp', 'healthcare']}
               description="Led the development of a consultancy chatbot for SARS-COVID-2 patients, providing symptom assessment and self-care advice. Implemented machine learning models (KNN, SVM) for Intent Classification and developed a Named Entity Recognition system using PhoBERT and CRF."
               delay={0.15}
+              url="https://github.com/minhbtrc/covid-consultant-chatbot"
             />
           </div>
         </ScrollRevealSection>
@@ -327,81 +328,17 @@ export default function AboutContent() {
           </div>
         </ScrollRevealSection>
         
-        {/* Certifications Section */}
-        <ScrollRevealSection id="certifications" title="Certifications">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { 
-                name: 'AI Agents Fundamentals',
-                issuer: 'Hugging Face',
-                date: 'Mar 2025',
-                url: 'https://huggingface.co/datasets/agents-course/certificates/resolve/main/certificates/minhbtc/2025-03-02.png',
-                delay: 0.1
-              },
-              { 
-                name: 'Develop Your AI Skills with Google Gemini and Google Cloud Platform',
-                issuer: 'LinkedIn',
-                date: 'Dec 2024',
-                url: 'https://www.linkedin.com/learning/certificates/786f207a8154d5e7d9e82497fa26826c46243ad0009bbb044c795cb0fad9aabf',
-                delay: 0.15
-              },
-              { 
-                name: 'Google Gemini for Developers',
-                issuer: 'LinkedIn',
-                date: 'Dec 2024',
-                url: 'https://www.linkedin.com/learning/certificates/184dd13911e12c507705d3b1a40d2ac7b843bf700454512fbf7a2034243accf9',
-                delay: 0.2
-              },
-              { 
-                name: 'Generative AI Fundamentals',
-                issuer: 'Google Cloud Skills Boost',
-                date: 'Sep 2023',
-                url: 'https://www.cloudskillsboost.google/public_profiles/62daf634-c499-4c31-8ed2-bf1c0d6a9b15/badges/5406285',
-                delay: 0.25
-              },
-              { 
-                name: 'Introduction to Large Language Models',
-                issuer: 'Google Cloud Skills Boost',
-                date: 'Sep 2023',
-                url: 'https://www.cloudskillsboost.google/public_profiles/62daf634-c499-4c31-8ed2-bf1c0d6a9b15/badges/5393841',
-                delay: 0.3
-              },
-              { 
-                name: 'Generative AI with Large Language Models',
-                issuer: 'Coursera',
-                date: 'Aug 2023',
-                url: 'https://www.coursera.org/account/accomplishments/certificate/M8QJYLYC9FCD',
-                delay: 0.35
-              },
-              { 
-                name: 'LangChain & Vector Databases in Production',
-                issuer: 'Activeloop',
-                date: 'Aug 2023',
-                url: 'https://learn.activeloop.ai/certificates/snnl0bjoa4',
-                delay: 0.4,
-              },
-              { 
-                name: 'Deep Neural Networks with PyTorch',
-                issuer: 'IBM',
-                date: 'Mar 2022',
-                url: 'https://www.credly.com/badges/1a28ac75-fe07-46c8-af42-d6c655cde21a',
-                delay: 0.45
-              },
-              { 
-                name: 'Natural Language Processing Specialization',
-                issuer: 'Coursera',
-                date: 'Mar 2022',
-                url: 'https://www.coursera.org/account/accomplishments/specialization/certificate/8JVX3M2H36T2',
-                delay: 0.5
-              }
-            ].map((cert, index) => (
+        {/* Certificates Section */}
+        <ScrollRevealSection id="certificates" title="Certifications">
+          <div className="space-y-6">
+            {certificates.map((cert, index) => (
               <CertificationCard 
                 key={`cert-${index}`}
                 name={cert.name}
                 issuer={cert.issuer}
                 date={cert.date}
                 url={cert.url}
-                delay={cert.delay}
+                delay={index * 0.05}
               />
             ))}
           </div>
@@ -412,7 +349,7 @@ export default function AboutContent() {
 }
 
 // Component for scroll-based reveal animation
-function ScrollRevealSection({ id, title, children }) {
+function ScrollRevealSection({ id, title, children }: { id: string, title: string, children: React.ReactNode }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
   
@@ -439,7 +376,8 @@ function ScrollRevealSection({ id, title, children }) {
 }
 
 // Component for job experience card
-function JobCard({ title, description, period, isCurrent = false, points = [], technologies = [], delay = 0 }) {
+function JobCard(
+  { title, description, period, isCurrent = false, points = [], technologies = [], delay = 0 }: { title: string, description: string, period: string, isCurrent: boolean, points: string[], technologies: string[], delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   
@@ -498,7 +436,7 @@ function JobCard({ title, description, period, isCurrent = false, points = [], t
 }
 
 // Component for education card
-function EducationCard({ title, institution, period, subjects = [], delay = 0 }) {
+function EducationCard({ title, institution, period, subjects = [], delay = 0 }: { title: string, institution: string, period: string, subjects: string[], delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   
@@ -544,7 +482,7 @@ function EducationCard({ title, institution, period, subjects = [], delay = 0 })
 }
 
 // Component for project card
-function ProjectCard({ title, tags = [], description, url, delay = 0 }) {
+function ProjectCard({ title, tags = [], description, url, delay = 0 }: { title: string, tags: string[], description: string, url: string, delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   
@@ -590,7 +528,7 @@ function ProjectCard({ title, tags = [], description, url, delay = 0 }) {
 }
 
 // Component for skills card
-function SkillsCard({ title, skills = [], delay = 0 }) {
+function SkillsCard({ title, skills = [], delay = 0 }: { title: string, skills: string[], delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   
@@ -633,7 +571,7 @@ function SkillsCard({ title, skills = [], delay = 0 }) {
 }
 
 // Component for certification card
-function CertificationCard({ name, issuer, date, url, delay = 0 }) {
+function CertificationCard({ name, issuer, date, url, delay = 0 }: { name: string, issuer: string, date: string, url: string, delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
   
