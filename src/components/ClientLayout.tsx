@@ -17,14 +17,6 @@ import dynamic from 'next/dynamic'
 const ReactPlayer = dynamic(() => import('react-player/youtube'), { ssr: false })
 
 
-const typingCharacter = {
-  hidden: { opacity: 0 },
-  show: { 
-    opacity: 1,
-    transition: { type: "spring", stiffness: 300, damping: 20 }
-  }
-};
-
 // PlayButton component for terminal-style music control
 function PlayButton() {
   const [playing, setPlaying] = useState(false)
