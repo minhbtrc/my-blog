@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Copyright */}
           <div className="text-xs text-base-content/60">
-            © {year} minh.btc. All rights reserved.
+            © {year} Minh Bui. All rights reserved.
           </div>
           
           {/* Links */}

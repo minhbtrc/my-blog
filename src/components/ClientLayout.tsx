@@ -4,7 +4,7 @@ import { AppProgressBar as NextProgressBar } from 'next-nprogress-bar'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Moon, Sun, Github, Command, Terminal, Disc3 } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Github, Command, Terminal, Disc3 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { cn } from '../lib/utils'
@@ -16,16 +16,6 @@ import dynamic from 'next/dynamic'
 // Dynamically import ReactPlayer to prevent SSR issues
 const ReactPlayer = dynamic(() => import('react-player/youtube'), { ssr: false })
 
-// Animation variants for typing effect
-const typingContainer = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08
-    }
-  }
-};
 
 const typingCharacter = {
   hidden: { opacity: 0 },

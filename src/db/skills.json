@@ -1,0 +1,39 @@
+[
+  {
+    "title": "Frameworks & Libraries",
+    "skills": [
+      "PyTorch", 
+      "Transformers",
+      "Langchain",
+      "TensorFlow",
+      "HuggingFace",
+      "ONNX",
+      "spaCy",
+      "FastAPI"
+    ]
+  },
+  {
+    "title": "Tools & Platforms",
+    "skills": [
+      "MongoDB",
+      "PostgreSQL",
+      "Redis",
+      "Docker",
+      "Git",
+      "AWS",
+      "GCP"
+    ]
+  },
+  {
+    "title": "AI Techniques",
+    "skills": [
+      "NLP",
+      "LLMs",
+      "RAG",
+      "Prompt Engineering", 
+      "Fine-tuning",
+      "Embeddings",
+      "Vector Databases"
+    ]
+  }
+] 

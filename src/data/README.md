@@ -1,6 +1,6 @@
-# Certificate Management System
+# Data Management System
 
-This directory contains data files used throughout the application, including the certificates system.
+This directory contains data files used throughout the application, including certificates, work experiences, skills, education, and projects.
 
 ## Certificates
 
@@ -43,8 +43,173 @@ The certificates are displayed with the following information:
 
 Each certificate entry is clickable and will open the verification URL in a new tab.
 
+## Work Experiences
+
+The work experience system allows easy management of your professional history directly from a JSON file.
+
+### How to Add New Work Experiences
+
+1. Open `src/db/experiences.json`
+2. Add a new experience entry to the JSON array
+3. Fill in the required fields:
+   - `title`: Job title including company name
+   - `description`: Short description of the role
+   - `period`: Employment period (e.g., "Jan 2022 - Dec 2023")
+   - `isCurrent`: Boolean indicating if this is your current job
+   - `points`: Array of bullet points describing achievements
+   - `technologies`: Array of technologies used in this role
+
+### Example Work Experience Entry
+
+```json
+{
+  "title": "AI Engineer – Example Company",
+  "description": "Developing advanced AI solutions for enterprise clients",
+  "period": "Jan 2023 – Present",
+  "isCurrent": true,
+  "points": [
+    "Implemented RAG systems using LangChain and vector databases",
+    "Optimized LLM inference for production environments",
+    "Developed document processing pipeline with 98% accuracy"
+  ],
+  "technologies": ["LangChain", "PyTorch", "FastAPI", "Docker"]
+}
+```
+
+### Experience Display
+
+Work experiences are displayed in the Experience section of the About page, with the following information:
+- Job title
+- Brief job description
+- Employment period with a current job indicator
+- Bullet points highlighting key responsibilities and achievements
+- Technologies used, displayed as tags
+
+## Skills & Technologies
+
+The skills system organizes your technical skills and expertise into categories for easy display.
+
+### How to Add or Update Skills
+
+1. Open `src/db/skills.json`
+2. Add a new skill category or update existing categories
+3. Each category contains:
+   - `title`: Category name (e.g., "Frameworks & Libraries")
+   - `skills`: Array of skills in this category
+
+### Example Skills Category
+
+```json
+{
+  "title": "AI Techniques",
+  "skills": [
+    "NLP",
+    "LLMs",
+    "RAG",
+    "Prompt Engineering", 
+    "Fine-tuning",
+    "Embeddings",
+    "Vector Databases"
+  ]
+}
+```
+
+### Skills Display
+
+Skills are displayed in a grid layout in the Skills & Technologies section, grouped by category. Each skill is shown as a tag that can be hovered over for effect.
+
+## Education
+
+The education system manages your academic background and educational history.
+
+### How to Add or Update Education
+
+1. Open `src/db/education.json`
+2. Add a new education entry or update existing entries
+3. Each education entry contains:
+   - `title`: Degree or program title
+   - `institution`: Educational institution name
+   - `period`: Period of study
+   - `subjects`: Array of subjects or focus areas
+   - `description`: Optional description of the program
+
+### Example Education Entry
+
+```json
+{
+  "title": "Bachelor of Computer Science",
+  "institution": "Ho Chi Minh University of Technology",
+  "period": "Aug 2018 – Apr 2023",
+  "subjects": [
+    "machine learning",
+    "ai",
+    "data structures",
+    "algorithms",
+    "deep learning"
+  ],
+  "description": "Computer Science program with focus on Artificial Intelligence and Machine Learning"
+}
+```
+
+### Education Display
+
+Education entries are displayed in the Education section of the About page, showing:
+- Degree/program title
+- Institution name
+- Period of study
+- Subject tags
+
+## Projects
+
+The projects system allows you to showcase your portfolio of work and side projects.
+
+### How to Add or Update Projects
+
+1. Open `src/db/projects.json`
+2. Add a new project or update existing projects
+3. Each project entry contains:
+   - `title`: Project name
+   - `description`: Description of the project
+   - `tags`: Array of technologies or topics related to the project
+   - `url`: Link to the project (GitHub, live site, etc.)
+   - `image`: Optional path to a project screenshot/image
+   - `featured`: Optional boolean to mark as a featured project
+
+### Example Project Entry
+
+```json
+{
+  "title": "Langchain Chatbot",
+  "tags": ["ai", "llm", "chatbot"],
+  "description": "Developed a chatbot using the Langchain framework, integrated with Vertex AI or OpenAI API. Implemented MongoDB for memory management, utilized Gradio and Langchain UI, and incorporated Microsoft Presidio for data anonymization.",
+  "url": "https://github.com/minhbtrc/langchain-chatbot",
+  "image": "/images/projects/langchain.png"
+}
+```
+
+### Projects Display
+
+Projects are displayed in the Projects section of the About page, showing:
+- Project title
+- Description of the project
+- Technology tags
+- Link to the project (if provided)
+
+## How It Works
+
+All data is stored in JSON files in the `src/db` directory, making it easy to update without touching the application code. The TypeScript interfaces in the `src/data` directory provide type safety and helper functions.
+
 ### System Structure
 
 - `src/db/certificates.json`: JSON file containing all certificates data
+- `src/db/experiences.json`: JSON file containing all work experience data
+- `src/db/skills.json`: JSON file containing all skills and technologies data
+- `src/db/education.json`: JSON file containing all education history data
+- `src/db/projects.json`: JSON file containing all project data
 - `src/data/certificates.ts`: TypeScript interface and helper functions for certificates
-- The certificates are rendered in the About page using the existing `CertificationCard` component 
+- `src/data/experiences.ts`: TypeScript interface and helper functions for work experiences
+- `src/data/skills.ts`: TypeScript interface and helper functions for skills
+- `src/data/education.ts`: TypeScript interface and helper functions for education
+- `src/data/projects.ts`: TypeScript interface and helper functions for projects
+
+The data is automatically imported and displayed in the About page using the existing components. 

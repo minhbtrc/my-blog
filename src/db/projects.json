@@ -1,0 +1,23 @@
+[
+  {
+    "title": "The AI-Driven Blog",
+    "tags": ["llm", "cursor", "agent"],
+    "description": "New blog project that heavily uses ChatGPT and Cursor. As a back-end enthusiast who's no fan of CSS, I relied on these AI tools to help shape both the design and content. From styling advice to layout tweaks, the entire process was an AI-driven collaboration—and it turned out surprisingly well!",
+    "url": "https://minhbtc.blog",
+    "image": "/images/projects/blog.png",
+    "featured": true
+  },
+  {
+    "title": "Langchain Chatbot",
+    "tags": ["ai", "llm", "chatbot"],
+    "description": "Developed a chatbot using the Langchain framework, integrated with Vertex AI or OpenAI API. Implemented MongoDB for memory management, utilized Gradio and Langchain UI, and incorporated Microsoft Presidio for data anonymization.",
+    "url": "https://github.com/minhbtrc/langchain-chatbot",
+    "image": "/images/projects/langchain.png"
+  },
+  {
+    "title": "Covid Chatbot",
+    "tags": ["ai", "nlp", "healthcare"],
+    "description": "Led the development of a consultancy chatbot for SARS-COVID-2 patients, providing symptom assessment and self-care advice. Implemented machine learning models (KNN, SVM) for Intent Classification and developed a Named Entity Recognition system using PhoBERT and CRF.",
+    "url": "https://github.com/minhbtrc/covid-consultant-chatbot"
+  }
+] 

@@ -26,28 +26,6 @@ export default function Newsletter() {
       setMessage('Thank you for subscribing!')
       setEmail('')
     }, 1500)
-    
-    // In a real implementation, you would add an API call here:
-    // try {
-    //   const response = await fetch('/api/subscribe', {
-    //     method: 'POST',
-    //     body: JSON.stringify({ email }),
-    //     headers: { 'Content-Type': 'application/json' }
-    //   })
-    //   const data = await response.json()
-    //   
-    //   if (response.ok) {
-    //     setStatus('success')
-    //     setMessage(data.message || 'Thank you for subscribing!')
-    //     setEmail('')
-    //   } else {
-    //     setStatus('error')
-    //     setMessage(data.error || 'Something went wrong. Please try again.')
-    //   }
-    // } catch (error) {
-    //   setStatus('error')
-    //   setMessage('Failed to subscribe. Please try again later.')
-    // }
   }
 
   return (

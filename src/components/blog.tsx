@@ -6,7 +6,6 @@ import useSWR from 'swr'
 import ky from 'ky'
 import Link from 'next/link'
 import { Calendar, Clock } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 // Define Blog type for TypeScript
 interface Blog {
