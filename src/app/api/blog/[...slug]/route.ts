@@ -1,24 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-// Mock data that would normally come from a database
-const BLOGS = {
-  'langchain-chatbot': {
-    title: 'Building a Privacy-First AI Chatbot with LangChain',
-    description: 'The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and...',
-    date: '2023-07-15',
-    readingTime: '8 min read',
-    tags: ['ai', 'langchain', 'privacy', 'development'],
-    children: [],
-  },
-  'building-blog-with-ai': {
-    title: 'Building a Dev-Centric Blog with ChatGPT & Cursor',
-    description: 'How I built my blog with ChatGPT and Cursor, as an AI engineer, not a frontend developer.',
-    date: '2025-03-29',
-    readingTime: '10 min read',
-    tags: ['ai', 'development', 'cursor', 'gpt4', 'nextjs'],
-    children: [],
-  },
-};
+import { getBlogBySlug } from '@/data/blogs';
 
 export async function GET(
   request: NextRequest,
@@ -28,8 +9,8 @@ export async function GET(
     // Convert the slug array to a string path
     const path = params.slug.join('/');
     
-    // Look up the blog post in our mock data
-    const blogPost = BLOGS[path];
+    // Look up the blog post in our data system
+    const blogPost = getBlogBySlug(path);
     
     if (!blogPost) {
       return NextResponse.json(
@@ -38,7 +19,19 @@ export async function GET(
       );
     }
     
-    return NextResponse.json(blogPost);
+    // Transform to expected format if needed
+    const response = {
+      title: blogPost.title,
+      description: blogPost.description,
+      date: blogPost.date,
+      readingTime: blogPost.readingTime,
+      tags: blogPost.tags,
+      content: blogPost.content,
+      featuredImage: blogPost.featuredImage,
+      children: [],
+    };
+    
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching blog data:', error);
     return NextResponse.json(

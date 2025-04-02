@@ -4,13 +4,10 @@ import { useState, useEffect, useRef } from 'react'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Command } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import KeyboardShortcut from '@/components/keyboard-shortcut'
 
 export default function TerminalZenHome() {
   const [mounted, setMounted] = useState(false)
-  const [showCommandMenu, setShowCommandMenu] = useState(false)
   const [typedName, setTypedName] = useState("")
   const [typedSubtitle, setTypedSubtitle] = useState("")
   const [typingCommand, setTypingCommand] = useState(false)
@@ -30,7 +27,7 @@ export default function TerminalZenHome() {
   useEffect(() => {
     if (!mounted) return
     
-    const name = "MINHBTC"
+    const name = "Minh Bui"
     let currentIndex = 0
     
     const nameInterval = setInterval(() => {
@@ -110,20 +107,9 @@ export default function TerminalZenHome() {
     // const cursorInterval = setInterval(() => {
     //   setShowCursor(prev => !prev)
     // }, 530)
-    
-    // Handle keyboard command
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        setShowCommandMenu(prev => !prev)
-      }
-    }
-    
-    window.addEventListener('keydown', handleKeyDown)
-    
+        
     return () => {
       // clearInterval(cursorInterval)
-      window.removeEventListener('keydown', handleKeyDown)
     }
   }, [mounted])
   
@@ -131,38 +117,6 @@ export default function TerminalZenHome() {
   useEffect(() => {
     setMounted(true)
   }, [])
-  
-  // Toggle theme function
-  const toggleTheme = () => {
-    // Use a fallback if theme is undefined
-    const activeTheme = theme || (isDark ? 'dark' : 'light');
-    const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
-    console.log(`Terminal: Switching theme from ${activeTheme} to ${newTheme}`);
-    
-    // First update next-themes state
-    setTheme(newTheme);
-    
-    // Force immediate DOM updates for daisyUI
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
-    
-    // Apply theme-specific colors manually to speed up transition
-    if (newTheme === 'light') {
-      document.documentElement.style.setProperty('--base-100', '#ffffff');
-      document.documentElement.style.setProperty('--base-content', '#0f172a');
-      document.documentElement.style.setProperty('--primary', '#059669');
-    } else {
-      document.documentElement.style.setProperty('--base-100', '#0f172a');
-      document.documentElement.style.setProperty('--base-content', '#f8fafc');
-      document.documentElement.style.setProperty('--primary', '#3b82f6');
-    }
-    
-    // Force a repaint to ensure styles are applied immediately
-    document.body.style.display = 'none';
-    document.body.offsetHeight; // Trigger reflow
-    document.body.style.display = '';
-  }
   
   // Easter egg shell mode toggle
   const handleNameClick = () => {
@@ -215,7 +169,7 @@ export default function TerminalZenHome() {
                 }}
               >
                 <Image
-                  src="/new_profile.png"
+                  src="/profile.png"
                   alt="MinhBTC profile"
                   width={160}
                   height={160}
@@ -377,55 +331,9 @@ export default function TerminalZenHome() {
               </div>
             </div>
           </div>
-          
-          
+      
         </div>
       </main>
-      
-      {/* Command menu modal */}
-      {showCommandMenu && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[20vh]">
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" onClick={() => setShowCommandMenu(false)} />
-          <div className={cn(
-            "relative w-full max-w-md rounded-lg overflow-hidden",
-            shellMode
-              ? "bg-black border border-green-500/30"
-              : isDark 
-                ? "bg-zinc-900 shadow-lg border border-zinc-800" 
-                : "bg-white shadow-lg border border-zinc-200"
-          )}>
-            <div className="p-2">
-              <div className={cn(
-                "flex items-center p-2 border-b",
-                shellMode ? "border-green-500/30" : isDark ? "border-zinc-800" : "border-zinc-200"
-              )}>
-                <Command className={cn(
-                  "h-4 w-4 mr-2",
-                  shellMode ? "text-green-400/50" : "text-base-content/50"
-                )} />
-                <input 
-                  type="text" 
-                  className={cn(
-                    "w-full bg-transparent focus:outline-none",
-                    shellMode ? "text-green-400" : "text-base-content",
-                    shellMode && "caret-green-400"
-                  )}
-                  placeholder="Search posts..."
-                  autoFocus
-                />
-                <KeyboardShortcut keys={['Esc']} className="ml-2" />
-              </div>
-              
-              <div className={cn(
-                "py-6 px-2 text-sm text-center",
-                shellMode ? "text-green-400/60" : "text-base-content/60"
-              )}>
-                Type to search blog posts and pages
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
       
       {/* Add fade-in and blink keyframes */}
       <style jsx global>{`

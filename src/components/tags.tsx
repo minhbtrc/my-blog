@@ -203,39 +203,3 @@ export default function Tags({
     </div>
   )
 }
-
-function TagItem({
-  tag,
-  readOnly = true,
-  baseUrl = '',
-}: {
-  tag: string
-  readOnly?: boolean
-  baseUrl?: string
-}) {
-  const href = `${baseUrl}?tag=${encodeURIComponent(tag)}`
-  const tagIcon = getTagIcon(tag);
-
-  return (
-    <motion.div
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="inline-flex items-center"
-    >
-      {readOnly ? (
-        <span className="tech-tag font-mono text-emerald-800 dark:text-gray-300 bg-emerald-50 dark:bg-gray-800/70 border border-emerald-200 dark:border-gray-700 px-2 py-0.5 rounded-md text-xs inline-flex items-center">
-          {tagIcon}
-          <span>{tag}</span>
-        </span>
-      ) : (
-        <Link
-          href={href}
-          className="tech-tag font-mono text-emerald-800 dark:text-gray-300 bg-emerald-50 dark:bg-gray-800/70 border border-emerald-200 dark:border-gray-700 px-2 py-0.5 rounded-md text-xs hover:bg-emerald-100 dark:hover:bg-gray-700 hover:border-emerald-300 dark:hover:border-gray-600 transition-all inline-flex items-center"
-        >
-          {tagIcon}
-          <span>{tag}</span>
-        </Link>
-      )}
-    </motion.div>
-  )
-}

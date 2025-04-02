@@ -2,7 +2,7 @@ import 'server-only'
 import { z } from 'zod'
 import tablejson from './table.json'
 import indexjson from './index.json'
-import { env } from '@/configs/env'
+import { env } from '@/config/env'
 
 //edit view
 

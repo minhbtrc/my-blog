@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { House, Search, AlignJustify, Github, Mails } from 'lucide-react';
+import { House, AlignJustify, Github, Mails } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 
@@ -8,7 +8,7 @@ const navItems = [
   { name: 'Home', href: '/', icon: <House className="w-4 h-4" /> },
   { name: 'Blog', href: '/blog', icon: <AlignJustify className="w-4 h-4" /> },
   { name: 'Contact', href: '/contact', icon: <Mails className="w-4 h-4" /> },
-  { name: 'GitHub', href: process.env.NEXT_PUBLIC_GITHUB_URL || 'https://github.com/minhbtc', icon: <Github className="w-4 h-4" />, external: true },
+  { name: 'GitHub', href: process.env.NEXT_PUBLIC_GITHUB_URL , icon: <Github className="w-4 h-4" />, external: true },
 ];
 
 const Navbar: React.FC = () => {

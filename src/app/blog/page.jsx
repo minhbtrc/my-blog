@@ -4,36 +4,13 @@ import React, {
   Suspense, 
   useState, 
   useEffect, 
-  useRef,
   useMemo 
 } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from 'next-themes';
-import { X, Filter, Clock, Calendar, Play, Terminal, Pin } from "lucide-react";
+import { X, Filter, Terminal } from "lucide-react";
 import Link from 'next/link';
 import { Input } from "@/components/ui/input";
-
-// Enhanced blog data with more examples
-const FALLBACK_BLOGS = [
-  {
-    route: "/blog/building-blog-with-ai",
-    title: "How I Built My Blog with ChatGPT & Cursor — As an AI Engineer, Not a Frontend Dev",
-    description: "My journey building a modern, developer-centric blog using AI tools like Cursor and GPT-4o, despite having limited frontend experience.",
-    date: "2025-03-29",
-    readingTime: "10 min read",
-    tags: ["ai", "development", "cursor", "gpt4", "nextjs"],
-    featured: true
-  },
-  {
-    route: "/blog/langchain-chatbot",
-    title: "Building a Privacy-First AI Chatbot with LangChain",
-    description: "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and enthusiasts in the AI space.",
-    date: "2024-12-15",
-    readingTime: "8 min read",
-    tags: ["ai", "langchain", "privacy", "development"],
-    featured: false
-  }
-];
+import { getSortedBlogs } from "@/data/blogs";
 
 // Helper to format dates nicely
 function formatDate(dateString) {
@@ -60,30 +37,9 @@ const item = {
   show: { opacity: 1, y: 0 }
 };
 
-// Add typing animation variant
-const typingContainer = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08
-    }
-  }
-};
-
-const typingCharacter = {
-  hidden: { opacity: 0, y: 5 },
-  show: { 
-    opacity: 1, 
-    y: 0,
-    transition: { type: "spring", stiffness: 300, damping: 20 }
-  }
-};
-
 const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery, setSearchQuery }) => {
   // Split the placeholder into characters for typing animation
   const placeholder = "search_posts.py";
-  const placeholderChars = placeholder.split("");
   
   return (
     <motion.div
@@ -176,49 +132,6 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
     </motion.div>
   );
 };
-
-const FeaturedPost = ({ post }) => (
-  <motion.div
-    variants={item}
-    className="mb-8 border-l-2 border-blue-400/50 pl-4 space-y-2"
-  >
-    <div className="flex items-center gap-2">
-      <Pin className="h-3.5 w-3.5 text-blue-400" />
-      <span className="text-blue-400 text-xs font-mono">Featured</span>
-    </div>
-    
-    <Link href={post.route} className="block space-y-2 group">
-      <div className="text-xs font-mono text-muted-foreground flex items-center gap-2">
-        <Calendar className="h-3 w-3" />
-        <span>{formatDate(post.date)}</span>
-        <span>•</span>
-        <Clock className="h-3 w-3" />
-        <span>{post.readingTime}</span>
-      </div>
-      
-      <h2 className="text-xl md:text-2xl font-semibold group-hover:text-blue-400 transition-colors">
-        {post.title}
-      </h2>
-      
-      <p className="text-sm text-muted-foreground">
-        {post.description}
-      </p>
-      
-      <div className="text-xs font-mono text-muted-foreground opacity-60">
-        {post.tags.map((tag, i) => (
-          <React.Fragment key={tag}>
-            <span>{tag}</span>
-            {i < post.tags.length - 1 && <span className="mx-1">•</span>}
-          </React.Fragment>
-        ))}
-      </div>
-      
-      <div className="text-sm text-blue-400 font-mono group-hover:underline underline-offset-4 inline-flex items-center">
-        → Read
-      </div>
-    </Link>
-  </motion.div>
-);
 
 const BlogPost = ({ post, index }) => (
   <motion.div
@@ -341,12 +254,27 @@ const ViewToggle = ({ viewMode, setViewMode }) => (
 
 // Main blog page component
 function BlogPageContent() {
-  const { resolvedTheme } = useTheme();
-  const [blogs] = useState(FALLBACK_BLOGS);
+  const [blogs, setBlogs] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'shell'
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Load blogs from our structured data management system
+  useEffect(() => {
+    // Get blogs from our data management system
+    const blogData = getSortedBlogs();
+    
+    // Map the data to match the expected format
+    setBlogs(blogData.map(blog => ({
+      ...blog,
+      route: `/blog/${blog.slug}`,
+      featured: blog.featured || false
+    })));
+    
+    setIsLoading(false);
+  }, []);
   
   // Get all unique tags
   const allTags = useMemo(() => {

@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Bachelor of Computer Science",
+    "institution": "Ho Chi Minh University of Technology",
+    "period": "Aug 2018 – Apr 2023",
+    "subjects": [
+      "machine learning",
+      "ai",
+      "data structures",
+      "algorithms",
+      "deep learning"
+    ],
+    "description": "Computer Science program with focus on Artificial Intelligence and Machine Learning"
+  },
+  {
+    "title": "Mathematics Gifted Program",
+    "institution": "Hung Vuong High School for the Gifted",
+    "period": "Aug 2015 – Aug 2018",
+    "subjects": [
+      "advanced math",
+      "calculus",
+      "problem solving",
+      "logic",
+      "statistics"
+    ],
+    "description": "Specialized program for mathematically gifted students"
+  }
+] 

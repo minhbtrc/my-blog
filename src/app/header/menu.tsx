@@ -31,7 +31,7 @@ export default function Menu() {
       <PopoverButton className="btn btn-sm btn-circle border-0 border-transparent">
         <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-base-300">
           <Image 
-            src="/new_profile.png" 
+            src="/profile.png" 
             alt="MinhBTC" 
             width={32} 
             height={32}

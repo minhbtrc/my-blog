@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { MapPin, Coffee, Play } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
@@ -620,54 +620,3 @@ export default function ContactPage() {
     </motion.div>
   );
 }
-
-// Component for scroll-based reveal animation
-interface ScrollRevealSectionProps {
-  title?: string;
-  children: React.ReactNode;
-  className?: string;
-  delay?: number;
-}
-
-function ScrollRevealSection({ title, children, className = "", delay = 0 }: ScrollRevealSectionProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-  
-  return (
-    <motion.section 
-      className={`space-y-6 ${className}`}
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.4, ease: "easeOut", delay }}
-    >
-      {title && (
-        <motion.h2 
-          className="text-xl font-semibold"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.3, delay: delay + 0.1 }}
-        >
-          {title}
-        </motion.h2>
-      )}
-      {children}
-    </motion.section>
-  );
-}
-
-// Note: FormField component is no longer used in the updated design
-// It remains here for reference but could be removed
-interface FormFieldProps {
-  label: string;
-  name: string;
-  type: string;
-  value: string;
-  placeholder: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onFocus: () => void;
-  onBlur: () => void;
-  icon?: React.ReactNode;
-  isFocused: boolean;
-  delay?: number;
-} 

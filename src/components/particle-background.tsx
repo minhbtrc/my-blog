@@ -91,7 +91,7 @@ export default function ParticleBackground() {
       retina_detect: true,
       background: {
         color: {
-          value: isDark ? "#0f172a" : "#ffffff"
+          value: isDark ? "#1d232a" : "#ffffff"
         }
       }
     }

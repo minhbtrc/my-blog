@@ -1,0 +1,61 @@
+[
+  {
+    "title": "AI Engineer – FPT Software AI Center",
+    "description": "Building AI solutions for enterprise clients",
+    "points": [
+      "Research and apply techniques for handling document extraction",
+      "Develop RAG chatbot"
+    ],
+    "period": "Sep 2024 – Present",
+    "isCurrent": true,
+    "technologies": ["RAG", "LLM", "Document Processing"]
+  },
+  {
+    "title": "AI Engineer – SPARTAN",
+    "description": "Led development of PDF parsing solutions with LLMs",
+    "period": "Oct 2023 – Dec 2024",
+    "points": [
+      "Implemented advanced document parsing using large language models",
+      "Created comprehensive pipeline for data mining with seamless integration",
+      "Developed Langflow application for drag-and-drop PDF parsing",
+      "Implemented and improved APIs for robust backend services"
+    ],
+    "technologies": ["LLM", "Langchain", "Python", "FastAPI", "ONNX"],
+    "isCurrent": false
+  },
+  {
+    "title": "AI Consultant – J. D. Power",
+    "description": "Developed scalable AI solutions for PDF processing and retrieval-augmented generation (RAG) workflows",
+    "period": "Oct 2023 – Dec 2024",
+    "points": [
+      "Built reusable pipelines for PDF parsing using Azure Document Intelligence, PDFPlumber, and PyMuPDF.",
+      "Applied LLMs (GPT‑3.5, GPT‑4, Llama2) to solve domain-specific tasks.",
+      "Integrated LangChain and LlamaIndex to improve RAG performance.",
+      "Managed deployments with Kubernetes, Helm, Terraform, and GCP.",
+      "Designed scalable APIs and automated workflows for document intelligence."
+    ],
+    "technologies": [
+      "LLMs",
+      "LangChain",
+      "LlamaIndex",
+      "Python",
+      "FastAPI",
+      "Kubernetes",
+      "GCP"
+    ],
+    "isCurrent": false
+  },
+  {
+    "title": "AI Engineer – TRUONG MINH THINH TECHNOLOGY JSC",
+    "description": "Developing NLP models and optimizing for production",
+    "period": "Jul 2021 – Oct 2023",
+    "points": [
+      "Developed question generation models using BARTPho and Marian",
+      "Built sentiment analysis models to classify user messages",
+      "Fine-tuned LLM models using SFT Trainer and LoRA techniques",
+      "Optimized models with ONNX and TorchScript for better performance"
+    ],
+    "technologies": ["pytorch", "huggingface", "torchscript", "onnx", "langchain"],
+    "isCurrent": false
+  }
+] 
