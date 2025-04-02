@@ -1,0 +1,24 @@
+[
+  {
+    "slug": "langchain-chatbot",
+    "title": "Building a Privacy-First AI Chatbot with LangChain",
+    "description": "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and organizations focused on privacy concerns and data protection policies.",
+    "date": "2023-07-15",
+    "readingTime": "8 min read",
+    "tags": ["ai", "langchain", "privacy", "development"],
+    "featuredImage": "/images/blog/langchain-cover.png",
+    "content": "# Building a Privacy-First AI Chatbot with LangChain\n\nIn this post, I'll walk through how I built a privacy-focused chatbot using LangChain, with proper storage controls and data anonymization...",
+    "published": true
+  },
+  {
+    "slug": "building-blog-with-ai",
+    "title": "Building a Dev-Centric Blog with ChatGPT & Cursor",
+    "description": "How I built my blog with ChatGPT and Cursor, as an AI engineer, not a frontend developer.",
+    "date": "2023-08-10",
+    "readingTime": "10 min read",
+    "tags": ["ai", "development", "cursor", "gpt4", "nextjs"],
+    "featuredImage": "/images/blog/blog-ai-cover.png",
+    "content": "# Building a Dev-Centric Blog with ChatGPT & Cursor\n\nAs an AI engineer who's never been a fan of CSS or frontend development in general, I decided to try something different for my personal blog project...",
+    "published": true
+  }
+] 

@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Terminal, Code, Sparkles, ArrowRight, Monitor, Zap, BookOpen, Lightbulb, Eye, Calendar, Clock } from 'lucide-react'
+import { Code, Sparkles, ArrowRight, Monitor, Zap, BookOpen, Lightbulb, Eye } from 'lucide-react'
 
 export const metadata = {
   title: 'Building a Dev-Centric Blog with ChatGPT & Cursor (from a CSS-Hating AI Engineer)',

@@ -1,6 +1,6 @@
 # Data Management System
 
-This directory contains data files used throughout the application, including certificates, work experiences, skills, education, and projects.
+This directory contains data files used throughout the application, including certificates, work experiences, skills, education, projects, and blogs.
 
 ## Certificates
 
@@ -195,6 +195,51 @@ Projects are displayed in the Projects section of the About page, showing:
 - Technology tags
 - Link to the project (if provided)
 
+## Blogs
+
+The blogs system allows you to manage your blog posts in a structured way directly from a JSON file.
+
+### How to Add or Update Blog Posts
+
+1. Open `src/db/blogs.json`
+2. Add a new blog entry or update existing entries
+3. Each blog entry contains:
+   - `slug`: Unique identifier used in the URL
+   - `title`: Blog post title
+   - `description`: Short description for preview and SEO
+   - `date`: Publication date (YYYY-MM-DD format)
+   - `readingTime`: Estimated reading time
+   - `tags`: Array of tags for categorization
+   - `featuredImage`: Optional path to the featured image
+   - `content`: Markdown content of the blog post
+   - `published`: Boolean indicating if the post is published
+
+### Example Blog Entry
+
+```json
+{
+  "slug": "langchain-chatbot",
+  "title": "Building a Privacy-First AI Chatbot with LangChain",
+  "description": "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and organizations focused on privacy concerns and data protection policies.",
+  "date": "2023-07-15",
+  "readingTime": "8 min read",
+  "tags": ["ai", "langchain", "privacy", "development"],
+  "featuredImage": "/images/blog/langchain-cover.png",
+  "content": "# Building a Privacy-First AI Chatbot with LangChain\n\nIn this post, I'll walk through how I built a privacy-focused chatbot using LangChain, with proper storage controls and data anonymization...",
+  "published": true
+}
+```
+
+### Blog Display
+
+Blog posts are displayed on the blog page and individual blog post pages, showing:
+- Blog title
+- Featured image (if provided)
+- Publication date
+- Estimated reading time
+- Tags for categorization
+- Blog content in Markdown format
+
 ## How It Works
 
 All data is stored in JSON files in the `src/db` directory, making it easy to update without touching the application code. The TypeScript interfaces in the `src/data` directory provide type safety and helper functions.
@@ -206,10 +251,12 @@ All data is stored in JSON files in the `src/db` directory, making it easy to up
 - `src/db/skills.json`: JSON file containing all skills and technologies data
 - `src/db/education.json`: JSON file containing all education history data
 - `src/db/projects.json`: JSON file containing all project data
+- `src/db/blogs.json`: JSON file containing all blog post data
 - `src/data/certificates.ts`: TypeScript interface and helper functions for certificates
 - `src/data/experiences.ts`: TypeScript interface and helper functions for work experiences
 - `src/data/skills.ts`: TypeScript interface and helper functions for skills
 - `src/data/education.ts`: TypeScript interface and helper functions for education
 - `src/data/projects.ts`: TypeScript interface and helper functions for projects
+- `src/data/blogs.ts`: TypeScript interface and helper functions for blogs
 
-The data is automatically imported and displayed in the About page using the existing components. 
+The data is automatically imported and displayed in the appropriate pages using the existing components. 

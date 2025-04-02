@@ -10,28 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Filter, Terminal } from "lucide-react";
 import Link from 'next/link';
 import { Input } from "@/components/ui/input";
-
-// Enhanced blog data with more examples
-const FALLBACK_BLOGS = [
-  {
-    route: "/blog/building-blog-with-ai",
-    title: "How I Built My Blog with ChatGPT & Cursor — As an AI Engineer, Not a Frontend Dev",
-    description: "My journey building a modern, developer-centric blog using AI tools like Cursor and GPT-4o, despite having limited frontend experience.",
-    date: "2025-03-29",
-    readingTime: "10 min read",
-    tags: ["ai", "development", "cursor", "gpt4", "nextjs"],
-    featured: true
-  },
-  {
-    route: "/blog/langchain-chatbot",
-    title: "Building a Privacy-First AI Chatbot with LangChain",
-    description: "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and enthusiasts in the AI space.",
-    date: "2024-12-15",
-    readingTime: "8 min read",
-    tags: ["ai", "langchain", "privacy", "development"],
-    featured: false
-  }
-];
+import { getSortedBlogs } from "@/data/blogs";
 
 // Helper to format dates nicely
 function formatDate(dateString) {
@@ -58,21 +37,9 @@ const item = {
   show: { opacity: 1, y: 0 }
 };
 
-// Add typing animation variant
-const typingContainer = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08
-    }
-  }
-};
-
 const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery, setSearchQuery }) => {
   // Split the placeholder into characters for typing animation
   const placeholder = "search_posts.py";
-  const placeholderChars = placeholder.split("");
   
   return (
     <motion.div
@@ -287,11 +254,27 @@ const ViewToggle = ({ viewMode, setViewMode }) => (
 
 // Main blog page component
 function BlogPageContent() {
-  const [blogs] = useState(FALLBACK_BLOGS);
+  const [blogs, setBlogs] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState('list'); // 'list' or 'shell'
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Load blogs from our structured data management system
+  useEffect(() => {
+    // Get blogs from our data management system
+    const blogData = getSortedBlogs();
+    
+    // Map the data to match the expected format
+    setBlogs(blogData.map(blog => ({
+      ...blog,
+      route: `/blog/${blog.slug}`,
+      featured: blog.featured || false
+    })));
+    
+    setIsLoading(false);
+  }, []);
   
   // Get all unique tags
   const allTags = useMemo(() => {

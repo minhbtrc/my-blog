@@ -131,20 +131,6 @@ export default function Template({ children }: { children: ReactNode }) {
                       <Navigation />
                     </ClientOnly>
                     
-                    {/* Controls for article pages */}
-                    {/* {isMounted && !isMainBlogPage && (
-                      <div className="w-full flex flex-row gap-2 justify-end py-3 border-t border-b border-gray-200 dark:border-blue-900/30 mt-3">
-                        <FacebookShare className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-gray-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-cyan-300 p-1.5 rounded-md transition-colors" />
-                        <TwitterShare className="bg-gray-100 hover:bg-gray-200 dark:bg-slate-800/80 dark:hover:bg-blue-900/30 text-gray-600 dark:text-slate-400 hover:text-blue-700 dark:hover:text-cyan-300 p-1.5 rounded-md transition-colors" />
-                        <span className="grow" />
-                        <button
-                          className="bg-gradient-to-r from-blue-100 to-blue-50 hover:from-blue-200 hover:to-blue-100 dark:from-blue-900/20 dark:to-cyan-900/20 dark:hover:from-blue-900/30 dark:hover:to-cyan-900/30 text-blue-600 dark:text-cyan-400 hover:text-blue-700 dark:hover:text-cyan-300 px-3 py-1.5 rounded-md flex items-center gap-1.5 text-xs border border-blue-200 dark:border-blue-900/40 font-mono transition-all"
-                        >
-                          <Play className="w-3.5 h-3.5" />
-                          listen.js
-                        </button>
-                      </div>
-                    )} */}
                   </div>
                   
                   {/* Only show tags when client-side */}
@@ -208,20 +194,6 @@ export default function Template({ children }: { children: ReactNode }) {
                   </div>
                 )}
                 
-                {/* Footer quote
-                {isMounted && !isMainBlogPage && (
-                  <div className="w-full max-w-3xl px-4 mt-10 border-t border-gray-200 dark:border-blue-900/30 pt-6 text-center mb-12">
-                    <p className="italic text-gray-500 dark:text-slate-400 mb-5 font-mono">
-                    <span className="text-blue-500 dark:text-cyan-500">&gt;</span> AI is the new frontier of human potential <span className="animate-pulse">_</span>
-                    </p>
-                    <Link 
-                      href="/contact" 
-                      className="bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 dark:from-blue-900/30 dark:to-cyan-900/30 dark:hover:from-blue-900/40 dark:hover:to-cyan-900/40 text-blue-600 dark:text-cyan-400 hover:text-blue-700 dark:hover:text-cyan-300 px-4 py-2 rounded-md inline-block border border-blue-200 hover:border-blue-300 dark:border-blue-900/40 dark:hover:border-cyan-800/50 transition-colors font-mono text-sm"
-                    >
-                      contact.connect()
-                    </Link>
-                  </div>
-                )} */}
               </div>
             </div>
           </div>
