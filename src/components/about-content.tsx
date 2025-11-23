@@ -19,7 +19,7 @@ export default function AboutContent() {
     const timer = setTimeout(() => {
       setMounted(true)
     }, 100) // Small delay for better effect
-    
+
     return () => clearTimeout(timer)
   }, [])
 
@@ -38,8 +38,8 @@ export default function AboutContent() {
   // Item variants for children animation
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
-    show: { 
-      opacity: 1, 
+    show: {
+      opacity: 1,
       y: 0,
       transition: {
         duration: 0.3,
@@ -55,7 +55,7 @@ export default function AboutContent() {
   }
 
   return (
-    <motion.div 
+    <motion.div
       className="w-full max-w-full relative"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -63,7 +63,7 @@ export default function AboutContent() {
     >
       <main className="max-w-3xl mx-auto py-16 space-y-20">
         {/* Header Section */}
-        <motion.section 
+        <motion.section
           id="profile"
           className="space-y-6"
           variants={containerVariants}
@@ -71,7 +71,7 @@ export default function AboutContent() {
           animate="show"
         >
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <motion.div 
+            <motion.div
               className="w-20 h-20 md:w-24 md:h-24 relative rounded-full overflow-hidden shadow-sm"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -91,7 +91,7 @@ export default function AboutContent() {
             </motion.div>
 
             <div className="flex-1 text-center md:text-left">
-              <motion.h1 
+              <motion.h1
                 className="text-3xl md:text-4xl font-bold tracking-tight mb-2"
                 initial={{ y: -10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -106,12 +106,12 @@ export default function AboutContent() {
               >
                 <p className="font-mono text-muted-foreground mb-4 flex items-center gap-2 justify-center md:justify-start">
                   <span className="text-muted-foreground font-mono inline-flex items-center">
-                  minhbtc@ai-eng:~$<span className="inline-block w-2 h-4 bg-primary/70 ml-1 animate-pulse"></span>
-                  </span> 
+                    minhbtc@ai-eng:~$<span className="inline-block w-2 h-4 bg-primary/70 ml-1 animate-pulse"></span>
+                  </span>
                   <span>AI/NLP Engineer</span>
                 </p>
               </motion.div>
-              <motion.p 
+              <motion.p
                 className="text-sm text-muted-foreground mb-5 max-w-xl"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -119,8 +119,8 @@ export default function AboutContent() {
               >
                 Building real-world AI systems with a focus on large language models and their applications. Passionate about creating tools that bridge the gap between cutting-edge research and practical solutions.
               </motion.p>
-              
-              <motion.div 
+
+              <motion.div
                 className="flex flex-wrap gap-4 justify-center md:justify-start"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -143,7 +143,7 @@ export default function AboutContent() {
                 <motion.a
                   href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""}
                   target="_blank"
-                  rel="noreferrer" 
+                  rel="noreferrer"
                   className="text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2 transition-colors"
                   whileHover={socialVariants.hover}
                   whileTap={socialVariants.tap}
@@ -154,7 +154,7 @@ export default function AboutContent() {
                     LinkedIn
                   </span>
                 </motion.a>
-                
+
               </motion.div>
             </div>
           </div>
@@ -177,25 +177,21 @@ export default function AboutContent() {
         <ScrollRevealSection id="experience" title="Work Experience">
           <div className="space-y-8">
             {experiences.map((exp, index) => (
-              <JobCard 
+              <JobCard
                 key={`exp-${index}`}
-                title={exp.title}
-                description={exp.description}
-                period={exp.period}
-                isCurrent={exp.isCurrent}
-                points={exp.points}
-                technologies={exp.technologies}
+                company={exp.company}
+                positions={exp.positions}
                 delay={index * 0.05}
               />
             ))}
           </div>
         </ScrollRevealSection>
-        
+
         {/* Education Section */}
         <ScrollRevealSection id="education" title="Education">
           <div className="space-y-8">
             {education.map((edu, index) => (
-              <EducationCard 
+              <EducationCard
                 key={`edu-${index}`}
                 title={edu.title}
                 institution={edu.institution}
@@ -206,12 +202,12 @@ export default function AboutContent() {
             ))}
           </div>
         </ScrollRevealSection>
-        
+
         {/* Projects Section */}
         <ScrollRevealSection id="projects" title="Projects">
           <div className="space-y-8">
             {projects.map((project, index) => (
-              <ProjectCard 
+              <ProjectCard
                 key={`project-${index}`}
                 title={project.title}
                 tags={project.tags}
@@ -222,12 +218,12 @@ export default function AboutContent() {
             ))}
           </div>
         </ScrollRevealSection>
-        
+
         {/* Skills Section */}
         <ScrollRevealSection id="skills" title="Skills & Technologies">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             {skillCategories.map((category, index) => (
-              <SkillsCard 
+              <SkillsCard
                 key={`skill-${index}`}
                 title={category.title}
                 skills={category.skills}
@@ -236,12 +232,12 @@ export default function AboutContent() {
             ))}
           </div>
         </ScrollRevealSection>
-        
+
         {/* Certificates Section */}
         <ScrollRevealSection id="certificates" title="Certifications">
           <div className="space-y-6">
             {certificates.map((cert, index) => (
-              <CertificationCard 
+              <CertificationCard
                 key={`cert-${index}`}
                 name={cert.name}
                 issuer={cert.issuer}
@@ -261,9 +257,9 @@ export default function AboutContent() {
 function ScrollRevealSection({ id, title, children }: { id: string, title: string, children: React.ReactNode }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
-  
+
   return (
-    <motion.section 
+    <motion.section
       id={id}
       className="space-y-4"
       ref={ref}
@@ -271,7 +267,7 @@ function ScrollRevealSection({ id, title, children }: { id: string, title: strin
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <motion.h2 
+      <motion.h2
         className="text-xl font-semibold mb-6"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : { opacity: 0 }}
@@ -286,60 +282,67 @@ function ScrollRevealSection({ id, title, children }: { id: string, title: strin
 
 // Component for job experience card
 function JobCard(
-  { title, description, period, isCurrent = false, points = [], technologies = [], delay = 0 }: { title: string, description: string, period: string, isCurrent: boolean, points: string[], technologies: string[], delay: number }) {
+  { company, positions, delay = 0 }: { company: string, positions: any[], delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
-  
+
   return (
-    <motion.div 
-      className="space-y-2 relative pl-4 border-l border-muted"
+    <motion.div
+      className="space-y-6"
       ref={ref}
       initial={{ opacity: 0, x: -5 }}
       animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -5 }}
       transition={{ duration: 0.3, delay: delay }}
     >
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1">
-        <div>
-          <h3 className="font-medium">{title}</h3>
-          <div className="text-sm text-muted-foreground mb-2">
-            {description}
-          </div>
+      <div className="flex items-center gap-3">
+        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <span className="font-bold text-primary text-lg">{company.charAt(0)}</span>
         </div>
-        <div className="text-xs text-muted whitespace-nowrap flex items-center">
-          {period} {isCurrent && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>}
-        </div>
+        <h3 className="text-xl font-bold">{company}</h3>
       </div>
-      
-      {points.length > 0 && (
-        <motion.ul 
-          className="list-disc list-outside ml-5 text-sm text-muted-foreground space-y-1"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.3, delay: delay + 0.1 }}
-        >
-          {points.map((point, index) => (
-            <li key={index}>{point}</li>
-          ))}
-        </motion.ul>
-      )}
-      
-      {technologies.length > 0 && (
-        <motion.div 
-          className="flex flex-wrap gap-2 pt-2"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.3, delay: delay + 0.2 }}
-        >
-          {technologies.map((tech) => (
-            <span 
-              key={tech} 
-              className="px-2 py-0.5 bg-muted/30 text-muted-foreground rounded-full text-xs"
-            >
-              {tech.toLowerCase()}
-            </span>
-          ))}
-        </motion.div>
-      )}
+
+      <div className="ml-4 pl-6 border-l-2 border-muted space-y-8 pb-2">
+        {positions.map((position, index) => (
+          <div key={index} className="relative">
+            {/* Timeline dot */}
+            <div className={`absolute -left-[31px] top-1.5 h-4 w-4 rounded-full border-2 border-background ${position.isCurrent ? 'bg-green-500' : 'bg-muted-foreground/30'}`} />
+
+            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1 mb-2">
+              <div>
+                <h4 className="font-semibold text-lg">{position.title}</h4>
+                <div className="text-sm text-muted-foreground">
+                  {position.description}
+                </div>
+              </div>
+              <div className="text-xs text-muted whitespace-nowrap flex items-center mt-1 md:mt-0 bg-muted/20 px-2 py-1 rounded">
+                {position.period}
+                {position.isCurrent && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>}
+              </div>
+            </div>
+
+            {position.points.length > 0 && (
+              <ul className="list-disc list-outside ml-4 text-sm text-muted-foreground space-y-1 mb-3">
+                {position.points.map((point: string, idx: number) => (
+                  <li key={idx}>{point}</li>
+                ))}
+              </ul>
+            )}
+
+            {position.technologies.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {position.technologies.map((tech: string) => (
+                  <span
+                    key={tech}
+                    className="px-2 py-0.5 bg-muted/30 text-muted-foreground rounded-full text-xs"
+                  >
+                    {tech.toLowerCase()}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </motion.div>
   );
 }
@@ -348,9 +351,9 @@ function JobCard(
 function EducationCard({ title, institution, period, subjects = [], delay = 0 }: { title: string, institution: string, period: string, subjects: string[], delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
-  
+
   return (
-    <motion.div 
+    <motion.div
       className="space-y-2 relative pl-4 border-l border-muted"
       ref={ref}
       initial={{ opacity: 0, x: -5 }}
@@ -368,17 +371,17 @@ function EducationCard({ title, institution, period, subjects = [], delay = 0 }:
           {period}
         </div>
       </div>
-      
+
       {subjects.length > 0 && (
-        <motion.div 
+        <motion.div
           className="flex flex-wrap gap-2 pt-2"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}
           transition={{ duration: 0.3, delay: delay + 0.1 }}
         >
           {subjects.map((subject) => (
-            <span 
-              key={subject} 
+            <span
+              key={subject}
               className="px-2 py-0.5 bg-muted/30 text-muted-foreground rounded-full text-xs"
             >
               {subject}
@@ -394,9 +397,9 @@ function EducationCard({ title, institution, period, subjects = [], delay = 0 }:
 function ProjectCard({ title, tags = [], description, url, delay = 0 }: { title: string, tags: string[], description: string, url: string, delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
-  
+
   return (
-    <motion.div 
+    <motion.div
       className="space-y-2"
       ref={ref}
       initial={{ opacity: 0, y: 10 }}
@@ -408,8 +411,8 @@ function ProjectCard({ title, tags = [], description, url, delay = 0 }: { title:
         <h3 className="font-medium">{title}</h3>
         <div className="flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <span 
-              key={tag} 
+            <span
+              key={tag}
               className="px-2 py-0.5 bg-muted/30 text-muted-foreground rounded-full text-xs"
             >
               {tag}
@@ -421,9 +424,9 @@ function ProjectCard({ title, tags = [], description, url, delay = 0 }: { title:
         {description}
       </p>
       {url && (
-        <motion.a 
+        <motion.a
           href={url}
-          target="_blank" 
+          target="_blank"
           rel="noreferrer"
           className="text-sm text-primary inline-flex items-center hover:underline underline-offset-2 transition-colors mt-1"
           whileHover={{ x: 3 }}
@@ -440,9 +443,9 @@ function ProjectCard({ title, tags = [], description, url, delay = 0 }: { title:
 function SkillsCard({ title, skills = [], delay = 0 }: { title: string, skills: string[], delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
-  
+
   return (
-    <motion.div 
+    <motion.div
       className="space-y-4"
       ref={ref}
       initial={{ opacity: 0, y: 10 }}
@@ -452,19 +455,19 @@ function SkillsCard({ title, skills = [], delay = 0 }: { title: string, skills: 
       <h3 className="text-base font-medium">
         {title}
       </h3>
-      <motion.div 
+      <motion.div
         className="flex flex-wrap gap-2"
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ 
-          duration: 0.4, 
+        transition={{
+          duration: 0.4,
           delay: delay + 0.1,
-          staggerChildren: 0.05 
+          staggerChildren: 0.05
         }}
       >
         {skills.map((skill, index) => (
-          <motion.span 
-            key={skill} 
+          <motion.span
+            key={skill}
             className="px-2.5 py-1 bg-muted/30 text-muted-foreground rounded-full text-xs"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
@@ -483,9 +486,9 @@ function SkillsCard({ title, skills = [], delay = 0 }: { title: string, skills: 
 function CertificationCard({ name, issuer, date, url, delay = 0 }: { name: string, issuer: string, date: string, url: string, delay: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
-  
+
   return (
-    <motion.div 
+    <motion.div
       ref={ref}
       className="relative pl-4 border-l border-muted"
       initial={{ opacity: 0, x: -5 }}
@@ -493,7 +496,7 @@ function CertificationCard({ name, issuer, date, url, delay = 0 }: { name: strin
       transition={{ duration: 0.3, delay: delay }}
       whileHover={{ x: 2 }}
     >
-      <a 
+      <a
         href={url || '#'}
         target="_blank"
         rel="noopener noreferrer"
