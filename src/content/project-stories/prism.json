@@ -4,7 +4,7 @@
   "title": "Building PRISM: a reflective AI product with an operational backend",
   "summary": "How streaming, concurrent generation cost control, cancellation cleanup, subscription consistency and privacy-conscious telemetry fit together in a bilingual iOS reflection app that is in internal QA.",
   "lead": "PRISM is a bilingual iOS self-reflection app with a Flutter client and an asynchronous Python backend. I worked on it, and it is in internal QA and has not launched. In this post I focus on the operational engineering: streaming generated text over server-sent events, reserving spend before a provider call, cleaning up interrupted requests, keeping subscriptions consistent, and keeping private text out of logs. I also say what I have verified and what I have not.",
-  "status": "Internal QA",
+  "status": "Coming soon",
   "stack": [
     "Flutter",
     "FastAPI",

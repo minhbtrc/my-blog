@@ -8,6 +8,7 @@ import { readingMinutes, type ProjectStory } from '@/data/project-stories'
  * so open author questions never reach production.
  */
 export function StoryArticle({ story, review = false }: { story: ProjectStory; review?: boolean }) {
+  const comingSoon = story.status === 'Coming soon'
   return (
     <Article>
       {review && <Link href="/blog/review" className="mb-8 inline-block text-sm text-base-content/70 hover:text-primary">← All project stories</Link>}
@@ -18,10 +19,16 @@ export function StoryArticle({ story, review = false }: { story: ProjectStory; r
         author="Minh Bui"
         date={story.date}
         readingTime={`${readingMinutes(story)} min read`}
+        status={comingSoon ? 'Coming soon' : undefined}
         tags={story.stack}
       />
       <PostBody>
         <Lead><p>{story.lead}</p></Lead>
+        {comingSoon && (
+          <Callout label="Coming soon">
+            <p>This app has not been released yet. This article describes how I am building it, and I will link the App Store page here when it is live.</p>
+          </Callout>
+        )}
         <Steps title="The workflow at a glance" items={story.flow} />
         {story.diagram && <Mermaid chart={story.diagram.chart} caption={story.diagram.caption} />}
         {story.sections.map((section, i) => (
