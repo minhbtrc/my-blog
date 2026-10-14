@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { profile } from '@/data/profile'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { MapPin, Coffee, Play } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
@@ -51,10 +52,13 @@ export default function ContactPage() {
     "future.of.ai@example.com"
   ]
   
-  // Get random placeholder from array
-  const getRandomPlaceholder = (array: string[]) => {
-    return array[Math.floor(Math.random() * array.length)]
-  }
+  // Placeholders start deterministic (no hydration mismatch) and pick a random one once after mount
+  const [placeholders, setPlaceholders] = useState({ name: namePlaceholders[0], email: emailPlaceholders[0], message: messagePlaceholders[0] })
+  useEffect(() => {
+    const pick = (array: string[]) => array[Math.floor(Math.random() * array.length)]
+    setPlaceholders({ name: pick(namePlaceholders), email: pick(emailPlaceholders), message: pick(messagePlaceholders) })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -92,19 +96,14 @@ export default function ContactPage() {
       }, 1000)
     }
     
-    // Simulate form submission - replace with actual API call
     try {
-      // await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(formData)
-      // })
-      
-      // Simulating network delay
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      if (!response.ok) throw new Error(`Contact request failed with status ${response.status}`)
+
       setFormStatus('success')
       setFormData({ name: '', email: '', message: '' })
       
@@ -227,79 +226,8 @@ export default function ContactPage() {
         animation: wiggle 1s ease-in-out infinite;
       }
       
-      .python-string {
-        color: #ECCC87; /* Yellow for string literals */
-      }
-      
-      .python-keyword {
-        color: #4B5563; /* Darker gray for keywords in light mode */
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-keyword {
-          color: #B77EE0; /* Purple for keywords in dark mode */
-        }
-      }
-      
-      .python-function {
-        color: #065F46; /* Emerald for function names in light mode */
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-function {
-          color: #62AEEF; /* Blue for function names in dark mode */
-        }
-      }
-      
-      .python-comment {
-        color: #047857; /* Emerald for comments in light mode */
-        font-style: italic;
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-comment {
-          color: #98C379; /* Green for comments in dark mode */
-        }
-      }
-      
-      .python-param {
-        color: #0F766E; /* Teal for parameter names in light mode */
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-param {
-          color: #E06B74; /* Red for parameter names in dark mode */
-        }
-      }
-      
-      .python-bracket {
-        color: #6B7280; /* Gray for brackets in light mode */
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-bracket {
-          color: #ABB2BF; /* Light gray for brackets in dark mode */
-        }
-      }
-      
       input:focus::placeholder, textarea:focus::placeholder {
         color: transparent;
-      }
-      
-      .terminal-glow {
-        box-shadow: 0 0 15px rgba(5, 150, 105, 0.1);
-        border: 1px solid rgba(5, 150, 105, 0.2);
-      }
-      
-      .docstring {
-        border-left: 2px solid rgba(5, 150, 105, 0.3);
-        padding-left: 1rem;
-      }
-
-      @media (prefers-color-scheme: light) {
-        .terminal-background {
-          background-color: rgba(240, 253, 250, 0.8);
-        }
       }
     `
     document.head.appendChild(style)
@@ -387,8 +315,8 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('name')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900"
-                        placeholder={getRandomPlaceholder(namePlaceholders)}
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content"
+                        placeholder={placeholders.name}
                         required
                       />
                       <span className="python-string absolute right-0 top-0 pointer-events-none">"</span>
@@ -410,8 +338,8 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('email')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900"
-                        placeholder={getRandomPlaceholder(emailPlaceholders)}
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content"
+                        placeholder={placeholders.email}
                         required
                       />
                       <span className="python-string absolute right-0 top-0 pointer-events-none">"</span>
@@ -432,8 +360,8 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('message')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900 min-h-24 h-32 resize-none"
-                        placeholder={getRandomPlaceholder(messagePlaceholders)}
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content min-h-24 h-32 resize-none"
+                        placeholder={placeholders.message}
                         required
                       ></textarea>
                       <span className="python-string absolute right-0 top-0 pointer-events-none">"</span>
@@ -455,7 +383,7 @@ export default function ContactPage() {
               <motion.div variants={item} className="flex justify-end mt-4">
                 <motion.button 
                   type="submit" 
-                  className="flex items-center gap-2 border border-emerald-200 dark:border-muted/30 bg-emerald-50 dark:bg-muted/10 hover:bg-emerald-100 dark:hover:bg-muted/20 text-emerald-800 dark:text-current px-4 py-2 rounded-md text-sm transition-all shadow-sm hover:shadow"
+                  className="flex items-center gap-2 border border-base-300 bg-base-content/5 hover:bg-base-content/10 text-base-content disabled:opacity-60 px-4 py-2 rounded-md text-sm transition-all shadow-sm hover:shadow"
                   disabled={formStatus === 'submitting'}
                   whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
@@ -483,7 +411,7 @@ export default function ContactPage() {
                       </div>
                     </div>
                   ) : (
-                    <span>exec("Not working yet")</span>
+                    <span>send_message()</span>
                   )}
                 </motion.button>
               </motion.div>
@@ -506,7 +434,7 @@ export default function ContactPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="text-red-500 dark:text-red-400 text-sm space-y-1"
+                    className="text-error-content text-sm space-y-1"
                   >
                     <div># Error: Failed to send message.</div>
                     <div># Please try again later.</div>
@@ -520,16 +448,16 @@ export default function ContactPage() {
           <motion.div className="lg:col-span-2 space-y-4">
             <motion.div 
               variants={item}
-              className="docstring space-y-6 text-gray-700 dark:text-muted-foreground p-4"
+              className="docstring space-y-6 text-base-content/80 p-4"
             >
-              <div className="text-emerald-500 dark:text-blue-400">"""</div>
+              <div className="text-base-content/50">"""</div>
               
               <motion.div 
                 variants={item} 
                 className="space-y-6"
               >
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4 flex-shrink-0 text-emerald-600 dark:text-blue-400" />
+                  <MapPin className="w-4 h-4 flex-shrink-0 text-primary" />
                   <p className="text-gray-700 dark:text-gray-300">
                     Ho Chi Minh City, Vietnam
                   </p>
@@ -545,30 +473,30 @@ export default function ContactPage() {
                 className="space-y-4 pt-2"
               >
                 <motion.a
-                  href={process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/minhbtc"}
+                  href={process.env.NEXT_PUBLIC_GITHUB_URL || profile.github}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-center gap-3"
                   whileHover={{ x: 3 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <SiGithub className="w-4 h-4 text-emerald-600 dark:text-blue-400" />
-                  <span className="group-hover:text-emerald-700 dark:group-hover:text-blue-300 transition-colors">
-                    github.com/minhbtc
+                  <SiGithub className="w-4 h-4 text-primary" />
+                  <span className="text-base-content group-hover:text-primary transition-colors">
+                    github.com/minhbtrc
                   </span>
                 </motion.a>
                 
                 <motion.a
-                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com/in/minhbtc"}
+                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || profile.linkedin}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-center gap-3"
                   whileHover={{ x: 3 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <SiLinkedin className="w-4 h-4 text-emerald-600 dark:text-blue-400" />
-                  <span className="group-hover:text-emerald-700 dark:group-hover:text-blue-300 transition-colors">
-                    linkedin.com/in/minhbtc
+                  <SiLinkedin className="w-4 h-4 text-primary" />
+                  <span className="text-base-content group-hover:text-primary transition-colors">
+                    linkedin.com/in/minhbtcm00
                   </span>
                 </motion.a>
               </motion.div>
@@ -584,10 +512,10 @@ export default function ContactPage() {
                     href={process.env.NEXT_PUBLIC_BUYMEACOFFEE_URL || "https://www.buymeacoffee.com/minhbtc"}
                     target="_blank"
                     rel="noreferrer" 
-                    className="group flex items-center gap-2.5 py-2.5 px-4 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 dark:from-amber-500/80 dark:to-amber-600/80 dark:hover:from-amber-500 dark:hover:to-amber-600 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                    className="group flex items-center gap-2.5 py-2.5 px-4 rounded-md border border-base-300 text-base-content transition-colors hover:border-base-content/40"
                   >
                     <div className="relative">
-                      <Coffee className="w-5 h-5 text-white group-hover:animate-coffee-wiggle" />
+                      <Coffee className="w-5 h-5" />
                       <motion.div
                         className="absolute -top-3 left-1/2 transform -translate-x-1/2"
                         animate={{
@@ -603,16 +531,15 @@ export default function ContactPage() {
                         <div className="w-1.5 h-1.5 rounded-full bg-white/70 blur-sm" />
                       </motion.div>
                     </div>
-                    <span className="font-medium group-hover:text-white/95">Buy me a coffee</span>
+                    <span className="font-medium">Buy me a coffee</span>
                   </Link>
-                  <div className="absolute inset-0 -z-10 rounded-full bg-amber-200/30 dark:bg-amber-700/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-pulse"></div>
                 </motion.div>
                 <span className="text-sm text-gray-600 dark:text-gray-400 ml-2 italic">
-                  ☕ Your support fuels my code!
+                  Support the blog and open-source work.
                 </span>
               </motion.div>
               
-              <div className="text-emerald-500 dark:text-blue-400">"""</div>
+              <div className="text-base-content/50">"""</div>
             </motion.div>
           </motion.div>
         </motion.div>

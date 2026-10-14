@@ -1,0 +1,301 @@
+{
+  "slug": "chatbot-template",
+  "project": "Chatbot Template",
+  "title": "Turning a chatbot backend into reusable building blocks",
+  "summary": "How I split Chatbot Template into small specialist experts and injected model, memory, embedding and vector-database components, and where the design is still incomplete.",
+  "lead": "My second chatbot needed most of my first one's infrastructure: model configuration, memory, streaming, document ingestion and API handling. I packaged that foundation as shared components plus small specialist classes I call experts, so a new behavior is an addition rather than a rewrite. In this post I explain the layering, how a request flows through it, how document ingestion works, how to run it, and which parts are still limited or unverified.",
+  "status": "Open-source project",
+  "stack": [
+    "FastAPI",
+    "LangChain",
+    "Injector (dependency injection)",
+    "RAG",
+    "MongoDB",
+    "Chroma",
+    "Docker"
+  ],
+  "flow": [
+    "Accept an API request",
+    "Hand it to the chat engine",
+    "Run the active expert",
+    "Prepare history and context",
+    "Call the brain",
+    "Save to memory and respond"
+  ],
+  "diagram": {
+    "chart": "graph TD\n    API[\"FastAPI routes\"] --> CE[\"ChatEngine\"]\n    CE --> EX[\"Active expert<br/>(QNA, RAG or DEEPRESEARCH)\"]\n    EX --> BR[\"Brain<br/>(AGENT or LLM)\"]\n    EX --> MEM[(\"Memory<br/>(in-memory or MongoDB)\")]\n    EX --> VDB[(\"Vector database<br/>(Chroma)\")]\n    VDB --- EMB[\"Embeddings\"]\n    BR --> LLM[\"LLM client<br/>(OpenAI, Azure, Gemini, Vertex, llama.cpp)\"]",
+    "caption": "Layers of the template. Experts hold workflow logic; the brain, memory, embeddings and vector database are injected components selected by configuration."
+  },
+  "sections": [
+    {
+      "title": "The problem: the same backend, rebuilt each time",
+      "paragraphs": [
+        "Every new AI prototype I started began the same way: create a project, install FastAPI and LangChain, add database code, write the streaming logic and implement conversation memory again. I wrote Chatbot Template to stop repeating that. I think of it as a reusable AI application backend organized around specialized experts, configurable model components and interchangeable conversation memory.",
+        "My goal was narrower than a framework that covers every case. I wanted the parts that do not change between chatbots in one place, and the parts that do change, the workflow and its prompts, small and easy to add. So I separated expert behavior from shared model, memory, embedding and vector-database interfaces, implemented a document retrieval expert with PDF loading, semantic chunking, document metadata and synchronous and asynchronous indexing paths, and organized containerized development around the same backend.",
+        "I describe the code as it stands. I do not claim production readiness, scale or performance, and where my README and my code disagree, I point it out."
+      ]
+    },
+    {
+      "title": "Give each expert a narrow responsibility",
+      "paragraphs": [
+        "In my design, an expert holds workflow-specific behavior. I wrote three: a Q&A expert, a retrieval-augmented (RAG) expert and a deep-research expert that uses web search. They share a base class, BaseExpert, that receives configuration, memory and a brain through dependency injection and implements the parts every workflow needs: store the user message, read the history, call the brain, store the reply and return a structured response.",
+        "I left one decision to the subclasses: how to prepare the context string passed to the brain. The Q&A expert returns a fixed system prompt. The RAG expert retrieves chunks from the vector database and formats them into its prompt. That is the template-method pattern, and it is why a new expert needs little code: it overrides context preparation and declares the components it needs in its constructor. A retrieval expert needs embeddings and a vector database, while a conversational expert does not, and keeping these dependencies explicit makes that visible in each constructor.",
+        "I wrote synchronous and asynchronous variants for processing and for streaming, so the same expert serves plain application code and async services."
+      ],
+      "code": [
+        {
+          "title": "src/experts/base.py (abridged)",
+          "language": "python",
+          "code": "class BaseExpert:\n    @inject\n    def __init__(self, config: Config, memory: MemoryInterface, brain: BrainInterface):\n        self.config = config\n        self.memory = memory\n        self.brain = brain\n\n    def process(self, query: str, conversation_id: str, user_id: str) -> ChatResponse:\n        history = self._prepare_history(query, conversation_id, user_id)\n        context = self._prepare_context(query, conversation_id, user_id)\n        response = self.brain.think(history, context)\n        self.memory.add_message(\n            role=\"assistant\", content=response[\"content\"], conversation_id=conversation_id\n        )\n        return ChatResponse(\n            response=response[\"content\"],\n            conversation_id=conversation_id or \"default\",\n            additional_kwargs=response[\"additional_kwargs\"]\n        )\n\n    @abstractmethod\n    def _prepare_context(self, sentence: str, conversation_id: str, user_id: str, **kwargs: Any) -> str:\n        \"\"\"Prepare the context for the brain.\"\"\""
+        }
+      ],
+      "table": {
+        "caption": "The three experts in src/experts.",
+        "headers": [
+          "Expert",
+          "Context it prepares",
+          "Extra dependencies"
+        ],
+        "rows": [
+          [
+            "QnaExpert",
+            "A fixed Q&A system prompt",
+            "Tool provider; tools are bound to the brain when available"
+          ],
+          [
+            "RAGBotExpert",
+            "Retrieved chunks formatted into the RAG prompt",
+            "Embeddings and a vector database"
+          ],
+          [
+            "DeepResearchExpert",
+            "Research workflow with web search (Tavily key in the README)",
+            "Search tool; loop limits in configuration"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "Follow a request through the layers",
+      "paragraphs": [
+        "A request enters through my FastAPI routes under /api/v1 and is passed to a ChatEngine. The engine holds one instance of each expert and selects the current one from the configured expert type, defaulting to QNA. It then calls the expert and returns the result, or iterates over the expert's stream and yields chunks.",
+        "I made the streaming endpoint emit Server-Sent Events as JSON objects with a type of start, chunk, end or error, so a client can tell a finished answer from a failure. The expert saves the full assistant message to memory once the stream ends."
+      ],
+      "diagrams": [
+        {
+          "chart": "sequenceDiagram\n    participant C as Client\n    participant A as FastAPI route\n    participant E as ChatEngine\n    participant X as Expert\n    participant M as Memory\n    participant B as Brain\n    C->>A: POST chat\n    A->>E: process_message\n    E->>X: aprocess\n    X->>M: Add user message, read history\n    X->>X: Prepare context\n    X->>B: athink(history, context)\n    B-->>X: content\n    X->>M: Add assistant message\n    X-->>C: ChatResponse",
+          "caption": "Non-streaming request path, from api/v1/chat.py, src/chat_engine.py and src/experts/base.py. The route currently passes an empty user id."
+        }
+      ]
+    },
+    {
+      "title": "Wire components with dependency injection",
+      "paragraphs": [
+        "I centralized construction in src/config_injector.py. A module binds the Config object, then asks a factory function for each component, which reads the relevant configuration value and returns an implementation. Each component is bound by its interface as a singleton, and experts and the chat engine are bound the same way. At startup the application creates the injector from configuration and fetches the ChatEngine from it.",
+        "What I get from this is orchestration code that depends on capabilities, not on concrete clients. A test can substitute a different implementation for the memory or brain interface, and choosing between in-memory and MongoDB history is a setting. An interface alone does not prove test coverage, though, and I have not measured coverage yet; there is a tests directory and the README documents the pytest commands."
+      ],
+      "diagrams": [
+        {
+          "chart": "graph LR\n    CFG[\"Config<br/>(environment)\"] --> FAC[\"Factory functions\"]\n    FAC --> LLMC[\"LLM client\"]\n    FAC --> MEMC[\"Memory\"]\n    FAC --> EMBC[\"Embedding\"]\n    FAC --> VDBC[\"Vector database\"]\n    LLMC --> BRC[\"Brain\"]\n    BRC --> EXC[\"Experts\"]\n    MEMC --> EXC\n    VDBC --> EXC",
+          "caption": "Construction order in config_injector.py. Each factory reads the configuration; experts receive their dependencies by interface."
+        }
+      ],
+      "code": [
+        {
+          "title": "src/config_injector.py (abridged)",
+          "language": "python",
+          "code": "class ConfigurableModule(Module):\n    def __init__(self, config: Config):\n        self.config = config\n\n    def configure(self, binder: Binder):\n        binder.bind(Config, to=self.config)\n\n        llm_client = create_llm_client(self.config)\n        binder.bind(LLMInterface, to=llm_client, scope=singleton)\n\n        memory = create_memory(self.config)\n        binder.bind(MemoryInterface, to=memory, scope=singleton)\n\n        embedding = create_embedding(self.config)\n        binder.bind(EmbeddingInterface, to=embedding, scope=singleton)\n\n        vector_database = create_vector_database(self.config, embedding)\n        binder.bind(VectorDatabaseInterface, to=vector_database, scope=singleton)\n        ...\n        binder.bind(RAGBotExpert, to=RAGBotExpert, scope=singleton)\n        binder.bind(ChatEngine, to=ChatEngine, scope=singleton)"
+        }
+      ]
+    },
+    {
+      "title": "Replace components without overstating support",
+      "paragraphs": [
+        "I try to keep three claims apart: an interface exists, a factory wires an implementation, and a deployment has been validated. The table lists what my factories select today. The memory factory handles MongoDB and in-memory history; a SQL memory variant is imported and constructed only in commented-out lines, so it is not available. The vector database factory handles Chroma and an in-memory store. The config field description also mentions FAISS, and my README lists INMEMORY where the factory checks for INMEM, so my documentation and code have drifted apart in places.",
+        "Whoever deploys a given combination of provider and storage still has to configure it and run a basic integration check. I have not verified every provider listed in my README."
+      ],
+      "table": {
+        "caption": "Configuration values and what the factories accept.",
+        "headers": [
+          "Component",
+          "Setting",
+          "Accepted by the factory"
+        ],
+        "rows": [
+          [
+            "Memory",
+            "BOT_MEMORY_TYPE",
+            "MONGODB, INMEMORY (SQL is commented out)"
+          ],
+          [
+            "Vector database",
+            "VECTOR_DATABASE_TYPE",
+            "CHROMA, INMEM"
+          ],
+          [
+            "Brain",
+            "BRAIN_TYPE",
+            "AGENT (with tools), otherwise a plain LLM brain"
+          ],
+          [
+            "Expert",
+            "EXPERT_TYPE",
+            "QNA, RAG, DEEPRESEARCH"
+          ],
+          [
+            "LLM provider",
+            "MODEL_TYPE",
+            "README lists OPENAI, AZUREOPENAI, GEMINI, VERTEX, LLAMA"
+          ],
+          [
+            "Embedding",
+            "EMBEDDING_TYPE",
+            "Config describes OPENAI and AZUREOPENAI"
+          ]
+        ]
+      }
+    },
+    {
+      "title": "Hide the model behind a brain",
+      "paragraphs": [
+        "I do not let experts call a model client directly. They call a brain, an abstraction in src/base/brains whose interface has think, athink, stream_think and astream_think methods, plus reset, use_tools and close. I wrote two variants: an LLM brain that sends the history and context to the model, and an agent brain that can use tools supplied by a tool provider. The brain factory returns the agent brain when the configured brain type is AGENT, which is also the default, and the plain LLM brain otherwise.",
+        "This extra layer has a cost, since every call passes through one more interface, but it keeps provider details out of the experts. A separate factory creates the model client from the model type setting, so switching providers changes configuration, not expert code. The deep-research expert adds its own limits to the configuration: a maximum number of research loops, a number of initial queries and a graph recursion limit, with defaults of 50, 5 and 15 in the Config class. I have not tuned or benchmarked those values."
+      ]
+    },
+    {
+      "title": "Make ingestion a pipeline with checks",
+      "paragraphs": [
+        "I wrote the document path in the RAG expert as a sequence of guarded steps. It checks that the file exists, is a file and is readable, loads the PDF pages, attaches the user id and document id to every page as metadata, splits the pages into semantic chunks, and indexes the chunks in the vector database. If no content can be extracted, or no chunks are produced, the method raises an error instead of reporting a successful index. Failures are logged and re-raised.",
+        "I treat metadata as part of the retrieval contract. At query time the expert calls the vector database with a metadata filter containing the user id, so a chunk's origin travels with it into retrieval. That is the intended shape of per-user separation, but it does not enforce isolation on its own: the chat route currently passes an empty user id because I wrote it for a single-user system, and the vector database implementation has to apply the filter. I would review access isolation separately before any multi-user use."
+      ],
+      "diagrams": [
+        {
+          "chart": "flowchart LR\n    F[\"PDF file\"] --> V{\"Exists and readable?\"}\n    V -- \"No\" --> ERR1[\"Raise error\"]\n    V -- \"Yes\" --> LD[\"Load pages<br/>(PyPDFLoader)\"]\n    LD --> MD[\"Attach user_id<br/>and document_id\"]\n    MD --> CH[\"Semantic chunking\"]\n    CH --> EM{\"Chunks created?\"}\n    EM -- \"No\" --> ERR2[\"Raise error\"]\n    EM -- \"Yes\" --> IX[\"Index in vector database\"]",
+          "caption": "Ingestion in RAGBotExpert.process_document. Empty extracted content and empty chunk lists are errors, not silent successes."
+        }
+      ],
+      "code": [
+        {
+          "title": "src/experts/rag_bot/expert.py (abridged)",
+          "language": "python",
+          "code": "def process_document(self, file_path: str, user_id: str, document_id: str) -> None:\n    if not os.path.exists(file_path):\n        raise FileNotFoundError(f\"File not found: {file_path}\")\n    if not os.path.isfile(file_path):\n        raise ValueError(f\"Path is not a file: {file_path}\")\n    if not os.access(file_path, os.R_OK):\n        raise PermissionError(f\"File is not readable: {file_path}\")\n\n    docs = PyPDFLoader(file_path).load()\n    if not docs:\n        raise ValueError(f\"No content could be extracted from file: {file_path}\")\n    for doc in docs:\n        doc.metadata.update({\"user_id\": user_id, \"document_id\": document_id})\n\n    doc_chunks = self.chunk_document(docs)\n    if not doc_chunks:\n        raise ValueError(\"No chunks were created from the document\")\n    return self.index_documents(list(doc_chunks))"
+        }
+      ]
+    },
+    {
+      "title": "Support asynchronous work deliberately",
+      "paragraphs": [
+        "The retrieval expert has synchronous and asynchronous versions of loading, chunking, indexing and retrieval, and the engine calls the asynchronous versions from the API, so I/O does not block the event loop.",
+        "An async method is only part of the design. I have not yet defined or tested what happens under concurrent ingestion of several documents, partial failure halfway through indexing, or repeated submission of the same document. For a template, predictable failure behavior matters as much as a successful first upload, so this is on my list below."
+      ]
+    },
+    {
+      "title": "Run it",
+      "paragraphs": [
+        "You need Python 3.12 or later, optionally MongoDB for persistent memory, and the uv installer. The project root is the backend itself. After creating a virtual environment and installing the requirements, set environment variables for the model provider, memory and, for RAG, the vector database and embeddings. python app.py starts the API and serves documentation at /docs. There is also a command-line interface with a mode for each of the three experts.",
+        "For exact paths, use the interactive documentation. The routes in api/v1 are /chat, /chat/stream, /clear/{conversation_id}, /experts/*, /process-document, /query and /clear-history under the /api/v1 prefix; the endpoint list in my README still uses older names such as /chat/message and /rag/upload. I included a Dockerfile and Makefile targets for building and running a container, but I have not verified a container deployment yet."
+      ],
+      "steps": [
+        {
+          "title": "Create an environment",
+          "text": "uv venv, activate it, then uv pip install -r requirements.txt"
+        },
+        {
+          "title": "Configure the provider",
+          "text": "Set MODEL_TYPE and the matching API key in the environment"
+        },
+        {
+          "title": "Choose memory and expert",
+          "text": "Set BOT_MEMORY_TYPE and EXPERT_TYPE; add MONGO_URI for MongoDB"
+        },
+        {
+          "title": "Start the API",
+          "text": "python app.py, then open http://localhost:8080/docs"
+        },
+        {
+          "title": "Or use the CLI",
+          "text": "python cli.py --mode qna, --mode rag or --mode deepresearch"
+        }
+      ],
+      "code": [
+        {
+          "title": "README: environment variables (placeholders)",
+          "language": "shell",
+          "code": "MODEL_TYPE=OPENAI  # Options: OPENAI, LLAMA, AZUREOPENAI, VERTEX, GEMINI\nOPENAI_API_KEY=your_openai_key\nBASE_MODEL_NAME=gpt-3.5-turbo\n\n# MongoDB Configuration (optional)\nMONGO_URI=mongodb://localhost:27017/chatbot\n\n# Vector Database Configuration\nVECTOR_DATABASE_TYPE=CHROMA\nVECTOR_DATABASE_CHROMA_PATH=./chroma_db\n\nPORT=8080\nLOG_LEVEL=INFO"
+        }
+      ]
+    },
+    {
+      "title": "Limits and open items",
+      "paragraphs": [
+        "My README calls the project production-ready and lists comprehensive logging, error handling middleware and a complete test suite. Reading it again, I treat that as the goal, not a verified fact. What I can point to in the code is error handling middleware, a shared logging module and a tests directory. I cannot point to measurements of reliability, load or deployment.",
+        "Several items are visibly unfinished. The expert switch in ChatEngine toggles only between the Q&A and RAG experts, so the deep-research expert can be selected at startup from configuration but not through the switch method. The SQL memory backend is commented out. The chat routes pass an empty user id. And configuration documentation and factory values differ in places, as noted above.",
+        "I did not carry an anonymization layer over from my LangChain Chatbot, where it is optional. Anyone adopting this template for user data would have to add that layer and decide where traces and stored history go. The configuration includes Langfuse settings for tracing, which I have not exercised yet."
+      ]
+    },
+    {
+      "title": "What I would do next",
+      "paragraphs": [
+        "The evidence I want next is practical: how many lines of project-specific code a new expert needs, which integration tests can be reused across experts, and where configuration mistakes still need manual debugging. My first exercise will be to add one real expert through the shared interfaces and publish the diff.",
+        "Then I will fix the gaps above: align the README and configuration with the factories, include the deep-research expert in the switch, define and test the ingestion contract for concurrency and duplicates, and either implement or remove the SQL backend. Until I have validated a specific deployment, the accurate description is a reusable backend foundation."
+      ]
+    }
+  ],
+  "date": "2025-11-22",
+  "takeaways": [
+    "Put workflow logic in small experts and infrastructure behind interfaces, so a new behavior mostly means overriding context preparation.",
+    "Centralize construction in factories and an injector so that choosing memory, vector store or provider is configuration, and tests can substitute components.",
+    "Treat ingestion as a pipeline with explicit failure cases, and carry metadata such as user and document ids into retrieval.",
+    "Separate three claims: an interface exists, a factory wires it, and a deployment has been validated. Only the first two are shown in the repository.",
+    "List the unfinished parts, such as the SQL backend, the expert switch and empty user ids, instead of leaving them implicit."
+  ],
+  "reviewNotes": [
+    "Confirm how Chatbot Template evolved from LangChain Chatbot and which changes you owned.",
+    "Add one real example of an expert introduced through the shared interfaces.",
+    "Decide whether to keep the README wording 'production-ready'; this story avoids it. The published title in blogs.json still says 'Production-Ready'.",
+    "The README endpoint list and Python version (3.12+) differ from api/v1 routes and the Dockerfile (python 3.11-slim). Confirm which is current, and whether the Docker image runs.",
+    "Confirm the BOT_MEMORY_TYPE, BRAIN_TYPE and EXPERT_TYPE variable names (taken from the Config field names; the env-loading mechanism was not read in full)."
+  ],
+  "sources": [
+    {
+      "label": "chatbot-template on GitHub",
+      "url": "https://github.com/minhbtrc/chatbot-template",
+      "note": "README, source tree and docs"
+    },
+    {
+      "label": "src/experts/base.py",
+      "url": "https://github.com/minhbtrc/chatbot-template/blob/main/src/experts/base.py",
+      "note": "shared expert base class"
+    },
+    {
+      "label": "src/experts/rag_bot/expert.py",
+      "url": "https://github.com/minhbtrc/chatbot-template/blob/main/src/experts/rag_bot/expert.py",
+      "note": "document ingestion and retrieval"
+    },
+    {
+      "label": "src/config_injector.py",
+      "url": "https://github.com/minhbtrc/chatbot-template/blob/main/src/config_injector.py",
+      "note": "dependency injection wiring"
+    },
+    {
+      "label": "FastAPI: dependencies",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/",
+      "note": "dependency handling in the API layer"
+    },
+    {
+      "label": "Injector",
+      "url": "https://github.com/python-injector/injector",
+      "note": "the dependency injection library the template uses"
+    },
+    {
+      "label": "uv",
+      "url": "https://github.com/astral-sh/uv",
+      "note": "installer named in the README"
+    },
+    {
+      "label": "LangChain documentation",
+      "url": "https://python.langchain.com/docs/",
+      "note": "framework used for models and document loading"
+    }
+  ]
+}

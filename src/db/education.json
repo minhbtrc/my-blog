@@ -1,5 +1,12 @@
 [
   {
+    "title": "Master of Computer Science",
+    "institution": "Ho Chi Minh University of Technology",
+    "period": "Aug 2025 - Present",
+    "subjects": [],
+    "resume": true
+  },
+  {
     "title": "Bachelor of Computer Science",
     "institution": "Ho Chi Minh University of Technology",
     "period": "Aug 2018 - Apr 2023",
@@ -10,6 +17,7 @@
       "algorithms",
       "deep learning"
     ],
+    "resume": true,
     "description": "Computer Science program with focus on Artificial Intelligence and Machine Learning"
   },
   {
@@ -23,6 +31,7 @@
       "logic",
       "statistics"
     ],
-    "description": "Specialized program for mathematically gifted students"
+    "description": "Specialized program for mathematically gifted students",
+    "resume": false
   }
-] 
+]

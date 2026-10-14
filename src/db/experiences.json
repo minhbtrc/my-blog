@@ -3,101 +3,112 @@
     "company": "FPT Software AI Center",
     "positions": [
       {
-        "title": "Project Leader",
-        "description": "Leading system design and team mentorship",
-        "points": [
-          "Led system and database design for enterprise AI solutions",
-          "Mentored team members and managed task planning",
-          "Clarified requirements and communicated with stakeholders"
-        ],
-        "period": "Sep 2025 - Present",
+        "title": "Senior AI Engineer",
+        "description": "Provided technical leadership for an 8-9-person team across system design, experimentation and code reviews; clarified stakeholder requirements and coordinated frontend/backend delivery.",
+        "period": "Sep 2024 - Present",
         "isCurrent": true,
-        "technologies": [
-          "System Design",
-          "Team Leadership",
-          "RAG",
-          "LLM"
-        ]
-      },
-      {
-        "title": "AI Engineer",
-        "description": "Building AI solutions for enterprise clients",
-        "points": [
-          "Research and apply techniques for handling document extraction",
-          "Develop RAG chatbot for document",
-          "Build LLM pipeline for document processing"
-        ],
-        "period": "Sep 2024 - Aug 2025",
-        "isCurrent": false,
-        "technologies": [
-          "RAG",
-          "LLM",
-          "Document Processing"
-        ]
-      }
-    ]
-  },
-  {
-    "company": "SPARTAN",
-    "positions": [
-      {
-        "title": "AI Engineer",
-        "description": "Led development of PDF parsing solutions with LLMs",
-        "period": "Oct 2023 - Dec 2024",
-        "points": [
-          "Built reusable pipelines for PDF parsing using Azure Document Intelligence, PDFPlumber, and PyMuPDF.",
-          "Created comprehensive pipeline for data mining with seamless integration",
-          "Developed Langflow application for drag-and-drop PDF mining",
-          "Managed deployments with Kubernetes, Helm, Terraform, and GCP."
+        "points": [],
+        "sections": [
+          {
+            "title": "Enterprise contract intelligence & agent architecture",
+            "points": [
+              "Designed the AI architecture for an enterprise contract-analysis platform serving approximately 1,000 users, using LangGraph to coordinate multi-step document review and tool-based analysis.",
+              "Made retrieved answers traceable to source documents through citation-backed retrieval; added response caching to reuse LLM outputs and evaluated lower-cost models against task requirements.",
+              "Preserved contract metadata and master-data history across revisions through snapshot versioning, supported by PostgreSQL/pgvector and OpenSearch data models."
+            ]
+          },
+          {
+            "title": "Enterprise integration & feature access",
+            "points": [
+              "Integrated the contract platform with an internal AI service, addressing cross-service authentication and secure connectivity requirements within enterprise infrastructure.",
+              "Designed Salesforce Canvas and SSO integration to embed the contract platform into existing business workflows, defining application embedding and API contracts across systems.",
+              "Enabled business-unit-specific feature access through a Business Line permission matrix, enforcing the same feature restrictions across backend APIs and the application UI."
+            ]
+          },
+          {
+            "title": "Knowledge graphs & software lifecycle intelligence",
+            "points": [
+              "Built traceable links between requirements, documentation, source code and defects in a knowledge graph, giving QA and engineering a connected view of information spread across Rally, wikis and code repositories.",
+              "Led a feasibility study for test generation grounded in requirement dependencies; modeled epic, feature and user-story relationships to supply context for scenarios spanning multiple requirements."
+            ]
+          },
+          {
+            "title": "Document intelligence & applied research",
+            "points": [
+              "Designed ingestion to preserve document layout and section hierarchy for contextual retrieval; evaluated vision-language classification and document parsers to inform the pipeline design."
+            ]
+          }
         ],
         "technologies": [
-          "LLM",
-          "Langchain",
+          "LangGraph",
           "FastAPI",
-          "ONNX",
-          "GCP",
-          "Kubernetes",
-          "Helm",
-          "Terraform"
-        ],
-        "isCurrent": false
+          "PostgreSQL",
+          "pgvector",
+          "OpenSearch",
+          "Salesforce"
+        ]
       }
     ]
   },
   {
-    "company": "TRUONG MINH THINH TECHNOLOGY JSC",
+    "company": "Spartan",
     "positions": [
       {
         "title": "AI Engineer",
-        "description": "Developing NLP models and optimizing for production",
-        "period": "Sep 2021 - Oct 2023",
-        "points": [
-          "Fine-tuned LLM models using SFT Trainer and LoRA techniques",
-          "Optimized models with ONNX and TorchScript for better performance",
-          "Developed question generation models using BARTPho and Marian",
-          "Built sentiment analysis models to classify user messages"
+        "description": "",
+        "period": "Oct 2023 - Dec 2024",
+        "isCurrent": false,
+        "points": [],
+        "sections": [
+          {
+            "title": "Document extraction, workflow APIs & cloud delivery",
+            "points": [
+              "Researched document-parsing approaches and led PDF parser development with Python libraries and Azure Document Intelligence, preserving layout for downstream extraction.",
+              "Applied cloud-based LLMs to automate structured data extraction and formatting, connecting PDF parsing to reusable document-processing workflows.",
+              "Designed LLM invocation scheduling and rate-limit handling to manage constrained API capacity across concurrent document-processing workloads.",
+              "Led backend development for a LangFlow-based application that lets users compose PDF processing workflows through a visual interface; built APIs for flow execution and modular parsing components.",
+              "Contributed Kubernetes deployment scripts and supported GCP rollout, working across backend integration and deployment troubleshooting."
+            ]
+          }
         ],
         "technologies": [
-          "pytorch",
-          "huggingface",
-          "torchscript",
-          "onnx",
-          "langchain"
-        ],
-        "isCurrent": false
-      },
+          "Python",
+          "Azure Document Intelligence",
+          "LangFlow",
+          "Kubernetes",
+          "GCP"
+        ]
+      }
+    ]
+  },
+  {
+    "company": "Truong Minh Thinh Technology JSC",
+    "positions": [
       {
-        "title": "AI Intern",
-        "description": "Learning and applying NLP fundamentals",
-        "period": "Jul 2021 - Sep 2021",
-        "points": [
-          
+        "title": "AI Engineer",
+        "description": "",
+        "period": "Jul 2021 - Oct 2023",
+        "isCurrent": false,
+        "points": [],
+        "sections": [
+          {
+            "title": "Vietnamese NLP, model optimization & conversational applications",
+            "points": [
+              "Designed and maintained scripted chatbot interaction flows; integrated LangChain and prompt-based responses to handle open-ended queries beyond predefined scenarios.",
+              "Developed Vietnamese question-generation models using BARTPho and Marian, including custom pointer mechanisms for out-of-vocabulary handling.",
+              "Built sentiment-classification models for user messages to support analysis and visualization of chatbot interactions.",
+              "Fine-tuned pretrained language models using Hugging Face SFT Trainer and LoRA, with task-specific hyperparameter experimentation.",
+              "Applied ONNX and TorchScript for inference optimization; used DVC to version data and experiments and keep model iterations reproducible."
+            ]
+          }
         ],
         "technologies": [
-          "pytorch",
-          "nlp"
-        ],
-        "isCurrent": false
+          "PyTorch",
+          "Hugging Face",
+          "LoRA",
+          "ONNX",
+          "DVC"
+        ]
       }
     ]
   }

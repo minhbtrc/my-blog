@@ -1,43 +1,58 @@
 [
   {
-    "slug": "langchain-chatbot",
-    "title": "Building a Privacy-First AI Chatbot with LangChain",
-    "description": "The langchain-chatbot repository is a comprehensive implementation of an AI-powered conversational tool designed for developers and organizations focused on privacy concerns and data protection policies.",
-    "date": "2023-07-15",
+    "slug": "multi-agent-executive-assistant",
+    "title": "Building an assistant that carries work across conversations",
+    "description": "How routing, persistent task state, relevance-filtered briefings and confirmation before external actions fit together in a stateful multi-agent assistant, and what still needs verifying.",
+    "date": "2026-10-14",
     "readingTime": "8 min read",
     "tags": [
-      "ai",
-      "langchain",
-      "privacy",
-      "development"
+      "langgraph",
+      "fastapi",
+      "postgresql",
+      "microsoft graph",
+      "pdf / docx"
     ],
-    "featuredImage": "/images/blog/langchain-cover.png",
-    "content": "# Building a Privacy-First AI Chatbot with LangChain\n\nIn this post, I'll walk through how I built a privacy-focused chatbot using LangChain, with proper storage controls and data anonymization...",
+    "content": "How routing, persistent task state, relevance-filtered briefings and confirmation before external actions fit together in a stateful multi-agent assistant, and what still needs verifying.",
     "published": true
   },
   {
-    "slug": "building-blog-with-ai",
-    "title": "Building a Dev-Centric Blog with ChatGPT & Cursor",
-    "description": "How I built my blog with ChatGPT and Cursor, as an AI engineer, not a frontend developer.",
-    "date": "2023-08-10",
-    "readingTime": "10 min read",
+    "slug": "prism",
+    "title": "Building PRISM: a reflective AI product with an operational backend",
+    "description": "How streaming, concurrent generation cost control, cancellation cleanup, subscription consistency and privacy-conscious telemetry fit together in a bilingual iOS reflection app that is in internal QA.",
+    "date": "2026-10-14",
+    "readingTime": "8 min read",
     "tags": [
-      "ai",
-      "development",
-      "cursor",
-      "gpt4",
-      "nextjs"
+      "flutter",
+      "fastapi",
+      "postgresql",
+      "redis",
+      "revenuecat"
     ],
-    "featuredImage": "/images/blog/blog-ai-cover.png",
-    "content": "# Building a Dev-Centric Blog with ChatGPT & Cursor\n\nAs an AI engineer who's never been a fan of CSS or frontend development in general, I decided to try something different for my personal blog project...",
+    "content": "How streaming, concurrent generation cost control, cancellation cleanup, subscription consistency and privacy-conscious telemetry fit together in a bilingual iOS reflection app that is in internal QA.",
+    "published": true
+  },
+  {
+    "slug": "covid-chatbot",
+    "title": "Building a Vietnamese dialogue system before LLMs",
+    "description": "Intent classification, rule-based information extraction, conversation state and structured replies in a historical Vietnamese Covid-19 consultation chatbot, read directly from the repository.",
+    "date": "2026-10-14",
+    "readingTime": "9 min read",
+    "tags": [
+      "python",
+      "fastapi",
+      "tf-idf",
+      "knn / svm",
+      "mongodb"
+    ],
+    "content": "Intent classification, rule-based information extraction, conversation state and structured replies in a historical Vietnamese Covid-19 consultation chatbot, read directly from the repository.",
     "published": true
   },
   {
     "slug": "chatbot-template",
-    "title": "Introducing Chatbot Template: A Production-Ready AI Framework",
-    "description": "A modular, privacy-first backend framework for building scalable AI chat applications with FastAPI, LangChain, and MongoDB.",
+    "title": "Turning a chatbot backend into reusable building blocks",
+    "description": "How Chatbot Template separates specialized experts from injected model, memory, embedding and vector-database components, and where the design is still incomplete.",
     "date": "2025-11-22",
-    "readingTime": "6 min read",
+    "readingTime": "9 min read",
     "tags": [
       "ai",
       "fastapi",
@@ -45,8 +60,38 @@
       "template",
       "opensource"
     ],
-    "featuredImage": "/images/blog/chatbot-template-cover.png",
-    "content": "",
+    "content": "How Chatbot Template separates specialized experts from injected model, memory, embedding and vector-database components, and where the design is still incomplete.",
+    "published": true
+  },
+  {
+    "slug": "building-blog-with-ai",
+    "title": "Building this site with an AI-assisted feedback loop",
+    "description": "How a backend engineer used Cursor, GPT-4o screenshots and later an AI coding assistant to build and redesign a portfolio site, and what kept it honest: one data source, shared components and explicit checks.",
+    "date": "2025-03-30",
+    "readingTime": "8 min read",
+    "tags": [
+      "ai",
+      "development",
+      "cursor",
+      "gpt4",
+      "nextjs"
+    ],
+    "content": "How a backend engineer used Cursor, GPT-4o screenshots and later an AI coding assistant to build and redesign a portfolio site, and what kept it honest: one data source, shared components and explicit checks.",
+    "published": true
+  },
+  {
+    "slug": "langchain-chatbot",
+    "title": "From a model call to a configurable chatbot",
+    "description": "How the LangChain chatbot combines MongoDB conversation memory, optional Presidio anonymization, provider configuration and LangSmith tracing, with the trade-offs and the parts that are still open.",
+    "date": "2025-03-26",
+    "readingTime": "9 min read",
+    "tags": [
+      "ai",
+      "langchain",
+      "privacy",
+      "development"
+    ],
+    "content": "How the LangChain chatbot combines MongoDB conversation memory, optional Presidio anonymization, provider configuration and LangSmith tracing, with the trade-offs and the parts that are still open.",
     "published": true
   }
 ]

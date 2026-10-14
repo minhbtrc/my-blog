@@ -1,8 +1,8 @@
 {
   "version": 2,
+  "installCommand": "yarn install --ignore-engines --production=false",
   "buildCommand": "yarn vercel-build",
   "framework": "nextjs",
-  "public": true,
   "cleanUrls": true,
   "images": {
     "sizes": [16, 32, 64, 128, 256, 384, 512, 1024],

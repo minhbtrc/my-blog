@@ -1,18 +1,12 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next'
+import { profile } from '@/data/profile'
 
 export const metadata: Metadata = {
-  title: 'Resume | Minh Bui',
-  description: 'Generate a PDF resume based on your About page content',
-};
+  title: `CV | ${profile.name}`,
+  description: `${profile.title}. Enterprise AI, agentic systems and technical leadership. `,
+  robots: { index: false, follow: false, nocache: true },
+}
 
-export default function ResumeLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="min-h-screen">
-      {children}
-    </div>
-  );
-} 
+export default function ResumeLayout({ children }: { children: React.ReactNode }) {
+  return children
+}

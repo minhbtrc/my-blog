@@ -18,6 +18,8 @@ export interface Education {
   description?: string;
   /** Array of subjects or focus areas */
   subjects: string[];
+  /** Keep the full About profile while selecting entries for the PDF. */
+  resume?: boolean;
   /** Animation delay value (used for staggered animations) */
   delay?: number;
 }

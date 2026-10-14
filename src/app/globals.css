@@ -9,19 +9,19 @@
     --base-200: #f8fafc;
     --base-300: #f1f5f9;
     --base-content: #0f172a;
-    --primary: #059669;
+    --primary: #8a1f3c;
     --primary-content: #ffffff;
     --secondary: #0f766e;
     --accent: #10b981;
   }
   
   .dark {
-    --base-100: #0f172a;
+    --base-100: #1d232a;
     --base-200: #1e293b;
     --base-300: #334155;
-    --base-content: #f8fafc;
-    --primary: #3b82f6;
-    --primary-content: #ffffff;
+    --base-content: #cbd5e1;
+    --primary: #e0708a;
+    --primary-content: #1a0f14;
     --secondary: #64748b;
     --accent: #60a5fa;
   }
@@ -40,7 +40,7 @@
   }
   
   ::selection {
-    @apply bg-emerald-200 dark:bg-primary/20 text-emerald-800 dark:text-primary;
+    @apply bg-primary/20 text-base-content;
   }
   
   /* Scrollbar styling */
@@ -49,25 +49,25 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-base-200;
+    @apply bg-base-200;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-emerald-200 dark:bg-base-300 transition-colors;
+    @apply rounded-full bg-base-content/20 transition-colors;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-emerald-300 dark:bg-neutral/60;
+    @apply bg-base-content/35;
   }
 }
 
 /* Typography */
 .font-mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
 }
 
 .font-sans {
-  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-inter, Arial), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Prose customization for content */
@@ -80,7 +80,7 @@
 }
 
 .prose a {
-  @apply text-emerald-600 dark:text-primary hover:text-emerald-700 dark:hover:text-primary/80 transition-colors;
+  @apply text-primary hover:text-primary/80 transition-colors;
 }
 
 .prose h2, .prose h3, .prose h4 {
@@ -97,7 +97,7 @@
 }
 
 .article-content a {
-  @apply text-emerald-600 dark:text-primary hover:text-emerald-700 dark:hover:text-primary/80 transition-colors;
+  @apply text-primary hover:text-primary/80 transition-colors;
 }
 
 .article-content ul {
@@ -113,7 +113,7 @@
 }
 
 .article-content blockquote {
-  @apply border-l-4 border-emerald-300 dark:border-primary/30 pl-4 italic bg-emerald-50 dark:bg-transparent py-0.5;
+  @apply border-l-2 border-primary/50 pl-4 italic py-0.5;
 }
 
 .article-content pre {
@@ -121,7 +121,7 @@
 }
 
 .article-content code {
-  @apply font-mono text-sm px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-gray-800;
+  @apply font-mono text-sm px-1.5 py-0.5 rounded bg-base-200;
 }
 
 .article-content img {
@@ -130,44 +130,44 @@
 
 /* Terminal styling */
 .terminal-background {
-  @apply bg-gray-50/90 dark:bg-gray-900/50 backdrop-blur-sm border border-emerald-100 dark:border-gray-800 shadow-sm;
+  @apply border border-base-300 bg-base-100;
 }
 
 .terminal-glow {
-  box-shadow: 0 0 20px rgba(5, 150, 105, 0.1);
+  @apply border border-base-300;
 }
 
 .docstring {
-  @apply rounded-md border border-emerald-100 dark:border-gray-800 bg-white/80 dark:bg-gray-900/30 backdrop-blur-sm shadow-sm;
+  @apply rounded-md border border-base-300 bg-base-100;
 }
 
-/* Python syntax highlighting */
+/* Python-style tokens on the contact page: neutral, one accent */
 .python-keyword {
-  @apply text-gray-600 dark:text-blue-400 font-medium;
+  @apply font-medium text-base-content/70;
 }
 
 .python-function {
-  @apply text-emerald-700 dark:text-yellow-300 font-medium;
+  @apply font-medium text-primary;
 }
 
 .python-comment {
-  @apply text-emerald-600 dark:text-green-400;
+  @apply italic text-base-content/50;
 }
 
 .python-param {
-  @apply text-teal-700 dark:text-red-400;
+  @apply text-base-content;
 }
 
 .python-string {
-  @apply text-amber-600 dark:text-green-300;
+  @apply text-base-content/80;
 }
 
 .python-bracket {
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-base-content/50;
 }
 
 .python-cursor {
-  @apply animate-blink text-emerald-700 dark:text-blue-400;
+  @apply animate-blink text-primary;
 }
 
 /* Animation for cursor */
@@ -182,7 +182,7 @@
 
 /* Form input focus effects */
 input:focus, textarea:focus {
-  @apply ring-1 ring-emerald-200 dark:ring-blue-900/30;
+  @apply ring-1 ring-primary/30;
 }
 
 /* Dark/light mode transition */
@@ -194,4 +194,224 @@ input:focus, textarea:focus {
 html, body, * {
   transition-property: background-color, border-color, color, fill, stroke !important;
   transition-duration: 50ms !important;
+}
+
+/* Keyboard and motion accessibility; reuse the existing theme palette. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Article system (see docs/blog-style-guide.md)                       */
+/* One accent (primary), neutral surfaces, sans headings, mono meta.   */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .post {
+    @apply mx-auto w-full max-w-3xl px-5 py-10 sm:px-6 sm:py-14;
+  }
+
+  .post-header {
+    @apply mb-10 border-b border-base-300 pb-8;
+  }
+  .post-kicker {
+    @apply font-mono text-xs uppercase tracking-widest text-base-content/60;
+  }
+  .post-title {
+    @apply mt-4 text-3xl font-semibold leading-tight tracking-tight text-base-content sm:text-4xl sm:leading-tight;
+    font-family: var(--font-inter, system-ui), system-ui, sans-serif;
+  }
+  .post-subtitle {
+    @apply mt-4 text-lg leading-8 text-base-content/75;
+  }
+  .post-meta {
+    @apply mt-5 whitespace-pre-wrap font-mono text-xs text-base-content/60;
+  }
+  .post-tags {
+    @apply mt-2 whitespace-pre-wrap font-mono text-xs text-base-content/50;
+  }
+  .post-lead {
+    @apply mb-10 border-l-2 border-primary pl-5 text-base leading-8 text-base-content/80;
+  }
+
+  .post-prose {
+    @apply text-base leading-8 text-base-content/85 sm:text-[1.0625rem];
+  }
+  .post-prose > * + * {
+    @apply mt-5;
+  }
+  .post-prose h2 {
+    @apply mt-14 scroll-mt-24 text-2xl font-semibold leading-9 tracking-tight text-base-content;
+    font-family: var(--font-inter, system-ui), system-ui, sans-serif;
+  }
+  .post-prose h3 {
+    @apply mt-9 scroll-mt-24 text-lg font-semibold leading-8 text-base-content;
+    font-family: var(--font-inter, system-ui), system-ui, sans-serif;
+  }
+  .post-prose a {
+    @apply text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:decoration-primary;
+  }
+  .post-prose strong {
+    @apply font-semibold text-base-content;
+  }
+  .post-prose ul {
+    @apply list-disc space-y-2 pl-6 marker:text-base-content/40;
+  }
+  .post-prose ol {
+    @apply list-decimal space-y-2 pl-6 marker:text-base-content/50;
+  }
+  .post-prose :not(pre) > code {
+    @apply rounded border border-base-300 bg-base-200 px-1.5 py-0.5 font-mono text-[0.85em] text-base-content;
+  }
+  .post-prose hr {
+    @apply my-12 border-base-300;
+  }
+  .post-prose table {
+    @apply w-full border-collapse text-sm;
+  }
+  .post-prose th {
+    @apply border-b border-base-300 px-3 py-2 text-left font-semibold text-base-content;
+  }
+  .post-prose td {
+    @apply border-b border-base-300/70 px-3 py-2 align-top;
+  }
+
+  .post-callout {
+    @apply rounded-md border border-base-300 border-l-2 border-l-base-content/40 bg-base-200/60 px-5 py-4 text-[0.95rem] leading-7 text-base-content/80;
+  }
+  .post-callout > div > * + * {
+    @apply mt-3;
+  }
+  .post-callout-label {
+    @apply mb-1 font-mono text-xs uppercase tracking-widest text-base-content/60;
+  }
+
+  .post-code {
+    @apply overflow-hidden rounded-md border border-base-300 bg-base-200/60;
+  }
+  .post-code figcaption {
+    @apply flex items-center justify-between border-b border-base-300 px-4 py-2 font-mono text-xs text-base-content/60;
+  }
+  .post-code pre {
+    @apply m-0 overflow-x-auto p-4 font-mono text-[0.8125rem] leading-6 text-base-content;
+  }
+  .post-code pre:focus-visible {
+    outline-offset: -2px;
+  }
+
+  .post-figure {
+    @apply my-10;
+  }
+  .post-figure img {
+    @apply h-auto w-full rounded-md border border-base-300;
+  }
+  .post-figure figcaption {
+    @apply mt-3 text-sm leading-6 text-base-content/60;
+  }
+  .post-figure-pair {
+    @apply my-10 grid items-start gap-6 sm:grid-cols-2;
+  }
+  .post-figure-pair .post-figure {
+    @apply my-0;
+  }
+
+  .post-steps {
+    @apply rounded-md border border-base-300 p-5;
+  }
+  .post-steps figcaption {
+    @apply mb-4 font-mono text-xs uppercase tracking-widest text-base-content/60;
+  }
+  .post-steps ol {
+    @apply m-0 grid list-none gap-3 p-0 sm:grid-cols-2;
+  }
+  .post-steps li {
+    @apply m-0 flex gap-3 text-sm leading-6;
+  }
+  .post-steps li > span {
+    @apply font-mono text-base-content/50;
+  }
+  .post-steps li p {
+    @apply mt-1 text-base-content/70;
+  }
+
+  .post-definitions {
+    @apply divide-y divide-base-300 border-y border-base-300;
+  }
+  .post-definitions > div {
+    @apply grid gap-1 py-4 sm:grid-cols-[11rem_minmax(0,1fr)] sm:gap-6;
+  }
+  .post-definitions dt {
+    @apply text-sm font-semibold text-base-content;
+  }
+  .post-definitions dd {
+    @apply text-[0.95rem] leading-7 text-base-content/80;
+  }
+
+  .post-table {
+    @apply my-8;
+  }
+  .post-table > div {
+    @apply overflow-x-auto rounded border border-base-300;
+  }
+  .post-table table {
+    @apply w-full border-collapse text-left text-sm leading-6;
+  }
+  .post-table thead {
+    @apply border-b border-base-300 bg-base-content/5;
+  }
+  .post-table th {
+    @apply px-4 py-2.5 align-top font-semibold text-base-content;
+  }
+  .post-table tbody tr {
+    @apply border-b border-base-300 last:border-b-0;
+  }
+  .post-table td {
+    @apply px-4 py-2.5 align-top text-base-content/80;
+  }
+  .post-table figcaption {
+    @apply mt-2 text-center text-sm text-base-content/60;
+  }
+
+  .post-quote {
+    @apply border-l-2 border-base-content/30 pl-5 text-lg leading-8 text-base-content/80;
+  }
+  .post-quote footer {
+    @apply mt-2 text-sm text-base-content/60;
+  }
+
+  .post-references {
+    @apply mt-14 border-t border-base-300 pt-6;
+  }
+  .post-references h2 {
+    @apply text-base font-semibold text-base-content;
+  }
+  .post-references ul {
+    @apply mt-3 list-none space-y-2 p-0 text-sm leading-6 text-base-content/70;
+  }
+  .post-references a {
+    @apply text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary;
+  }
+
+  .post-footer {
+    @apply mt-12 border-t border-base-300 pt-6 text-sm;
+  }
+  .post-footer a {
+    @apply text-base-content/70 hover:text-primary;
+  }
+}
+
+@layer components {
+  .post-prose .post-section > * + * { @apply mt-5; }
+  .post-prose .post-section + .post-section { @apply mt-14; }
 }

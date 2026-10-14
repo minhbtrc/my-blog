@@ -48,12 +48,12 @@ const config: Config = {
         light: {
           'color-scheme': 'light',
           // Main colors
-          primary: '#059669',           // Emerald accent
+          primary: '#8a1f3c',           // Burgundy accent (9:1 on white)
           'primary-content': '#ffffff', // White text on primary color
-          secondary: '#0f766e',         // Teal for secondary elements
+          secondary: '#64748b',         // Neutral slate
           'secondary-content': '#ffffff', // White text on secondary
           // Accent color - using a muted variant of primary
-          accent: '#10b981',            // Lighter emerald for accent
+          accent: '#8a1f3c',            // Same burgundy: one accent
           'accent-content': '#ffffff',  // White text on accent
           neutral: '#64748b',           // Slate gray for neutral elements
           'neutral-content': '#ffffff', // White text on neutral
@@ -75,13 +75,13 @@ const config: Config = {
         dark: {
           'color-scheme': 'dark',
           // Main colors
-          primary: '#3b82f6',           // Blue accent (more vibrant in dark)
-          'primary-content': '#ffffff', // White text
+          primary: '#e0708a',           // Light burgundy/rose: 5.2:1 on base-100
+          'primary-content': '#1a0f14', // Dark text on primary: 6.1:1
           secondary: '#64748b',         // Slate gray (same as light)
           'secondary-content': '#ffffff', // White text
           // Accent color
-          accent: '#60a5fa',            // Lighter blue for accent in dark mode
-          'accent-content': '#0f172a',  // Very dark text on light accent
+          accent: '#e0708a',            // Same accent as primary
+          'accent-content': '#1a0f14',
           neutral: '#475569',           // Darker slate for neutral elements
           'neutral-content': '#f8fafc', // Very light text
           // Informative colors
@@ -97,7 +97,7 @@ const config: Config = {
           'base-100': '#1d232a',        // Dark slate for primary background
           'base-200': '#1e293b',        // Slightly lighter for secondary
           'base-300': '#334155',        // Medium slate for tertiary
-          'base-content': '#94a3b8',    // Medium slate for better dark mode contrast
+          'base-content': '#cbd5e1',    // Light slate: 10:1 on base-100 (was #94a3b8, ~5.6:1)
         },
       },
     ],

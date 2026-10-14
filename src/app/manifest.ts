@@ -1,10 +1,11 @@
 import { MetadataRoute } from 'next'
+import { profile } from '@/data/profile'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Minh BTC - AI Engineer Portfolio',
     short_name: 'Minh BTC',
-    description: 'AI Engineer & Natural Language Processing Specialist',
+    description: profile.intro,
     start_url: '/',
     display: 'standalone',
     background_color: '#ffffff',

@@ -1,10 +1,8 @@
-node_modules
+
+# local / private artifacts
+output/
+tmp/
+.venv-resume/
+tsconfig.tsbuildinfo
 .next
-build
-.next-tmp
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.DS_Store
+node_modules

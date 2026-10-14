@@ -1,3 +1,7 @@
+# Profile and resume source
+
+The current profile and PDF share the JSON in `src/db/`. See [profile and CV maintenance](../../docs/profile-and-resume.md) for the current schema, generation commands and validation. Positions can include grouped `sections`; projects include detailed `points` and an optional `status`.
+
 # Data Management System
 
 This directory contains data files used throughout the application, including certificates, work experiences, skills, education, projects, and blogs.
