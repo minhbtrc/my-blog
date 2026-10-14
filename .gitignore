@@ -4,3 +4,5 @@ output/
 tmp/
 .venv-resume/
 tsconfig.tsbuildinfo
+.next
+node_modules

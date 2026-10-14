@@ -98,7 +98,7 @@
   ],
   "reviewNotes": [
     "Chronology confirmed from the repo: v1.0 used Gradio, later versions added Next.js and FastAPI (CHANGELOG.md).",
-    "Select a synthetic conversation for the screenshots rather than using personal messages, and replace the phone number 0345678999 (a real mobile prefix) with an obviously fake one.",
+    "Select a synthetic conversation for the screenshots rather than using personal messages, and replace the phone number (already covered in the published screenshots) with an obviously fake one.",
     "Confirm any benchmark dataset and results before adding accuracy or latency claims.",
     "The assistant's system prompt in the screenshots credits 'Cong Minh and Tran Hieu'. Confirm co-developer credit and which parts you built."
   ],
