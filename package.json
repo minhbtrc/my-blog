@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "24.x"
+    "node": "20.x || 22.x || 24.x"
   },
   "scripts": {
     "dev": "concurrently --names DEV,LNT,MGR -c cyan,yellow,magenta 'yarn dev:watch' 'yarn lint:watch' 'yarn migrate:watch'",
@@ -41,7 +41,6 @@
     "lunr": "^2.3.9",
     "mermaid": "^11.12.1",
     "next": "14.2.4",
-    "next-mdx-remote": "^5.0.0",
     "next-nprogress-bar": "^2.3.12",
     "next-themes": "^0.3.0",
     "nodemailer": "^6.10.0",

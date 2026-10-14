@@ -5867,18 +5867,6 @@ neo-async@^2.6.2:
   resolved "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-next-mdx-remote@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.npmjs.org/next-mdx-remote/-/next-mdx-remote-5.0.0.tgz"
-  integrity sha512-RNNbqRpK9/dcIFZs/esQhuLA8jANqlH694yqoDBK8hkVdJUndzzGmnPHa2nyi90N4Z9VmzuSWNRpr5ItT3M7xQ==
-  dependencies:
-    "@babel/code-frame" "^7.23.5"
-    "@mdx-js/mdx" "^3.0.1"
-    "@mdx-js/react" "^3.0.1"
-    unist-util-remove "^3.1.0"
-    vfile "^6.0.1"
-    vfile-matter "^5.0.0"
-
 next-nprogress-bar@^2.3.12:
   version "2.4.7"
   resolved "https://registry.npmjs.org/next-nprogress-bar/-/next-nprogress-bar-2.4.7.tgz"
