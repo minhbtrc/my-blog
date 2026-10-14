@@ -85,7 +85,7 @@ export default function NotFound() {
             <Cpu size={48} className="text-primary" />
           </motion.div>
           
-          <h1 className="text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">404</h1>
+          <h1 className="text-5xl font-semibold mb-2 text-primary">404</h1>
           <h2 className="text-2xl font-semibold mb-4">Page Not Found</h2>
           
           <div className="bg-base-300/30 rounded-lg p-4 mb-6 font-mono text-sm text-left h-[120px] overflow-hidden">
@@ -93,7 +93,7 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-blue-500"
+              className="text-primary"
             >
               &#62; AI assistant rebooting...
             </motion.div>
@@ -103,7 +103,7 @@ export default function NotFound() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.7 }}
-                className={i % 2 === 0 ? "text-red-400" : "text-green-400"}
+                className="text-base-content/70"
               >
                 &#62; {message}
               </motion.div>
@@ -173,7 +173,7 @@ export default function NotFound() {
         {[...Array(20)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-2 h-2 rounded-full bg-blue-500/30"
+            className="absolute w-2 h-2 rounded-full bg-primary/30"
             initial={{ 
               x: Math.random() * 600 - 300, 
               y: Math.random() * 600 - 300, 

@@ -52,10 +52,13 @@ export default function ContactPage() {
     "future.of.ai@example.com"
   ]
   
-  // Get random placeholder from array
-  const getRandomPlaceholder = (array: string[]) => {
-    return array[Math.floor(Math.random() * array.length)]
-  }
+  // Placeholders start deterministic (no hydration mismatch) and pick a random one once after mount
+  const [placeholders, setPlaceholders] = useState({ name: namePlaceholders[0], email: emailPlaceholders[0], message: messagePlaceholders[0] })
+  useEffect(() => {
+    const pick = (array: string[]) => array[Math.floor(Math.random() * array.length)]
+    setPlaceholders({ name: pick(namePlaceholders), email: pick(emailPlaceholders), message: pick(messagePlaceholders) })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -313,7 +316,7 @@ export default function ContactPage() {
                         onFocus={() => handleFocus('name')}
                         onBlur={handleBlur}
                         className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content"
-                        placeholder={getRandomPlaceholder(namePlaceholders)}
+                        placeholder={placeholders.name}
                         required
                       />
                       <span className="python-string absolute right-0 top-0 pointer-events-none">"</span>
@@ -336,7 +339,7 @@ export default function ContactPage() {
                         onFocus={() => handleFocus('email')}
                         onBlur={handleBlur}
                         className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content"
-                        placeholder={getRandomPlaceholder(emailPlaceholders)}
+                        placeholder={placeholders.email}
                         required
                       />
                       <span className="python-string absolute right-0 top-0 pointer-events-none">"</span>
@@ -358,7 +361,7 @@ export default function ContactPage() {
                         onFocus={() => handleFocus('message')}
                         onBlur={handleBlur}
                         className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content min-h-24 h-32 resize-none"
-                        placeholder={getRandomPlaceholder(messagePlaceholders)}
+                        placeholder={placeholders.message}
                         required
                       ></textarea>
                       <span className="python-string absolute right-0 top-0 pointer-events-none">"</span>
@@ -431,7 +434,7 @@ export default function ContactPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="text-error text-sm space-y-1"
+                    className="text-error-content text-sm space-y-1"
                   >
                     <div># Error: Failed to send message.</div>
                     <div># Please try again later.</div>

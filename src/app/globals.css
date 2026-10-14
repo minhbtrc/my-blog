@@ -9,7 +9,7 @@
     --base-200: #f8fafc;
     --base-300: #f1f5f9;
     --base-content: #0f172a;
-    --primary: #059669;
+    --primary: #8a1f3c;
     --primary-content: #ffffff;
     --secondary: #0f766e;
     --accent: #10b981;
@@ -20,8 +20,8 @@
     --base-200: #1e293b;
     --base-300: #334155;
     --base-content: #cbd5e1;
-    --primary: #3b82f6;
-    --primary-content: #ffffff;
+    --primary: #e0708a;
+    --primary-content: #1a0f14;
     --secondary: #64748b;
     --accent: #60a5fa;
   }
@@ -40,7 +40,7 @@
   }
   
   ::selection {
-    @apply bg-emerald-200 dark:bg-primary/20 text-emerald-800 dark:text-primary;
+    @apply bg-primary/20 text-base-content;
   }
   
   /* Scrollbar styling */
@@ -49,15 +49,15 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-base-200;
+    @apply bg-base-200;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-emerald-200 dark:bg-base-300 transition-colors;
+    @apply rounded-full bg-base-content/20 transition-colors;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-emerald-300 dark:bg-neutral/60;
+    @apply bg-base-content/35;
   }
 }
 
@@ -80,7 +80,7 @@
 }
 
 .prose a {
-  @apply text-emerald-600 dark:text-primary hover:text-emerald-700 dark:hover:text-primary/80 transition-colors;
+  @apply text-primary hover:text-primary/80 transition-colors;
 }
 
 .prose h2, .prose h3, .prose h4 {
@@ -97,7 +97,7 @@
 }
 
 .article-content a {
-  @apply text-emerald-600 dark:text-primary hover:text-emerald-700 dark:hover:text-primary/80 transition-colors;
+  @apply text-primary hover:text-primary/80 transition-colors;
 }
 
 .article-content ul {
@@ -113,7 +113,7 @@
 }
 
 .article-content blockquote {
-  @apply border-l-4 border-emerald-300 dark:border-primary/30 pl-4 italic bg-emerald-50 dark:bg-transparent py-0.5;
+  @apply border-l-2 border-primary/50 pl-4 italic py-0.5;
 }
 
 .article-content pre {
@@ -121,7 +121,7 @@
 }
 
 .article-content code {
-  @apply font-mono text-sm px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-gray-800;
+  @apply font-mono text-sm px-1.5 py-0.5 rounded bg-base-200;
 }
 
 .article-content img {
@@ -130,7 +130,7 @@
 
 /* Terminal styling */
 .terminal-background {
-  @apply bg-gray-50/90 dark:bg-gray-900/50 backdrop-blur-sm border border-emerald-100 dark:border-gray-800 shadow-sm;
+  @apply border border-base-300 bg-base-100;
 }
 
 .terminal-glow {
