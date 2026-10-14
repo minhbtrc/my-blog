@@ -87,6 +87,13 @@
           "caption": "The Gradio interface of my early version (v1.0), with a Vietnamese conversation. The current repository uses a Next.js frontend instead.",
           "width": 1505,
           "height": 912
+        },
+        {
+          "src": "/images/langchain-chatbot/frontend-ui.png",
+          "alt": "Dark chat page titled Personality Chatbot with a single message input that reads What is your name?",
+          "caption": "The current Next.js frontend, captured by running the repository's frontend on its own. The backend was not running, so the page shows only the empty chat input.",
+          "width": 1280,
+          "height": 200
         }
       ]
     },
