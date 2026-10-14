@@ -29,27 +29,27 @@ function PlayButton() {
   useEffect(() => {
     setMounted(true)
 
-    // Check for previous user interaction
-    const hasUserInteracted = localStorage.getItem('music-interaction')
-    if (hasUserInteracted === 'true') {
-      setHasInteracted(true)
-    }
-
-    // Listen for first interaction
+    // Browsers only allow audio after a real gesture (click, tap or key press; scrolling does not count).
+    // Start on the first one, unless the visitor paused the music earlier.
+    const events = ['pointerdown', 'keydown', 'touchend'] as const
     const handleFirstInteraction = () => {
+      events.forEach(e => window.removeEventListener(e, handleFirstInteraction))
       setHasInteracted(true)
-      localStorage.setItem('music-interaction', 'true')
+      if (localStorage.getItem('music-paused') !== 'true') setPlaying(true)
     }
-
-    window.addEventListener('click', handleFirstInteraction, { once: true })
+    events.forEach(e => window.addEventListener(e, handleFirstInteraction))
 
     return () => {
-      window.removeEventListener('click', handleFirstInteraction)
+      events.forEach(e => window.removeEventListener(e, handleFirstInteraction))
     }
   }, [])
 
   const togglePlay = () => {
-    setPlaying(prev => !prev)
+    setHasInteracted(true)
+    setPlaying(prev => {
+      localStorage.setItem('music-paused', prev ? 'true' : 'false')
+      return !prev
+    })
   }
 
   if (!mounted || !hasUrl) {
@@ -89,7 +89,7 @@ function PlayButton() {
 
         {/* Tooltip on hover */}
         <span className="hidden group-hover:block absolute top-full mt-1 left-1/2 -translate-x-1/2 text-xs font-mono bg-base-300 text-base-content px-2 py-1 rounded whitespace-nowrap z-50">
-          {playing ? "Pause" : "Listen"} {!hasInteracted && "(Click to enable)"}
+          {playing ? "Pause" : "Listen"}
         </span>
       </button>
     </>
