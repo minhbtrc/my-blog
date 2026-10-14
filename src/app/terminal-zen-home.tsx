@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Download } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { profile } from '@/data/profile'
 
 export default function TerminalZenHome() {
@@ -26,7 +26,6 @@ export default function TerminalZenHome() {
           <p className="mt-5 font-mono text-xs leading-6 text-base-content/70">Agentic AI · Technical leadership · Enterprise delivery</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
             <Link href="/about" className="btn btn-primary gap-2 font-medium">Experience & projects <ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
-            <Link href="/resume" className="btn btn-outline gap-2 font-medium"><Download className="h-4 w-4" aria-hidden="true" />View CV</Link>
           </div>
           <Link href="/blog" className="mt-6 inline-flex items-center gap-2 text-sm text-primary hover:underline">Read the blog <ArrowRight className="h-4 w-4" aria-hidden="true" /></Link>
         </div>

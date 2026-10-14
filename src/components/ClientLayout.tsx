@@ -4,7 +4,7 @@ import { AppProgressBar as NextProgressBar } from 'next-nprogress-bar'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Github, Command, Terminal, Disc3, FileText, Moon, Sun } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Github, Command, Terminal, Disc3, Moon, Sun } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { cn } from '../lib/utils'
@@ -173,8 +173,7 @@ export default function ClientLayout({
     { path: '/', label: 'Home', icon: <Home className="w-4 h-4" /> },
     { path: '/blog', label: 'Blog', icon: <Code className="w-4 h-4" /> },
     { path: '/about', label: 'About', icon: <User className="w-4 h-4" /> },
-    { path: '/contact', label: 'Contact', icon: <Mail className="w-4 h-4" /> },
-    { path: '/resume', label: 'CV', icon: <FileText className="w-4 h-4" /> }
+    { path: '/contact', label: 'Contact', icon: <Mail className="w-4 h-4" /> }
   ]
 
   return (

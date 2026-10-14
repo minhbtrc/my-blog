@@ -7,7 +7,6 @@ import { projects } from '@/data/projects'
 import { education } from '@/data/education'
 import { skillCategories } from '@/data/skills'
 import { certificates } from '@/data/certificates'
-import ResumeGenerator from './ResumeGenerator'
 
 const sections = ['Experience', 'Projects', 'Expertise', 'Education', 'Learning']
 
@@ -39,7 +38,6 @@ export default function AboutContent() {
           <Image src="/profile.png" alt={profile.name} width={96} height={96} className="h-20 w-20 shrink-0 rounded-full object-cover sm:h-24 sm:w-24" priority />
         </div>
         <p className="mt-7 text-base leading-8 text-base-content/80">{profile.summary}</p>
-        <div className="mt-7"><ResumeGenerator /></div>
         <div className="mt-5 flex flex-wrap gap-5 text-sm text-base-content/70">
           <a href={profile.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-primary"><Github className="h-4 w-4" aria-hidden="true" />GitHub<span className="sr-only"> (opens in a new tab)</span></a>
           <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-primary"><Linkedin className="h-4 w-4" aria-hidden="true" />LinkedIn<span className="sr-only"> (opens in a new tab)</span></a>

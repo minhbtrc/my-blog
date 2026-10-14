@@ -36,7 +36,6 @@ export default function Footer() {
             >
               About
             </Link>
-            <Link href="/resume" className="text-base-content/60 hover:text-base-content">CV</Link>
             <a
               href={profile.github}
               target="_blank"
