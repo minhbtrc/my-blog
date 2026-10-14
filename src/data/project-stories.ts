@@ -23,7 +23,21 @@ export interface ProjectStory {
     paragraphs: string[]
     points?: string[]
     figures?: { src: string; alt: string; caption: string; width?: number; height?: number }[]
+    /** Extra Mermaid diagrams for this section, rendered after the paragraphs. */
+    diagrams?: { chart: string; caption: string }[]
+    /** Terms and explanations rendered as a definition list. */
+    definitions?: { term: string; text: string }[]
+    /** Numbered stages for a short linear process. */
+    steps?: { title: string; text?: string }[]
+    table?: { caption?: string; headers: string[]; rows: string[][] }
+    code?: { title?: string; language?: string; code: string }[]
+    /** Neutral aside. label is a short word such as Note or Trade-off. */
+    callout?: { label: string; text: string }
   }[]
+  /** ISO publication date. */
+  date: string
+  /** Short bullet list shown at the end of the article. */
+  takeaways?: string[]
   /** Author-only questions. Shown on the local review page, never in published copy. */
   reviewNotes: string[]
   sources: { label: string; url: string; note?: string }[]

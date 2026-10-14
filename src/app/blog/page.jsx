@@ -11,7 +11,6 @@ import { X, Filter, Terminal } from "lucide-react";
 import Link from 'next/link';
 import { Input } from "@/components/ui/input";
 import { getSortedBlogs } from "@/data/blogs";
-import { projectStorySummaries } from "@/data/project-story-list";
 
 // Helper to format dates nicely
 function formatDate(dateString) {
@@ -316,24 +315,9 @@ function BlogPageContent() {
       </motion.div>
       
       {process.env.NODE_ENV === 'development' && (
-        <section className="mb-10 border-b border-base-300 pb-2" aria-labelledby="drafts-heading">
-          <div className="flex items-baseline justify-between gap-4">
-            <h2 id="drafts-heading" className="font-mono text-xs uppercase tracking-widest text-base-content/60">Project stories · drafts ({projectStorySummaries.length})</h2>
-            <Link href="/blog/review" className="text-xs text-primary hover:underline">Review all →</Link>
-          </div>
-          <p className="mt-2 text-xs text-base-content/60">Visible only in local development until each story is approved for publication.</p>
-          <ul className="mt-4">
-            {projectStorySummaries.map(story => (
-              <li key={story.slug} className="border-t border-base-300 py-5 first:border-t-0">
-                <Link href={`/blog/review/${story.slug}`} className="group block space-y-2">
-                  <p className="font-mono text-xs text-base-content/60">Draft  ·  {story.stack.slice(0, 4).join('  ·  ')}</p>
-                  <h3 className="text-lg font-semibold leading-7 text-base-content transition-colors group-hover:text-primary">{story.title}</h3>
-                  <p className="text-sm leading-6 text-base-content/70">{story.summary}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <p className="mb-6 text-center text-xs text-base-content/60">
+          Local only: <Link href="/blog/review" className="text-primary hover:underline">author review notes for each project story</Link>
+        </p>
       )}
 
       {/* Search and filter */}

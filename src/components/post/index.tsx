@@ -151,6 +151,25 @@ export function Definitions({ items }: { items: { term: string; text: ReactNode 
   )
 }
 
+/** Compact comparison table. Use for trade-offs, before/after and option summaries. */
+export function Table({ caption, headers, rows }: { caption?: string; headers: string[]; rows: ReactNode[][] }) {
+  return (
+    <figure className="post-table">
+      <div>
+        <table>
+          <thead>
+            <tr>{headers.map(header => <th key={header} scope="col">{header}</th>)}</tr>
+          </thead>
+          <tbody>
+            {rows.map((row, i) => <tr key={i}>{row.map((cell, j) => (j === 0 ? <th key={j} scope="row">{cell}</th> : <td key={j}>{cell}</td>))}</tr>)}
+          </tbody>
+        </table>
+      </div>
+      {caption && <figcaption>{caption}</figcaption>}
+    </figure>
+  )
+}
+
 export function Pullquote({ children, source }: { children: ReactNode; source?: string }) {
   return (
     <blockquote className="post-quote">

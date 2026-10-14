@@ -358,6 +358,31 @@ html, body, * {
     @apply text-[0.95rem] leading-7 text-base-content/80;
   }
 
+  .post-table {
+    @apply my-8;
+  }
+  .post-table > div {
+    @apply overflow-x-auto rounded border border-base-300;
+  }
+  .post-table table {
+    @apply w-full border-collapse text-left text-sm leading-6;
+  }
+  .post-table thead {
+    @apply border-b border-base-300 bg-base-content/5;
+  }
+  .post-table th {
+    @apply px-4 py-2.5 align-top font-semibold text-base-content;
+  }
+  .post-table tbody tr {
+    @apply border-b border-base-300 last:border-b-0;
+  }
+  .post-table td {
+    @apply px-4 py-2.5 align-top text-base-content/80;
+  }
+  .post-table figcaption {
+    @apply mt-2 text-center text-sm text-base-content/60;
+  }
+
   .post-quote {
     @apply border-l-2 border-base-content/30 pl-5 text-lg leading-8 text-base-content/80;
   }
