@@ -3,7 +3,7 @@
   "project": "LangChain Chatbot",
   "title": "From a model call to a configurable chatbot",
   "summary": "How the LangChain chatbot combines MongoDB conversation memory, optional Presidio anonymization, provider configuration and LangSmith tracing, with the trade-offs and the parts that are still open.",
-  "lead": "A model API can return an answer in a few lines of code. A reusable chatbot needs more decisions: how to keep a conversation, how to configure behavior, which provider to call, what to store, and how to debug a bad answer. This write-up walks through the langchain-chatbot repository, which turns those decisions into an application with MongoDB memory, optional Presidio anonymization, provider configuration and LangSmith tracing. It covers the design choices, the request path, how to run it, and what is limited or unfinished.",
+  "lead": "A model API can return an answer in a few lines of code. A reusable chatbot needs more decisions: how to keep a conversation, how to configure behavior, which provider to call, what to store, and how to debug a bad answer. In this post I walk through my langchain-chatbot repository, where I turned those decisions into an application with MongoDB memory, optional Presidio anonymization, provider configuration and LangSmith tracing. I cover the design choices, the request path, how to run it, and what is still limited or unfinished.",
   "status": "Open-source project",
   "stack": [
     "LangChain",
@@ -32,16 +32,16 @@
       "title": "The problem: more than a model call",
       "paragraphs": [
         "Calling a hosted model is the easy part of a chatbot. The work starts when the second message arrives. The bot has to remember the first one, so history must be stored somewhere and loaded for the right conversation. Its tone and instructions should be adjustable without editing code. The provider should be a configuration choice, not a rewrite. And when an answer is wrong, there has to be a way to see which prompt and which intermediate values produced it.",
-        "The langchain-chatbot project is my attempt to put those concerns into one running application. According to the README, the base model is Vertex AI or the OpenAI API, memory is MongoDB, the interface is a Next.js frontend with a FastAPI backend, and prompt versioning and tracing go through LangSmith. Users can shape the bot's personality by setting attributes such as gender and age. One concern is added on top: personal data in user messages can be anonymized before the text reaches the model provider, and mapped back afterwards.",
-        "I built the streaming chatbot with MongoDB-backed memory and configurable behavior, added LangSmith prompt versioning and tracing, and integrated Microsoft Presidio for anonymization. This post describes the code as it exists in the repository, including parts that are optional or incomplete. It makes no claims about throughput, answer quality or cost, because none were measured."
+        "My langchain-chatbot project is my attempt to put those concerns into one running application. According to my README, the base model is Vertex AI or the OpenAI API, memory is MongoDB, the interface is a Next.js frontend with a FastAPI backend, and prompt versioning and tracing go through LangSmith. Users can shape the bot's personality by setting attributes such as gender and age. I added one more concern on top: personal data in user messages can be anonymized before the text reaches the model provider, and mapped back afterwards.",
+        "I built the streaming chatbot with MongoDB-backed memory and configurable behavior, added LangSmith prompt versioning and tracing, and integrated Microsoft Presidio for anonymization. I describe the code as it exists in the repository, including parts that are optional or incomplete. I make no claims about throughput, answer quality or cost, because I did not measure them."
       ]
     },
     {
       "title": "Separate the interface from orchestration",
       "paragraphs": [
-        "The project started as a chat session in a Gradio interface. The changelog records that history: v1.0 chatted through a Gradio UI and saved conversation memory in MongoDB, and v1.0.1 added streaming responses, collection of user information, and an agent with basic tools. The repository now describes a Next.js frontend and a FastAPI backend, which is the shape this article follows.",
-        "The reason for the split is practical. In a UI callback, transport, prompt assembly, model invocation and output handling blur together, and an empty answer could come from any of them. With a backend that owns configuration and orchestration, each layer can be checked on its own. Model integration, memory and anonymization are separate components that the backend wires together, so changing a provider or a prompt does not touch the interface code.",
-        "The README names the backend components. They are summarized below; the Bot Manager is the class in bot.py that the rest of this article focuses on."
+        "I started with a chat session in a Gradio interface. My changelog records that history: v1.0 chatted through a Gradio UI and saved conversation memory in MongoDB, and v1.0.1 added streaming responses, collection of user information, and an agent with basic tools. The repository now describes a Next.js frontend and a FastAPI backend, which is the shape this post follows.",
+        "I split them for practical reasons. In a UI callback, transport, prompt assembly, model invocation and output handling blur together, and an empty answer could come from any of them. With a backend that owns configuration and orchestration, I can check each layer on its own. Model integration, memory and anonymization are separate components that the backend wires together, so changing a provider or a prompt does not touch the interface code.",
+        "My README names the backend components. I summarize them below; the Bot Manager is the class in bot.py that the rest of this post focuses on."
       ],
       "table": {
         "caption": "Backend components as described in the repository README.",
@@ -84,7 +84,7 @@
         {
           "src": "/images/langchain-chatbot/ui-screenshot.png",
           "alt": "Gradio chat interface titled LLM Assistant showing a short Vietnamese conversation",
-          "caption": "The Gradio interface of the early version (v1.0), with a Vietnamese conversation. The current repository uses a Next.js frontend instead.",
+          "caption": "The Gradio interface of my early version (v1.0), with a Vietnamese conversation. The current repository uses a Next.js frontend instead.",
           "width": 1505,
           "height": 912
         }
@@ -93,8 +93,8 @@
     {
       "title": "Follow one request end to end",
       "paragraphs": [
-        "The README documents the data flow in four stages. The user sends a message through the frontend, which forwards it to the backend. The backend optionally anonymizes personal data, builds the LangChain conversation chain and calls the selected provider, while LangSmith traces the run. The conversation is stored in MongoDB. If protection is enabled, the model response is de-anonymized before the backend returns it and the frontend renders it.",
-        "The order matters: history is loaded first, because anonymization has to cover the history as well as the new message. Otherwise a name that was replaced in one turn could reappear in plain text in the next prompt."
+        "My README documents the data flow in four stages. The user sends a message through the frontend, which forwards it to the backend. The backend optionally anonymizes personal data, builds the LangChain conversation chain and calls the selected provider, while LangSmith traces the run. The conversation is stored in MongoDB. If protection is enabled, the model response is de-anonymized before the backend returns it and the frontend renders it.",
+        "The order matters: I load history first, because anonymization has to cover the history as well as the new message. Otherwise a name replaced in one turn could reappear in plain text in the next prompt."
       ],
       "diagrams": [
         {
@@ -131,9 +131,9 @@
     {
       "title": "Scope memory to the conversation",
       "paragraphs": [
-        "Memory is the most consequential piece of state in the project, so it is worth being specific about how it is keyed. The repository has more than one memory implementation. One wraps LangChain's MongoDB chat message history and is configured with a connection string, database, collection and session identifier. A custom adapter uses pymongo directly: it stores one document per message turn with a conversation id, a session id and the serialized turn, indexes the session id, and loads or deletes history by filtering on both identifiers.",
-        "The point of the filter is that history should load for the intended conversation, not for whichever request last touched a shared variable. The base memory class also keeps an in-process dictionary of histories keyed by conversation id, and a window of the last five messages is the default context size. Storing history is therefore separate from choosing what goes into a prompt, and the window is a configuration value rather than a property of the database.",
-        "Persistent history brings obligations that code alone does not settle. Retention, deletion and access isolation are policy decisions. The v1.0 changelog is candid about the early state: it lists multi-user handling and saving history with a user id as pending. I would treat both as things to verify for any deployment rather than assume."
+        "Memory is the most consequential piece of state in the project, so I want to be specific about how it is keyed. The repository has more than one memory implementation. One wraps LangChain's MongoDB chat message history and is configured with a connection string, database, collection and session identifier. A custom adapter uses pymongo directly: it stores one document per message turn with a conversation id, a session id and the serialized turn, indexes the session id, and loads or deletes history by filtering on both identifiers.",
+        "The point of the filter is that history loads for the intended conversation, not for whichever request last touched a shared variable. The base memory class also keeps an in-process dictionary of histories keyed by conversation id, and a window of the last five messages is the default context size. So storing history is separate from choosing what goes into a prompt, and the window is a configuration value rather than a property of the database.",
+        "Persistent history brings obligations that code alone does not settle. Retention, deletion and access isolation are policy decisions. My v1.0 changelog is candid about the early state: it lists multi-user handling and saving history with a user id as pending. I would verify both for any deployment rather than assume them."
       ],
       "code": [
         {
@@ -146,9 +146,9 @@
     {
       "title": "Put PII handling at the provider boundary",
       "paragraphs": [
-        "Chat messages often contain names, phone numbers and identifiers. If the model provider is a third party, the cleanest place to intervene is the boundary just before the call. The project wraps LangChain's PresidioReversibleAnonymizer as an optional layer. It detects the language of the input (Vietnamese or English, defaulting to English when detection fails or the language is unsupported), then anonymizes the user input, the conversation history and the agent scratchpad. After the model responds, the reversible anonymizer maps the substituted values back, so the user sees a natural answer while the provider never receives the original value.",
-        "Making the layer reversible is the main design choice. Plain redaction would remove information the conversation needs: if the user says a phone number and later refers to it, a placeholder token has to stay consistent across turns. Realistic substitutes keep the prompt readable to the model, at the cost of holding a mapping in the backend that has to be handled with care.",
-        "The boundary is configuration and data flow, not a guarantee. An anonymizer does not detect every sensitive span, and it helps only where it is switched on. The README and .env.example list it as optional, and the example file sets ENABLE_ANONYMIZER to false. Raw history in MongoDB, trace contents and model input can each follow a different path, so each needs inspection. The recognizers added in constants.py are a list of US-oriented entity types (bank number, driver license, ITIN, passport, SSN); coverage of Vietnamese-specific identifiers is not something the repository demonstrates."
+        "Chat messages often contain names, phone numbers and identifiers. If the model provider is a third party, the cleanest place to intervene is the boundary just before the call. I wrapped LangChain's PresidioReversibleAnonymizer as an optional layer. It detects the language of the input (Vietnamese or English, defaulting to English when detection fails or the language is unsupported), then anonymizes the user input, the conversation history and the agent scratchpad. After the model responds, the reversible anonymizer maps the substituted values back, so the user sees a natural answer while the provider never receives the original value.",
+        "Making the layer reversible was my main design choice. Plain redaction would remove information the conversation needs: if the user says a phone number and later refers to it, a placeholder token has to stay consistent across turns. Realistic substitutes keep the prompt readable to the model, at the cost of holding a mapping in the backend that I have to handle with care.",
+        "The boundary is configuration and data flow, not a guarantee. An anonymizer does not detect every sensitive span, and it helps only where it is switched on. My README and .env.example list it as optional, and the example file sets ENABLE_ANONYMIZER to false. Raw history in MongoDB, trace contents and model input can each follow a different path, so each needs inspection. The recognizers I added in constants.py are a list of US-oriented entity types (bank number, driver license, ITIN, passport, SSN); the repository does not demonstrate coverage of Vietnamese-specific identifiers."
       ],
       "diagrams": [
         {
@@ -167,8 +167,8 @@
     {
       "title": "What the traces show",
       "paragraphs": [
-        "The LangSmith traces below come from a Vietnamese conversation in which the user gives a phone number. The first screenshot shows the anonymize step: the real number goes in and a different number comes out. The second shows the model call, where both the user message and the reply contain only the substitute. The third shows the de-anonymize step restoring the original number in the reply.",
-        "Seeing the substitution in a trace is more convincing than reading the code, but it is a single example. It shows that the path works for one phone number in one conversation. It is not an evaluation of detection recall, and the screenshots were redacted before publishing."
+        "The LangSmith traces below come from a Vietnamese conversation I ran in which the user gives a phone number. The first screenshot shows the anonymize step: the real number goes in and a different number comes out. The second shows the model call, where both the user message and the reply contain only the substitute. The third shows the de-anonymize step restoring the original number in the reply.",
+        "Seeing the substitution in a trace convinced me more than reading the code, but it is a single example. It shows that the path works for one phone number in one conversation. It is not an evaluation of detection recall, and I redacted the screenshots before publishing."
       ],
       "figures": [
         {
@@ -201,9 +201,9 @@
     {
       "title": "Use configuration and tracing to iterate",
       "paragraphs": [
-        "Bot behavior is configurable at several levels. The constructor of the Bot class accepts a prompt template, a memory type, a cache type, a model type, model keyword arguments, a personality string and a list of tools. The default prompt templates are referenced by LangSmith hub names in constants.py, which is where prompt versioning enters the picture: the prompt is identified by name rather than embedded in the Python source. The model types in the repository are OpenAI, Vertex AI and llama.cpp, selected through an enum that maps to LangChain model classes.",
-        "LangSmith tracing is enabled through environment variables, and the Bot waits for tracers to finish after each call so that a run is pushed before the process moves on. Run names such as LoadHistory, AnonymizeSentence and DeAnonymizeResponse are set explicitly in the chain, which is why the traces above are easy to read. Naming the steps is a small change that pays for itself the first time a bad answer has to be traced back to a stage.",
-        "The default sampling parameters in bot.py use a temperature of 0.2. I have not compared settings against each other, so I do not claim they are better than alternatives; they are starting values."
+        "I made bot behavior configurable at several levels. The constructor of the Bot class accepts a prompt template, a memory type, a cache type, a model type, model keyword arguments, a personality string and a list of tools. The default prompt templates are referenced by LangSmith hub names in constants.py, which is where prompt versioning enters the picture: the prompt is identified by name rather than embedded in the Python source. The model types are OpenAI, Vertex AI and llama.cpp, selected through an enum that maps to LangChain model classes.",
+        "I enable LangSmith tracing through environment variables, and the Bot waits for tracers to finish after each call so that a run is pushed before the process moves on. I set run names such as LoadHistory, AnonymizeSentence and DeAnonymizeResponse explicitly in the chain, which is why the traces above are easy to read. Naming the steps is a small change that pays for itself the first time a bad answer has to be traced back to a stage.",
+        "The default sampling parameters in bot.py use a temperature of 0.2. I have not compared settings against each other, so I do not claim they beat alternatives; they are starting values."
       ],
       "table": {
         "caption": "Configuration surfaces visible in the repository.",
@@ -249,8 +249,8 @@
     {
       "title": "Run it with Docker Compose",
       "paragraphs": [
-        "The repository ships a Compose file for the frontend, backend and database, plus a setup.sh script (setup.bat on Windows) and Makefile targets. The README requires Python 3.9 or later and Docker with Docker Compose. Compose starts the services in dependency order: the backend waits for a healthy MongoDB and the frontend waits for a healthy backend. The backend health check calls its /health route, which the repository defines.",
-        "The manual path follows the README. After the services are up, the frontend is on port 3000, the backend on 8080 and the API documentation on /docs. The Compose file publishes MongoDB on host port 27018, mapped to 27017 inside the container; the README diagram shows 27017, so use the Compose file as the reference."
+        "The repository ships a Compose file for the frontend, backend and database, plus a setup.sh script (setup.bat on Windows) and Makefile targets. My README asks for Python 3.9 or later and Docker with Docker Compose. Compose starts the services in dependency order: the backend waits for a healthy MongoDB and the frontend waits for a healthy backend. The backend health check calls its /health route.",
+        "The manual path follows my README. After the services are up, the frontend is on port 3000, the backend on 8080 and the API documentation on /docs. The Compose file publishes MongoDB on host port 27018, mapped to 27017 inside the container; my README diagram shows 27017, so treat the Compose file as the reference."
       ],
       "steps": [
         {
@@ -300,9 +300,9 @@
     {
       "title": "Limits and trade-offs",
       "paragraphs": [
-        "A configurable foundation is not a finished product. The table lists the design choices with the cost each one carries, followed by gaps that I can point to in the repository.",
-        "The repository holds code from different stages. The backend contains a Config class and a separate pydantic Settings module, and the Dockerfiles and entry-point paths are not uniform across the tree. For this write-up I read the Bot orchestration, memory and anonymizer code and the Compose file; I did not review the route that connects the frontend to the Bot, and I did not run the full stack for this article. Anything that depends on those paths should be checked against a clean run before it is relied on.",
-        "There is also no evaluation. The project has no benchmark for latency, response quality, anonymization recall or cost, so none are reported here."
+        "A configurable foundation is not a finished product. The table lists my design choices with the cost each one carries, followed by gaps I can point to in the repository.",
+        "The repository holds code from different stages. The backend contains a Config class and a separate pydantic Settings module, and the Dockerfiles and entry-point paths are not uniform across the tree. For this post I re-read the Bot orchestration, memory and anonymizer code and the Compose file; I did not review the route that connects the frontend to the Bot, and I did not run the full stack while writing. Anything that depends on those paths should be checked against a clean run before it is relied on.",
+        "There is also no evaluation. I have no benchmark for latency, response quality, anonymization recall or cost, so I report none."
       ],
       "table": {
         "caption": "Design choices and what they cost.",
@@ -348,7 +348,7 @@
     {
       "title": "What I would do next",
       "paragraphs": [
-        "The next step is evidence rather than features. I would build a small set of fixed, synthetic conversations and run them while varying the prompt version, the context window and the anonymizer setting. For privacy, the measurement would be how many seeded identifiers survive into the model input, the stored history and the trace, split by language. For behavior, it would be whether answers stay consistent across the window boundary.",
+        "My next step is evidence rather than features. I would build a small set of fixed, synthetic conversations and run them while varying the prompt version, the context window and the anonymizer setting. For privacy, I would measure how many seeded identifiers survive into the model input, the stored history and the trace, split by language. For behavior, I would check whether answers stay consistent across the window boundary.",
         "On the engineering side, I would unify the two configuration paths, make the anonymizer flag's wiring explicit and tested, verify per-user isolation of history end to end, and add recognizers for identifiers common in Vietnamese text. Each of these is a plan, not something the repository already does."
       ]
     }

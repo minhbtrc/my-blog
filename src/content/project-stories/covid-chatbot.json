@@ -2,8 +2,8 @@
   "slug": "covid-chatbot",
   "project": "Covid Chatbot",
   "title": "Building a Vietnamese dialogue system before LLMs",
-  "summary": "Intent classification, rule-based information extraction, conversation state and structured replies in a historical Vietnamese Covid-19 consultation chatbot, read directly from the repository.",
-  "lead": "This was an earlier Vietnamese NLP project in a narrow domain: a consultation chatbot for COVID-19 patients. The engineering problem was to understand what a user asked, remember what they said in earlier turns and return a reply through a chat interface. This write-up is a technical retrospective based on the public repository. It is not medical guidance, and no clinical validation, accuracy figure or deployment scale is claimed.",
+  "summary": "How we built a Vietnamese Covid-19 consultation chatbot before LLMs: intent classification, rule-based information extraction, conversation state and structured replies.",
+  "lead": "Before LLMs, I worked on a team project to build a Vietnamese consultation chatbot for COVID-19 patients. The engineering problem was to understand what a user asked, remember what they said in earlier turns and reply through a chat interface. In this post I look back at how we built it and what I would change. It is not medical guidance, and I claim no clinical validation, accuracy figure or deployment scale.",
   "status": "Published",
   "stack": [
     "Python",
@@ -29,23 +29,35 @@
     {
       "title": "Context and scope",
       "paragraphs": [
-        "The project is the repository minhbtrc/covid-consultant-chatbot. Its commits run from September 2021 to March 2023 across five branches (main, minh, minhbtc, refactor and thang) and come from several author names. My portfolio entry describes this as a project I led, but the repository does not show who did which part, so I describe what the code does and not who wrote each piece.",
-        "The bot answers in Vietnamese and covers four scenarios: a short question flow that starts when a user mentions symptoms, answers to general questions about the disease, contact information for local health stations, and current case numbers. Everything else falls back to a default question.",
-        "I read the code on the main branch and, where main is incomplete, the other branches. Where a claim could not be checked against code or data, I say so below."
+        "We worked on it from September 2021 to March 2023, across five branches (main, minh, minhbtc, refactor and thang) of minhbtrc/covid-consultant-chatbot. Several people committed to it, so when I write we below, I mean the team; I do not break down who wrote which part.",
+        "We scoped the bot to Vietnamese and four scenarios: a short question flow that starts when a user mentions symptoms, answers to general questions about the disease, contact information for local health stations, and current case numbers. Everything else falls back to a default question.",
+        "The main branch is incomplete without its model and data files, so in places I refer to the other branches. Where I have no record to back a claim, I say so."
       ],
       "definitions": [
-        { "term": "Intent", "text": "The kind of message: a greeting, a request, information given by the user, or an acknowledgement. Requests carry a sub-intent such as a question about symptoms or contacts." },
-        { "term": "Entity", "text": "A piece of information found in the text: age, sex, district, symptoms." },
-        { "term": "Slots", "text": "The stored state of the conversation. The code keeps personal information, symptoms, history, a diagnosis record and the current answer choices in one dictionary." },
-        { "term": "Response code", "text": "The dialogue manager returns a code naming the next action, such as asking for a district, instead of returning text. The generation stage turns codes into sentences." }
+        {
+          "term": "Intent",
+          "text": "The kind of message: a greeting, a request, information given by the user, or an acknowledgement. Requests carry a sub-intent such as a question about symptoms or contacts."
+        },
+        {
+          "term": "Entity",
+          "text": "A piece of information found in the text: age, sex, district, symptoms."
+        },
+        {
+          "term": "Slots",
+          "text": "The stored state of the conversation. We kept personal information, symptoms, history, a diagnosis record and the current answer choices in one dictionary."
+        },
+        {
+          "term": "Response code",
+          "text": "The dialogue manager returns a code naming the next action, such as asking for a district, instead of returning text. The generation stage turns codes into sentences."
+        }
       ]
     },
     {
       "title": "Split understanding, dialogue and generation",
       "paragraphs": [
-        "The backend separates natural language understanding, dialogue management and response generation. A message enters through a FastAPI endpoint, /api/send-message, which expects a sender identifier, a message identifier and the text. The bot loads earlier context, extracts intent and entities, passes the results to the dialogue logic and then builds a reply.",
-        "The split makes failures easier to classify. A wrong answer may come from a wrong intent, missing extracted information, a dialogue transition or the response text, and explicit intermediate results let each be inspected on its own. In the code the dialogue manager returns a dictionary keyed by an action code, and the generation module reads that code, not raw text.",
-        "The frontend is a separate Node service built on Botkit. It queues messages per user and schedules the call to the backend about one second after the latest message, cancelling a pending send when another message arrives. It splits the reply on an asterisk into separate chat bubbles and turns the returned options into quick-reply buttons. A docker-compose file starts the two services, the backend on port 8000 and the frontend on port 3000."
+        "We split the backend into natural language understanding, dialogue management and response generation. A message enters through a FastAPI endpoint, /api/send-message, which expects a sender identifier, a message identifier and the text. The bot loads earlier context, extracts intent and entities, passes the results to the dialogue logic and then builds a reply.",
+        "We wanted failures to be easy to classify. A wrong answer may come from a wrong intent, missing extracted information, a dialogue transition or the response text, and explicit intermediate results let us inspect each one on its own. Our dialogue manager returns a dictionary keyed by an action code, and the generation module reads that code, not raw text.",
+        "We built the frontend as a separate Node service on Botkit. It queues messages per user and schedules the call to the backend about one second after the latest message, cancelling a pending send when another message arrives. It splits the reply on an asterisk into separate chat bubbles and turns the returned options into quick-reply buttons. A docker-compose file starts the two services, the backend on port 8000 and the frontend on port 3000."
       ],
       "diagrams": [
         {
@@ -57,16 +69,16 @@
     {
       "title": "Clean Vietnamese text before classification",
       "paragraphs": [
-        "Chat messages in Vietnamese arrive with missing diacritics, Telex typing mistakes, abbreviations and slang. Before any model sees a message, a correction step lowercases it, normalises Unicode, replaces abbreviations and slang from dictionary files, repairs Telex mistakes, and rewrites shorthand such as Q1 into a district name. Punctuation is padded with spaces so the tokens are consistent.",
-        "The dictionaries live as JSON and text files in backend/data/spell_corection. Treating them as data instead of code means a new abbreviation can be added without touching the logic. I did not measure how much the correction step improved classification, so the benefit is a design intention and not a result."
+        "Vietnamese chat messages arrive with missing diacritics, Telex typing mistakes, abbreviations and slang, so we added a correction step before any model sees a message. It lowercases the text, normalises Unicode, replaces abbreviations and slang from dictionary files, repairs Telex mistakes, and rewrites shorthand such as Q1 into a district name. Punctuation is padded with spaces so the tokens are consistent.",
+        "We kept the dictionaries as JSON and text files in backend/data/spell_corection. Because they are data rather than code, adding a new abbreviation does not touch the logic. I have no measurement of how much the correction step improved classification, so I can only call the benefit an intention, not a result."
       ]
     },
     {
       "title": "Use intent models with visible training boundaries",
       "paragraphs": [
-        "Intent classification uses pickled pairs of a TF-IDF vectorizer and a classifier. Two pairs are loaded at start-up: one for the general intent and one for the sub-intent of a request. The retraining code in backend/api/api_retrain_model.py trains an SVC with a randomized hyperparameter search over C and kernel, ten-fold cross-validation and a ten percent held-out split, and trains a nearest-neighbour model with cosine distance.",
-        "The training data for the SVM is read from a MongoDB collection of labelled messages, which also means new examples can be added through an API and the models rebuilt. In the main branch version of the retraining function the SVM call is commented out and only the nearest-neighbour model is rebuilt.",
-        "The code prints a training score and a test score, but I found no stored evaluation results, no label counts and no confusion matrix. A training score would not describe conversation quality in any case. A model can classify familiar phrasing well and still fail on short follow-ups, misspellings or requests that overlap several intents. No accuracy figure is claimed here."
+        "For intent classification we used pickled pairs of a TF-IDF vectorizer and a classifier. Two pairs load at start-up: one for the general intent and one for the sub-intent of a request. The retraining code in backend/api/api_retrain_model.py trains an SVC with a randomized hyperparameter search over C and kernel, ten-fold cross-validation and a ten percent held-out split, and trains a nearest-neighbour model with cosine distance.",
+        "We read the SVM training data from a MongoDB collection of labelled messages, so new examples could be added through an API and the models rebuilt. In the main branch version of the retraining function the SVM call is commented out and only the nearest-neighbour model is rebuilt.",
+        "Our code printed a training score and a test score, but I found no stored evaluation results, label counts or a confusion matrix. That is the gap I would close first. A training score would not describe conversation quality anyway: a model can classify familiar phrasing well and still fail on short follow-ups, misspellings or requests that overlap several intents. So I claim no accuracy figure here."
       ],
       "diagrams": [
         {
@@ -83,53 +95,96 @@
       ]
     },
     {
-      "title": "Entity extraction is rule-based in the repository",
+      "title": "Extract entities with rules",
       "paragraphs": [
-        "In the code I could find, entities are extracted with regular expressions and keyword dictionaries, not with a trained sequence model. Age is a one- or two-digit number in a message that is not also naming a district. Sex comes from two word patterns. Symptoms come from two dictionaries of patterns, one for ordinary symptoms and one for serious ones, and the district comes from a pattern over district names.",
-        "That choice fits the domain. The set of things the bot needs is small and fixed, patterns for Vietnamese words with and without diacritics are cheap to write and test, and a match is easy to explain. The cost is coverage: a rephrased symptom or an unusual district spelling is missed unless someone adds a pattern. The extractor also declares a medical-history field that nothing in the code I read fills in.",
-        "My portfolio entry for this project also mentions named entity recognition with PhoBERT and CRF. I searched every branch and every commit of the public repository for PhoBERT, CRF and transformer libraries, including the requirements files, and found no training or inference code for such a model. The work may exist elsewhere, but I cannot show it from this repository, so I do not describe it as part of the system here."
+        "In the public repository, we extract entities with regular expressions and keyword dictionaries. Age is a one- or two-digit number in a message that is not also naming a district. Sex comes from two word patterns. Symptoms come from two dictionaries of patterns, one for ordinary symptoms and one for serious ones, and the district comes from a pattern over district names.",
+        "That choice fit the domain. The set of things the bot needed was small and fixed, patterns for Vietnamese words with and without diacritics were cheap to write and test, and a match was easy to explain. The cost is coverage: a rephrased symptom or an unusual district spelling is missed unless someone adds a pattern. The extractor also declares a medical-history field that nothing in the code fills in."
       ],
       "table": {
-        "caption": "What the repository shows for each part of the language understanding stack.",
-        "headers": ["Component", "What the code shows", "Status"],
+        "caption": "Each part of the language understanding stack in the public repository.",
+        "headers": [
+          "Component",
+          "What the code shows",
+          "Status"
+        ],
         "rows": [
-          ["Text correction", "Dictionary and regex based, data files in backend/data", "Present, not measured"],
-          ["Intent classification", "Pickled TF-IDF plus classifier, loaded at start-up; SVC retraining code with cross-validation", "Present, no stored scores"],
-          ["Entity extraction", "Regular expressions and keyword dictionaries", "Present, rule-based"],
-          ["PhoBERT and CRF entity model", "No code, dependency or training script found in any branch or commit", "Not verified, not described"],
-          ["Model and data files", "Models and data are git-ignored or DVC-tracked on main; pickles are committed on other branches", "Not reproducible from main alone"]
+          [
+            "Text correction",
+            "Dictionary and regex based, data files in backend/data",
+            "Present, not measured"
+          ],
+          [
+            "Intent classification",
+            "Pickled TF-IDF plus classifier, loaded at start-up; SVC retraining code with cross-validation",
+            "Present, no stored scores"
+          ],
+          [
+            "Entity extraction",
+            "Regular expressions and keyword dictionaries",
+            "Present, rule-based"
+          ],
+          [
+            "Model and data files",
+            "Models and data are git-ignored or DVC-tracked on main; pickles are committed on other branches",
+            "Not reproducible from main alone"
+          ]
         ]
       }
     },
     {
       "title": "Let conversation state change the interpretation",
       "paragraphs": [
-        "The reply pipeline reads the stored turns for the sender, takes the most recent one, and uses its action code as the previous intent and its slots as the starting state. The new entities are then merged in: age, sex and district overwrite earlier values, and symptoms are added as flags. A follow-up such as a single word of agreement is interpreted as an answer to the last question instead of starting from an empty form.",
-        "Each turn is stored in MongoDB with the sender, message text, intent, the dialogue result and the reply. That serves two purposes: continuity for the next turn and a record for later model improvement. The current implementation loads every stored turn for the sender and uses only the last, which is simple but would be wasteful for long conversations; I would query for the most recent turn only.",
-        "The backend returns a structured response with the reply text, an intent list and any answer options. The options appear only when there is more than one, and the frontend renders them as quick replies. That contract lets the interface present the next step without reconstructing backend decisions from natural language."
+        "Our reply pipeline reads the stored turns for the sender, takes the most recent one, and uses its action code as the previous intent and its slots as the starting state. The new entities are then merged in: age, sex and district overwrite earlier values, and symptoms are added as flags. A follow-up such as a single word of agreement is interpreted as an answer to the last question instead of starting from an empty form.",
+        "We stored each turn in MongoDB with the sender, message text, intent, the dialogue result and the reply. That served two purposes: continuity for the next turn and a record for later model improvement. The implementation loads every stored turn for the sender and uses only the last, which is simple but wasteful for long conversations; today I would query for the most recent turn only.",
+        "The backend returns a structured response with the reply text, an intent list and any answer options. The options appear only when there is more than one, and the frontend renders them as quick replies. With that contract, the interface could present the next step without reconstructing backend decisions from natural language."
       ]
     },
     {
       "title": "Four scenarios, four mechanisms",
       "paragraphs": [
-        "The dialogue manager routes by intent. Each scenario uses the simplest mechanism that fits, and none of them needs open-ended text generation. All reply text is authored: templates stored in MongoDB, formatted with values from the dialogue result."
+        "Our dialogue manager routes by intent. We gave each scenario the simplest mechanism that fit, and none of them needs open-ended text generation. We wrote all reply text ourselves: templates stored in MongoDB, formatted with values from the dialogue result."
       ],
       "table": {
         "caption": "Scenarios handled by the dialogue manager and where each gets its answer.",
-        "headers": ["Scenario", "Trigger", "Mechanism", "Answer source"],
+        "headers": [
+          "Scenario",
+          "Trigger",
+          "Mechanism",
+          "Answer source"
+        ],
         "rows": [
-          ["Symptom questions", "Symptoms mentioned or a request about symptoms", "Fixed question tree tracked in the slots", "Authored reply templates"],
-          ["General information", "Other request sub-intents", "Nearest-neighbour search over stored questions", "Stored answers in MongoDB"],
-          ["Local contacts", "Request about contact or support", "Ask for a district if unknown, then return an image link", "Contact list file"],
-          ["Current case numbers", "Request about numbers", "Call an external statistics endpoint, match a province name", "Live response, URL set by an environment variable"]
+          [
+            "Symptom questions",
+            "Symptoms mentioned or a request about symptoms",
+            "Fixed question tree tracked in the slots",
+            "Authored reply templates"
+          ],
+          [
+            "General information",
+            "Other request sub-intents",
+            "Nearest-neighbour search over stored questions",
+            "Stored answers in MongoDB"
+          ],
+          [
+            "Local contacts",
+            "Request about contact or support",
+            "Ask for a district if unknown, then return an image link",
+            "Contact list file"
+          ],
+          [
+            "Current case numbers",
+            "Request about numbers",
+            "Call an external statistics endpoint, match a province name",
+            "Live response, URL set by an environment variable"
+          ]
         ]
       }
     },
     {
       "title": "A fixed question tree for symptoms",
       "paragraphs": [
-        "When a user mentions symptoms, the bot starts a short sequence of yes or no style questions: whether they have been tested, which type of test and the result, whether they have been in an affected area, and whether they have had close contact. The structure is a nested dictionary in diagnose_reply.py, and a counter in the slots records how far along the user is. Unclear answers trigger a repeat of the question with explicit choices as buttons.",
-        "The outcomes are three authored response codes named serious, high and low. The bot's own disclaimer text, stored with the replies, says the predictions may be inaccurate and tells users to contact health centres. I have not clinically validated this flow, and the diagram below describes its structure, not medical advice."
+        "When a user mentions symptoms, the bot starts a short sequence of yes or no style questions: whether they have been tested, which type of test and the result, whether they have been in an affected area, and whether they have had close contact. We encoded the structure as a nested dictionary in diagnose_reply.py, with a counter in the slots recording how far along the user is. Unclear answers trigger a repeat of the question with explicit choices as buttons.",
+        "The outcomes are three response codes named serious, high and low. Our disclaimer text, stored with the replies, says the predictions may be inaccurate and tells users to contact health centres. The flow was never clinically validated, and the diagram below describes its structure, not medical advice."
       ],
       "diagrams": [
         {
@@ -141,8 +196,8 @@
     {
       "title": "Answer general questions by retrieval, and ask when unsure",
       "paragraphs": [
-        "General questions are answered by retrieval, not by classification. The message is vectorised with TF-IDF and compared by cosine distance with a corpus of stored questions. If the closest question is more than 0.85 similar, its stored answer is returned. Otherwise the bot replies with a clarifying prompt that offers the two closest questions as buttons, and a user's choice on the next turn is answered directly.",
-        "This is a useful pattern for a narrow domain: a wrong answer delivered confidently costs more than one extra turn. The threshold of 0.85 is a constant in the code and I have no evidence of how it was chosen or tuned. In the refactor branch the question corpus file holds 583 entries; I did not check their coverage or accuracy, and some answers attribute guidance to health authorities that I cannot verify."
+        "We answered general questions by retrieval, not by classification. The message is vectorised with TF-IDF and compared by cosine distance with a corpus of stored questions. If the closest question is more than 0.85 similar, its stored answer is returned. Otherwise the bot replies with a clarifying prompt that offers the two closest questions as buttons, and a user's choice on the next turn is answered directly.",
+        "I still like this pattern for a narrow domain: a wrong answer delivered confidently costs more than one extra turn. The 0.85 threshold is a constant in the code, and I have no record of how it was chosen or tuned. The question corpus in the refactor branch holds 583 entries; some answers cite health-authority guidance as it stood at the time, and I have not re-checked them since."
       ],
       "diagrams": [
         {
@@ -159,10 +214,10 @@
       ]
     },
     {
-      "title": "Limits and what I could not verify",
+      "title": "Limits",
       "paragraphs": [
-        "The main branch cannot be run from a clean checkout. The constant definitions module, the trained models and the data directory are git-ignored or tracked through DVC, and the DVC remote is not available to me. Other branches commit pickled models, but I did not run any version. Everything above comes from reading the code, not from executing it.",
-        "No evaluation records exist in the repository: no intent accuracy, no retrieval quality, no end-to-end dialogue success rate. There is also no evidence of how many people used the bot, whether it was deployed beyond configuration files for Docker and Heroku, or whether any clinician reviewed the question tree or the answers. I leave those claims out. The system is also tied to a pandemic-era context, and the answers and case-number source would need replacing before any reuse."
+        "The main branch cannot run from a clean checkout. The constants module, the trained models and the data are git-ignored or tracked through DVC on main, and I no longer have access to the DVC remote. Other branches commit pickled models. I wrote this post from the code, not from a fresh run.",
+        "The repository holds no evaluation records: no intent accuracy, no retrieval quality, no end-to-end dialogue success rate. I also have no records of usage numbers, of a deployment beyond the Docker and Heroku configuration, or of a clinical review of the question tree and the answers, so I make no claims about any of them. The system is tied to a pandemic-era context, and the answers and the case-number source would need replacing before any reuse."
       ]
     },
     {

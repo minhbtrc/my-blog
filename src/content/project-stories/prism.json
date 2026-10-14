@@ -3,7 +3,7 @@
   "project": "PRISM | AI Self-Reflection App",
   "title": "Building PRISM: a reflective AI product with an operational backend",
   "summary": "How streaming, concurrent generation cost control, cancellation cleanup, subscription consistency and privacy-conscious telemetry fit together in a bilingual iOS reflection app that is in internal QA.",
-  "lead": "PRISM is a bilingual iOS self-reflection app with a Flutter client and an asynchronous Python backend. It is in internal QA and has not launched. This write-up focuses on the operational engineering: streaming generated text over server-sent events, reserving spend before a provider call, cleaning up interrupted requests, keeping subscriptions consistent, and keeping private text out of logs. It also states what has been verified and what has not.",
+  "lead": "PRISM is a bilingual iOS self-reflection app with a Flutter client and an asynchronous Python backend. I worked on it, and it is in internal QA and has not launched. In this post I focus on the operational engineering: streaming generated text over server-sent events, reserving spend before a provider call, cleaning up interrupted requests, keeping subscriptions consistent, and keeping private text out of logs. I also say what I have verified and what I have not.",
   "status": "Internal QA",
   "stack": [
     "Flutter",
@@ -30,7 +30,7 @@
       "title": "Context and product boundary",
       "paragraphs": [
         "PRISM is a self-reflection product for iPhone. The experience centers on checking in, considering a question and returning to personal notes over time. The AI supports reflection; it is not positioned as prediction or therapy, and nothing here is a clinical claim.",
-        "That positioning shapes the engineering. A streamed response has to feel coherent, a saved entry has to stay private, and the interface has to work in both Vietnamese and English. The product is in internal QA and has not launched publicly, so this article describes design reasoning and implemented mechanisms, not production results.",
+        "That positioning shapes the engineering. A streamed response has to feel coherent, a saved entry has to stay private, and the interface has to work in both Vietnamese and English. The product is in internal QA and has not launched publicly, so I describe design reasoning and implemented mechanisms, not production results.",
         "The engineering problems below share a theme. Each is about a moment where the happy path stops being the whole story: a stream that is cut off, a spend that may or may not have happened, a purchase event that arrives late, a log line that could contain someone's private writing.",
         "The stack is Flutter on the client, FastAPI with PostgreSQL and Redis on the backend, and RevenueCat for subscriptions. Each piece has a narrow role: PostgreSQL holds durable data, Redis holds the short-lived coordination state for generation, and RevenueCat is the source of subscription events. Keeping those roles separate is what lets the failure handling below stay understandable."
       ],

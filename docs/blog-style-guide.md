@@ -4,7 +4,7 @@ Every article, whether a hand-written post or a project story, uses the shared a
 
 ## Voice
 
-- Write in first person, plainly, as an engineer explaining a decision to a peer.
+- Write every post in the first person singular ("I built", "I chose", "I have not measured"), plainly, as an engineer explaining a decision to a peer. Use "we" only for work a team did, and say so once. Never refer to "the author", "this write-up" or "the repository shows" as if someone else wrote the code; say what I did or what I found. Do not state ownership, roles or decisions the author has not confirmed.
 - Lead with what the post covers and why it matters. The `Lead` block is one short paragraph.
 - Prefer specific nouns and verbs over adjectives. Cut hype ("game-changer", "magic"), jokes that carry no information, and rhetorical questions.
 - State what you did and what you verified. Do not claim outcomes (speed, cost, accuracy, scale) without a measurement you can point to. If you have none, say what you would measure.
@@ -57,6 +57,16 @@ Import from `@/components/post`. Do not import from `BlogPostStyle` in new posts
 - Use synthetic data in screenshots. No real phone numbers, emails, tokens or client names.
 - Re-capture screenshots of this site when the design changes; do not reuse old ones.
 - A cover image is optional. If used, it must follow the same neutral look (no neon or stock AI art).
+
+## Sourcing images
+
+Posts need pictures, not only prose. Aim for at least one real image per post and one per major section where something visual exists. Use this order:
+
+1. **Capture it yourself.** Run the project (the author's public repositories, or this site) and screenshot the real UI, terminal or trace. Redact personal data and use synthetic input.
+2. **Public images licensed for reuse.** Official documentation, press kits, Wikimedia Commons, Unsplash. Record the licence, put the credit and source URL in the caption, and keep the file under 300 KB.
+3. **A diagram** (Mermaid) when the project is private or nothing can be captured.
+
+Never use an unlicensed image. Never fake a screenshot of a private product (for example PRISM or the executive assistant); use a diagram and say it is one. If a capture fails (missing dependency, no network), do not substitute a mock-up: leave the section without an image and note it in `reviewNotes`.
 
 ## Diagrams
 

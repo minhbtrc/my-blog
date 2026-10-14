@@ -3,7 +3,7 @@
   "project": "Multi-Agent Executive Assistant",
   "title": "Building an assistant that carries work across conversations",
   "summary": "How routing, persistent task state, relevance-filtered briefings and confirmation before external actions fit together in a stateful multi-agent assistant, and what still needs verifying.",
-  "lead": "An executive assistant has to do more than answer questions. This write-up covers a stateful multi-agent system built with LangGraph and FastAPI that routes requests to specialists, keeps task records in PostgreSQL, produces news briefings in a requested format, and asks for confirmation before acting in Microsoft Teams or Planner. It explains the design reasoning, the failure modes I designed for, what has been verified, and what I would measure next.",
+  "lead": "An executive assistant has to do more than answer questions. In this post I describe a stateful multi-agent system I helped build with LangGraph and FastAPI. It routes requests to specialists, keeps task records in PostgreSQL, produces news briefings in a requested format, and asks for confirmation before acting in Microsoft Teams or Planner. I explain my design reasoning, the failure modes we designed for, what I have verified, and what I would measure next.",
   "status": "Work project",
   "stack": [
     "LangGraph",
@@ -31,8 +31,8 @@
       "paragraphs": [
         "The assistant covers five kinds of work: task management, news briefings, meeting summaries, email drafting and document search. It is a stateful multi-agent system, meaning a request is routed to a specialist and the conversation keeps its context between turns. The backend is Python with FastAPI, the orchestration is a LangGraph graph, and durable records live in PostgreSQL. Teams and Planner integrations go through Microsoft Graph.",
         "The difficulty is not any single capability. A single conversation can create a task, move its deadline, ask for a news briefing and return to an earlier decision. Two properties make that hard to do well. First, the system has to remember work across turns without confusing a chat transcript with a record. Second, some of its outputs leave the system, as a message in Teams or a task in Planner, and those cannot be undone by editing a chat message.",
-        "This article describes the design reasoning behind those two properties. The project is work I contributed to, not a public repository, so I describe mechanisms and decisions rather than code, and I say explicitly where something has not been verified.",
-        "The rest of the article follows the order in which the problems appear: how to divide the work, where state lives, how task changes become records, how news is filtered, how external actions are gated, and finally which claims I can and cannot make."
+        "In this post I describe the design reasoning behind those two properties. The project is work I contributed to, not a public repository, so I describe mechanisms and decisions rather than code, and I say explicitly where I have not verified something.",
+        "The rest of the post follows the order in which the problems appeared for me: how to divide the work, where state lives, how task changes become records, how news is filtered, how external actions are gated, and finally which claims I can and cannot make."
       ],
       "definitions": [
         {
@@ -230,7 +230,7 @@
       "paragraphs": [
         "What I can state is what the implementation does: routing across five specialist areas, structured task operations with date parsing, model-based relevance filtering, template-informed report structure with PDF and DOCX export, PostgreSQL checkpoint and task persistence work, and confirmation flows for Teams and Planner.",
         "What I have not verified is behavior in a production tenant. Permissions, retries and downstream state for the Microsoft Graph integrations still need that check. I also have no measurements to publish, so I make no claim about accuracy, speed, cost or scale.",
-        "I find it useful to keep this separation explicit in the write-up. That the mechanisms are implemented does not show how the system behaves with real permissions, real users, rate limits or partial failures in Microsoft services. Those need an environment I could not treat as production."
+        "I keep this separation explicit in my own write-ups. That the mechanisms are implemented does not show how the system behaves with real permissions, real users, rate limits or partial failures in Microsoft services. Those need an environment I could not treat as production."
       ],
       "table": {
         "caption": "Verification status by area, based on what I can state rather than what I hope is true.",
