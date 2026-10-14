@@ -88,7 +88,6 @@ export default function AboutContent() {
             <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3">
               {process.env.NODE_ENV === "development" && <Link href={`/blog/review/${project.slug}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">Review draft article <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></Link>}
               {project.url && <a href={project.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">{project.url.startsWith('https://github.com/') ? 'View source' : 'Visit project'} <ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}
-              {project.article && <Link href={project.article} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">Read the full write-up <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></Link>}
             </div>
           </article>)}
         </div>
