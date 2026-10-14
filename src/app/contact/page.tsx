@@ -223,79 +223,8 @@ export default function ContactPage() {
         animation: wiggle 1s ease-in-out infinite;
       }
       
-      .python-string {
-        color: #ECCC87; /* Yellow for string literals */
-      }
-      
-      .python-keyword {
-        color: #4B5563; /* Darker gray for keywords in light mode */
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-keyword {
-          color: #B77EE0; /* Purple for keywords in dark mode */
-        }
-      }
-      
-      .python-function {
-        color: #065F46; /* Emerald for function names in light mode */
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-function {
-          color: #62AEEF; /* Blue for function names in dark mode */
-        }
-      }
-      
-      .python-comment {
-        color: #047857; /* Emerald for comments in light mode */
-        font-style: italic;
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-comment {
-          color: #98C379; /* Green for comments in dark mode */
-        }
-      }
-      
-      .python-param {
-        color: #0F766E; /* Teal for parameter names in light mode */
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-param {
-          color: #E06B74; /* Red for parameter names in dark mode */
-        }
-      }
-      
-      .python-bracket {
-        color: #6B7280; /* Gray for brackets in light mode */
-      }
-      
-      @media (prefers-color-scheme: dark) {
-        .python-bracket {
-          color: #ABB2BF; /* Light gray for brackets in dark mode */
-        }
-      }
-      
       input:focus::placeholder, textarea:focus::placeholder {
         color: transparent;
-      }
-      
-      .terminal-glow {
-        box-shadow: 0 0 15px rgba(5, 150, 105, 0.1);
-        border: 1px solid rgba(5, 150, 105, 0.2);
-      }
-      
-      .docstring {
-        border-left: 2px solid rgba(5, 150, 105, 0.3);
-        padding-left: 1rem;
-      }
-
-      @media (prefers-color-scheme: light) {
-        .terminal-background {
-          background-color: rgba(240, 253, 250, 0.8);
-        }
       }
     `
     document.head.appendChild(style)
@@ -383,7 +312,7 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('name')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900"
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content"
                         placeholder={getRandomPlaceholder(namePlaceholders)}
                         required
                       />
@@ -406,7 +335,7 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('email')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900"
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content"
                         placeholder={getRandomPlaceholder(emailPlaceholders)}
                         required
                       />
@@ -428,7 +357,7 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         onFocus={() => handleFocus('message')}
                         onBlur={handleBlur}
-                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-muted/30 focus:border-emerald-500 focus:outline-none dark:text-yellow-300 text-emerald-900 min-h-24 h-32 resize-none"
+                        className="w-full pl-3 pr-3 py-1 bg-transparent border-b border-base-300 focus:border-primary focus:outline-none text-base-content min-h-24 h-32 resize-none"
                         placeholder={getRandomPlaceholder(messagePlaceholders)}
                         required
                       ></textarea>
@@ -451,7 +380,7 @@ export default function ContactPage() {
               <motion.div variants={item} className="flex justify-end mt-4">
                 <motion.button 
                   type="submit" 
-                  className="flex items-center gap-2 border border-emerald-200 dark:border-muted/30 bg-emerald-50 dark:bg-muted/10 hover:bg-emerald-100 dark:hover:bg-muted/20 text-emerald-800 dark:text-current px-4 py-2 rounded-md text-sm transition-all shadow-sm hover:shadow"
+                  className="flex items-center gap-2 border border-base-300 bg-base-content/5 hover:bg-base-content/10 text-base-content disabled:opacity-60 px-4 py-2 rounded-md text-sm transition-all shadow-sm hover:shadow"
                   disabled={formStatus === 'submitting'}
                   whileHover={{ scale: 1.02, y: -1 }}
                   whileTap={{ scale: 0.98 }}
@@ -502,7 +431,7 @@ export default function ContactPage() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="text-red-500 dark:text-red-400 text-sm space-y-1"
+                    className="text-error text-sm space-y-1"
                   >
                     <div># Error: Failed to send message.</div>
                     <div># Please try again later.</div>
@@ -516,16 +445,16 @@ export default function ContactPage() {
           <motion.div className="lg:col-span-2 space-y-4">
             <motion.div 
               variants={item}
-              className="docstring space-y-6 text-gray-700 dark:text-muted-foreground p-4"
+              className="docstring space-y-6 text-base-content/80 p-4"
             >
-              <div className="text-emerald-500 dark:text-blue-400">"""</div>
+              <div className="text-base-content/50">"""</div>
               
               <motion.div 
                 variants={item} 
                 className="space-y-6"
               >
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-4 h-4 flex-shrink-0 text-emerald-600 dark:text-blue-400" />
+                  <MapPin className="w-4 h-4 flex-shrink-0 text-primary" />
                   <p className="text-gray-700 dark:text-gray-300">
                     Ho Chi Minh City, Vietnam
                   </p>
@@ -548,8 +477,8 @@ export default function ContactPage() {
                   whileHover={{ x: 3 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <SiGithub className="w-4 h-4 text-emerald-600 dark:text-blue-400" />
-                  <span className="group-hover:text-emerald-700 dark:group-hover:text-blue-300 transition-colors">
+                  <SiGithub className="w-4 h-4 text-primary" />
+                  <span className="text-base-content group-hover:text-primary transition-colors">
                     github.com/minhbtrc
                   </span>
                 </motion.a>
@@ -562,8 +491,8 @@ export default function ContactPage() {
                   whileHover={{ x: 3 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <SiLinkedin className="w-4 h-4 text-emerald-600 dark:text-blue-400" />
-                  <span className="group-hover:text-emerald-700 dark:group-hover:text-blue-300 transition-colors">
+                  <SiLinkedin className="w-4 h-4 text-primary" />
+                  <span className="text-base-content group-hover:text-primary transition-colors">
                     linkedin.com/in/minhbtcm00
                   </span>
                 </motion.a>
@@ -607,7 +536,7 @@ export default function ContactPage() {
                 </span>
               </motion.div>
               
-              <div className="text-emerald-500 dark:text-blue-400">"""</div>
+              <div className="text-base-content/50">"""</div>
             </motion.div>
           </motion.div>
         </motion.div>

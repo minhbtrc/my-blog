@@ -134,40 +134,40 @@
 }
 
 .terminal-glow {
-  box-shadow: 0 0 20px rgba(5, 150, 105, 0.1);
+  @apply border border-base-300;
 }
 
 .docstring {
-  @apply rounded-md border border-emerald-100 dark:border-gray-800 bg-white/80 dark:bg-gray-900/30 backdrop-blur-sm shadow-sm;
+  @apply rounded-md border border-base-300 bg-base-100;
 }
 
-/* Python syntax highlighting */
+/* Python-style tokens on the contact page: neutral, one accent */
 .python-keyword {
-  @apply text-gray-600 dark:text-blue-400 font-medium;
+  @apply font-medium text-base-content/70;
 }
 
 .python-function {
-  @apply text-emerald-700 dark:text-yellow-300 font-medium;
+  @apply font-medium text-primary;
 }
 
 .python-comment {
-  @apply text-emerald-600 dark:text-green-400;
+  @apply italic text-base-content/50;
 }
 
 .python-param {
-  @apply text-teal-700 dark:text-red-400;
+  @apply text-base-content;
 }
 
 .python-string {
-  @apply text-amber-600 dark:text-green-300;
+  @apply text-base-content/80;
 }
 
 .python-bracket {
-  @apply text-gray-500 dark:text-gray-400;
+  @apply text-base-content/50;
 }
 
 .python-cursor {
-  @apply animate-blink text-emerald-700 dark:text-blue-400;
+  @apply animate-blink text-primary;
 }
 
 /* Animation for cursor */
@@ -182,7 +182,7 @@
 
 /* Form input focus effects */
 input:focus, textarea:focus {
-  @apply ring-1 ring-emerald-200 dark:ring-blue-900/30;
+  @apply ring-1 ring-primary/30;
 }
 
 /* Dark/light mode transition */
