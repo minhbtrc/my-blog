@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "yarn install --ignore-engines",
+  "installCommand": "yarn install --ignore-engines --production=false",
   "buildCommand": "yarn vercel-build",
   "framework": "nextjs",
   "cleanUrls": true,
