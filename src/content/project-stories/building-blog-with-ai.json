@@ -2,285 +2,115 @@
   "slug": "building-blog-with-ai",
   "project": "The AI-Driven Blog",
   "title": "Building this site with an AI-assisted feedback loop",
-  "summary": "How I used Cursor, GPT-4o screenshot feedback and later an AI coding assistant to build and redesign this site, and what kept it honest: one data source, shared components and explicit checks.",
-  "lead": "I work mostly on backend and AI systems, and I wanted a personal site without turning CSS into a side project. I built the first version with Cursor and screenshot feedback from GPT-4o. In this post I walk through that loop, the later redesign that moved the site onto shared article components and one JSON data source, and the checks I now use to tell what I have and have not verified.",
+  "summary": "How I built this site with Cursor and screenshots fed to GPT-4o, where that loop fell short, and why I later moved the content into one set of JSON files.",
+  "lead": "I do backend and AI work, and CSS is not what I want to spend my evenings on. So I built my site by showing a model screenshots and telling it what looked wrong. It worked for looks and for nothing else.",
   "status": "Published",
   "stack": [
     "Next.js",
-    "React",
     "TypeScript",
     "Tailwind CSS",
+    "DaisyUI",
     "Cursor",
     "GPT-4o"
   ],
   "flow": [
-    "Describe a concrete change",
-    "Implement it",
-    "Inspect it in the browser",
-    "Give visual feedback",
-    "Refine the change",
-    "Check content and behavior"
+    "Write a component",
+    "Look at it in the browser",
+    "Screenshot it",
+    "Ask for feedback",
+    "Apply and repeat"
   ],
   "diagram": {
-    "chart": "graph LR\n    DATA[\"src/db/*.json\"] --> SITE[\"Website: Home and About\"]\n    DATA --> BUILD[\"scripts/build_resume.py\"]\n    BUILD --> PDF[\"public/resume: PDF, preview, manifest\"]\n    SITE --> CHECK[\"Visual and behavior review\"]\n    PDF --> CHECK",
-    "caption": "Profile data is the single source of truth. The website and the CV are both generated from it, with a per-project flag deciding what the shorter document includes."
+    "chart": "graph LR\n    DATA[\"src/db/*.json\"] --> SITE[\"Home and About pages\"]\n    DATA --> BUILD[\"scripts/build_resume.py\"]\n    BUILD --> PDF[\"CV PDF, preview, manifest\"]",
+    "caption": "The site and the CV both read the same JSON files."
   },
   "sections": [
     {
-      "title": "Context: I build backends and avoid CSS",
+      "title": "I wanted a site without learning design",
       "paragraphs": [
-        "My day-to-day work is FastAPI services, retrieval and agent workflows. Layout and styling are the parts I would rather delegate, but I wanted a site that looked deliberate. I treated the interface as a feedback problem: if I could show a model what the page looked like and say what was wrong, I could make small, checkable changes without a design background.",
-        "I made the first commit on 26 March 2025 and built most of the first version over the following days. In my original post I described going from asking how to center a div to building most of the interface components in about two weeks. That is my own recollection; the commit dates are the only part anyone else can check.",
-        "I had no design files and no reference boards. My only design inputs were screenshots of my own work and the model's comments on them."
-      ],
-      "definitions": [
-        {
-          "term": "Framework",
-          "text": "Next.js 14 with the App Router and TypeScript. I pinned next 14.2.4."
-        },
-        {
-          "term": "Styling",
-          "text": "Tailwind CSS, and later DaisyUI theme tokens. Utility classes are easy for an AI tool to generate and easy for me to review in a diff."
-        },
-        {
-          "term": "Editor",
-          "text": "Cursor, an editor with integrated AI coding assistance. I used it to write and restyle components."
-        },
-        {
-          "term": "Design feedback",
-          "text": "GPT-4o, which accepts a screenshot and can comment on layout, typography and hierarchy."
-        },
-        {
-          "term": "Deployment",
-          "text": "Vercel, with git-based deployments."
-        }
+        "My day job is FastAPI services, retrieval and agent workflows. Layout is the part I'd happily hand off, but I still wanted a personal site that didn't look like a template with my name pasted in. I had no design files and no reference boards, only my own pages and whatever a model would say about them.",
+        "The git history starts on 26 March 2025. From there it was Next.js, Tailwind and Cursor, with GPT-4o as the person I asked whether something looked right."
       ]
     },
     {
-      "title": "Make feedback concrete enough to act on",
+      "title": "Show it a screenshot, say one specific thing",
       "paragraphs": [
-        "I put every component through the same loop: write or restyle it in Cursor, look at it in the browser, capture a screenshot, ask GPT-4o for design feedback with a stated goal, apply the suggestions, and repeat until the changes between iterations became small.",
-        "I learned quickly that the result was only as good as my feedback. Asking to make a page look better left too much open. A screenshot plus one specific observation made the next change small: a heading has too little contrast, the content column is too wide, or the mobile header overflows the viewport.",
-        "The model could also point at an actual element in the image instead of guessing from my description. After enough iterations I started noticing alignment and spacing problems myself, before the model mentioned them."
-      ],
-      "diagrams": [
-        {
-          "chart": "graph TD\n    A[\"Write a component in Cursor\"] --> B[\"Review it in the browser\"]\n    B --> C[\"Capture a screenshot\"]\n    C --> D[\"Ask GPT-4o for design feedback\"]\n    D --> E[\"Apply the suggestions\"]\n    E --> F{\"Good enough?\"}\n    F -- \"No\" --> A\n    F -- \"Yes\" --> G[\"Ship\"]",
-          "caption": "The feedback loop used for each component in the first version. The exit condition was my own judgment that the change between iterations had become small."
-        }
-      ],
-      "steps": [
-        {
-          "title": "Write the component",
-          "text": "I started with something basic such as a hero, a card or a navigation bar, highlighted the weak parts and asked Cursor to restyle them with Tailwind."
-        },
-        {
-          "title": "Review in the browser",
-          "text": "I refreshed the page and compared the result with what I intended."
-        },
-        {
-          "title": "Capture a screenshot",
-          "text": "A full-page or section screenshot told the model more than any description I could write."
-        },
-        {
-          "title": "Ask for design feedback",
-          "text": "I sent the screenshot with a goal, for example a more technical, terminal-inspired look."
-        },
-        {
-          "title": "Apply the suggestions",
-          "text": "What came back in the first build: monospaced fonts, a blinking cursor beside my name, hover states."
-        },
-        {
-          "title": "Repeat",
-          "text": "I stopped when the change between iterations became small."
-        }
-      ]
-    },
-    {
-      "title": "Example: the hero section",
-      "paragraphs": [
-        "My first hero had a plain heading, default paragraph styling, a button without hover states and no visual hierarchy. When I showed GPT-4o a screenshot, it suggested more spacing and padding around the content, varied font weights to establish hierarchy, a subtle background treatment, hover effects on the button and a small visual element.",
-        "After three iterations the section had purposeful spacing, varied typography and light animation. Two of the changes I would not have thought of myself: the subtle background gradient and a secondary button to create hierarchy. I did not keep screenshots of that first version, so the image below shows the current, redesigned home page.",
-        "When I redesigned the site later, I kept the decisions that already worked: the emerald light theme and the blue and slate dark theme stayed, and typography, spacing and hierarchy carried the improvement."
+        "The loop was simple. Write or restyle a component in Cursor, look at it in the browser, take a screenshot, send it to GPT-4o with a goal, apply what comes back, repeat until the changes get small.",
+        "What I learned fast: \"make it look better\" gets you mush. A screenshot plus one observation gets you something you can act on. The heading has too little contrast. The content column is too wide. The mobile header runs off the screen. The model could point at the actual element instead of guessing from my description, and after a while I started spotting spacing problems before it did.",
+        "The hero section is the example I remember best. It began as a heading, a default paragraph and a button with no hover state. A few rounds later it had proper spacing, different font weights and a secondary button. I never would have thought of the second button. I didn't keep screenshots of that first version, so the one below is today's home page, which was redesigned later."
       ],
       "figures": [
         {
           "src": "/images/building-blog/home-light.png",
-          "alt": "Home page of the current site in light mode, with a terminal-style header, a round portrait, the name Minh Bui, the title Senior Applied AI Engineer and two buttons",
-          "caption": "My home page today, in light mode. The name, title and a one-sentence summary come before two actions, Experience and projects and View CV, with a plain link to the blog below them. This is the redesigned version, not the original hero.",
+          "alt": "Home page in light mode with a terminal-style header, a round portrait, the name Minh Bui, the title Senior Applied AI Engineer and two buttons",
+          "caption": "The home page today, not the first hero.",
           "width": 1200,
           "height": 760
         }
       ]
     },
     {
-      "title": "The loop covers visuals, not everything",
+      "title": "A screenshot can't tell you the build is broken",
       "paragraphs": [
-        "Screenshot feedback helped with how a page looked, and with nothing else. My git history has a run of 14 commits titled fix bug vercel, 13 of them on 29 March 2025 and one on 30 March. That is what getting my first deployment to build looked like. A screenshot of a correct local page told me nothing about a failing build on the host.",
-        "Content had the same gap. A model can comment on hierarchy, but it cannot see in a screenshot whether a claim in a project description is true. That is why, in the later work, I moved verification out of the visual loop and into explicit data and checks."
+        "Screenshots only help with how a page looks. The history has a run of 14 commits titled \"fix bug vercel\", 13 on 29 March and one on 30 March. That is what getting the first deployment to build looked like, and a picture of a correct local page told me nothing about it.",
+        "The same goes for content. A model can say the hierarchy is off. It can't see whether a sentence in a project description is true. That's why I stopped treating the visual loop as the whole review."
       ]
     },
     {
-      "title": "Replace one-off styling with shared article components",
+      "title": "One set of JSON files for the site and the CV",
       "paragraphs": [
-        "My original posts each carried their own markup and styling. For the redesign I introduced a shared article system in src/components/post: a header, a lead paragraph, callouts, code blocks, figures, steps, definition lists, tables, pull quotes, a Mermaid wrapper and a references list. I wrote the rules down in docs/blog-style-guide.md: neutral surfaces, one accent colour, no emoji, alt text and a caption for every image, and Mermaid diagrams with quoted labels and no custom colours.",
-        "I did this for maintenance. A post is now mostly content, and consistency in light and dark mode comes from one place instead of from each page. My project stories, including this one, are JSON files in src/content/project-stories rendered by a single story component, so writing a new one is a content change rather than a new page.",
-        "An AI coding assistant did the implementation of the restyle, so the commit is authored by the assistant, and its message lists the shared components, the neutral light and dark tokens, the greyscale Mermaid theme and the rewritten posts."
+        "Profile, experience, projects, skills and education live as JSON in src/db. The pages render them, and scripts/build_resume.py builds the CV PDF from the same files. There's a second mode, npm run resume:check, that compares a hash of the sources with the committed manifest and checks that every experience and project bullet shows up in the PDF text. If I edit the data and forget to rebuild, the check fails.",
+        "I serve a PDF I've actually looked at instead of generating one in the visitor's browser. What people download is what I reviewed, and the site doesn't ship a PDF library.",
+        "One mistake came out of this. When I picked a short project list for the CV, I also removed the older projects from the About page. Now About shows everything and each project has a resume flag that only the PDF reads. Archive projects get the flag turned off, not deleted."
       ],
-      "figures": [
-        {
-          "src": "/images/building-blog/blog-index-light.png",
-          "alt": "Blog index in light mode with a search field, a list and shell toggle, and a dated list of posts with titles, descriptions and lowercase tags",
-          "caption": "My blog index in light mode. Each entry shows a date and reading time, a title, a one-sentence description and lowercase tags, all drawn from src/db/blogs.json.",
-          "width": 1200,
-          "height": 760
-        },
-        {
-          "src": "/images/building-blog/blog-index-dark.png",
-          "alt": "The same blog index in dark mode with a blue accent colour on the active navigation item",
-          "caption": "The same index in dark mode. The accent changes from emerald to blue while surfaces stay neutral. The line above the search field is a development-only link to author review notes and does not appear in production.",
-          "width": 1200,
-          "height": 760
-        }
-      ],
-      "callout": {
-        "label": "Note",
-        "text": "I captured these screenshots from the running site after the redesign. I have no screenshots of the first version."
-      }
-    },
-    {
-      "title": "Give content a single source of truth",
-      "paragraphs": [
-        "I keep profile, experience, project, skill, education and certificate data in JSON files under src/db, separate from the components that render them. Updating my About page is a content change instead of a search for repeated text in markup.",
-        "The same files feed my CV. scripts/build_resume.py reads them and writes the PDF, a preview image and a manifest to public/resume. A second mode, npm run resume:check, recomputes a hash over the source files and the script, compares it with the manifest, then extracts text from the PDF and checks that every experience and selected project bullet appears in it. If I change the data and forget to rebuild the PDF, the check fails.",
-        "I chose a generated, checked PDF over recreating the document in the visitor's browser. The reviewed file is the file people download, so the preview and the download cannot drift apart, and the site does not need to load a PDF library for visitors."
-      ],
-      "diagrams": [
-        {
-          "chart": "flowchart LR\n    JSON[\"src/db JSON files\"] --> ABOUT[\"About page: all projects\"]\n    JSON --> SCRIPT[\"build_resume.py\"]\n    SCRIPT --> PDF[\"CV PDF and preview\"]\n    SCRIPT --> MAN[\"manifest.json hashes\"]\n    PDF --> CHECK[\"resume:check\"]\n    MAN --> CHECK\n    JSON --> CHECK",
-          "caption": "Data flow for the portfolio. The check step compares source hashes and PDF text with the committed artifacts, so a data change without a rebuild is reported."
-        }
-      ],
+      "diagrams": [],
       "code": [
         {
           "title": "scripts/build_resume.py (abridged)",
           "language": "python",
-          "code": "SOURCES = [ROOT / 'src/db' / f'{name}.json' for name in\n           ('profile', 'experiences', 'projects', 'skills', 'education', 'certificates')]\nSOURCES += [Path(__file__).resolve(), ROOT / 'scripts/requirements-resume.txt']\n\n...\n\nfor project in (item for item in load('projects') if item.get('resume', True)):\n    expected += [project['title'], *project.get('points', [])]"
+          "code": "for project in (item for item in load('projects') if item.get('resume', True)):\n    expected += [project['title'], *project.get('points', [])]"
         }
+      ]
+    },
+    {
+      "title": "Shared components for posts",
+      "paragraphs": [
+        "My early posts each carried their own markup. In the redesign I moved to a small set of shared article components in src/components/post and wrote the rules into docs/blog-style-guide.md: neutral surfaces, one accent colour, alt text and a caption on every image. The commit that did this is mine, with a Claude co-author trailer.",
+        "Posts like this one are now JSON files in src/content/project-stories, so a new write-up is content rather than a new page."
       ],
       "figures": [
         {
-          "src": "/images/building-blog/about-projects-light.png",
-          "alt": "Projects section of the About page in light mode showing project cards with titles, descriptions, technology lines and bullet points",
-          "caption": "The About page lists projects from src/db/projects.json. The visible cards show a title, an optional status tag such as Internal QA, a description, a technology line and bullets. Each project can link to its write-up.",
+          "src": "/images/building-blog/blog-index-light.png",
+          "alt": "Blog index in light mode with a search field and a dated list of posts with titles, descriptions and tags",
+          "caption": "The blog index after the redesign, drawn from src/db/blogs.json.",
           "width": 1200,
           "height": 760
         }
       ]
     },
     {
-      "title": "Treat the portfolio and the resume as different documents",
+      "title": "What I checked, and what I'd do next",
       "paragraphs": [
-        "A profile refresh exposed a mistake I had made: when I chose a short project list for the CV, I also removed older projects from my About page. The fix was architectural as well as editorial. About now renders every project, and each project carries a resume flag that only the PDF reads. My maintenance notes in docs/profile-and-resume.md say it in one line: set the flag to false for archive projects and never delete them to shorten the CV.",
-        "I now treat the two as documents for different readers. Someone scanning my CV needs the most relevant evidence quickly, within a fixed length. Someone visiting the portfolio may want the history, the implementation detail and a full write-up, such as this one."
-      ],
-      "table": {
-        "caption": "What each surface reads from src/db and what it is for.",
-        "headers": [
-          "Surface",
-          "Reads",
-          "Selection rule",
-          "Reader"
-        ],
-        "rows": [
-          [
-            "About page",
-            "profile, experiences, projects, skills, education",
-            "Every project and skill category is rendered",
-            "Someone exploring the full history"
-          ],
-          [
-            "CV PDF",
-            "The same files plus certificates",
-            "Projects with resume set to false are omitted; certificates need resume set to true",
-            "Someone scanning quickly"
-          ],
-          [
-            "Project write-ups",
-            "src/content/project-stories",
-            "Linked from a project by its article field",
-            "Someone who wants detail and trade-offs"
-          ]
-        ]
-      }
-    },
-    {
-      "title": "Review behavior as well as screenshots",
-      "paragraphs": [
-        "After the redesign I reviewed the site at mobile, tablet and desktop widths (320, 390, 768 and 1280 pixels), covering navigation, theme persistence, section anchors and the PDF download path. That review found a header overflow that was not visible on desktop, and it confirmed that the downloaded PDF matched the committed file byte for byte. The production build generated all 17 pages.",
-        "These checks have limits. The Next.js configuration skips lint and type validation during builds, so a passing build is not a clean-repository result. ESLint passed for the files I changed, but repository-wide lint and type checks still report older failures in blog, demo, database and particle-background code. An embedded music player also reported a YouTube error during review, and external playback was not validated. The checks were local; I did not run them against a production deployment."
-      ],
-      "table": {
-        "caption": "Verification recorded in docs/profile-and-resume.md for the profile and CV work, with the boundary of each check.",
-        "headers": [
-          "Check",
-          "Result recorded",
-          "Not covered"
-        ],
-        "rows": [
-          [
-            "Production build",
-            "Generated all 17 pages",
-            "Lint and type validation are skipped by the build configuration"
-          ],
-          [
-            "ESLint on changed files",
-            "Passed",
-            "Older files in the repository still have lint and type errors"
-          ],
-          [
-            "resume:check",
-            "Source hashes, PDF text and three-page layout in sync",
-            "Visual layout still needs a person to inspect each page"
-          ],
-          [
-            "Browser review at four widths",
-            "Header overflow found and repaired; menu, anchors, theme and download worked",
-            "External music playback; no production deployment"
-          ]
-        ]
-      }
-    },
-    {
-      "title": "Keep publishing and privacy explicit",
-      "paragraphs": [
-        "My public CV carries professional profile links and no personal phone number or email address; the validator in the build script rejects contact fields and mailto or tel links. I keep full-contact copies outside the published directory, and I removed the old public PDF from the source tree.",
-        "Removing a file does not erase Git history or copies people have already downloaded, so I review artifacts before I push them. The screenshots in this post show only public site content."
-      ]
-    },
-    {
-      "title": "Limits and what I would change",
-      "paragraphs": [
-        "I have no measurement of how much time the loop saved compared with another approach, and I would not claim one. The original post also proposed a local agent that would watch the dev server, capture screenshots on change and feed them to a model. That was an idea, and I have not built it. If I did, the first thing I would add is a stored set of screenshots per page and theme, so a change that breaks layout shows up as a diff instead of relying on my attention.",
-        "Two other things are on my list: turn lint and type checks back on in the build once the older files are fixed, and add a check that every project with an article link points to a page that exists. Both address the same weakness the loop has, which is that it only catches what someone happens to look at."
+        "After the redesign I went through the site at 320, 390, 768 and 1280 pixels. That caught a header overflow I'd never have seen on desktop. The production build generated 17 pages, but the Next config skips lint and type checks, so a green build means less than it sounds like. Fixing the older files and turning those checks back on is on my list.",
+        "I never measured how much time the screenshot loop saved, so I can't give you a number. I also once wrote about a local agent that would watch the dev server, screenshot on every change and send the images to a model. I haven't built it. If I did, I'd store a screenshot per page and theme first, so a broken layout shows up as a diff instead of depending on me noticing."
       ]
     }
   ],
   "date": "2025-03-30",
   "takeaways": [
-    "A screenshot plus one specific observation produces smaller, more checkable changes than a general request to improve a page.",
-    "A visual feedback loop does not cover builds, deployments or the truth of written claims; those need their own checks.",
-    "One JSON source for the website and the CV, with a per-project flag for the short document, keeps the two from drifting apart.",
-    "Shared article components and a written style guide make consistency a property of the system instead of each page.",
-    "A passing build is not a clean result when lint and type checks are skipped, so say what was and was not checked."
+    "A screenshot plus one specific observation beats a general request to improve a page.",
+    "Visual feedback says nothing about builds, deployments or whether written claims are true.",
+    "One JSON source for the site and the CV, with a per-project flag, keeps them from drifting.",
+    "A passing build means little when lint and type checks are skipped."
   ],
   "reviewNotes": [
-    "The original file had no date field. I set 2026-10-14 (the redesign date) because the story now covers that work. Use 2025-03-30 if you prefer the original post date, and confirm the intended publication date.",
-    "src/db/blogs.json and src/app/blog/building-blog-with-ai/page.jsx still hold the old hand-written post under the same slug. Decide whether this story replaces it, and update the blogs.json description and tags to match.",
-    "The 'about two weeks' figure and the hero example (GPT-4o suggestions, three iterations) come from your original post. Confirm you are comfortable keeping them.",
-    "Confirm you are comfortable with the sentence that the restyle commit is authored by an AI assistant.",
-    "public/images/cursor-editor.webp is an HTML error page saved as .webp and public/images/gpt4o-interface.webp is the OpenAI logo; neither was used. Replace or delete them.",
-    "If you have real first-version screenshots, add them as a before and after pair."
+    "Date is 2025-03-30 (original post). Confirm, or use 2026-10-14 since the story now covers the redesign.",
+    "src/db/blogs.json and src/app/blog/building-blog-with-ai/page.jsx still hold the old post under the same slug. Decide whether this story replaces it.",
+    "'About two weeks' and the hero example (GPT-4o suggestions, three iterations) were in the original post and are dropped or softened here; confirm the hero details I kept are right.",
+    "The restyle commit 8b17506 is authored by Minh with a Claude co-author trailer; I wrote it that way. Confirm what the assistant did versus you.",
+    "Cursor use for the first version comes from the original story, not from git history.",
+    "public/images/cursor-editor.webp and gpt4o-interface.webp are not real images and are unused; replace or delete.",
+    "If you have first-version screenshots, add a before and after pair."
   ],
   "sources": [
     {

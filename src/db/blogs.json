@@ -2,9 +2,9 @@
   {
     "slug": "multi-agent-executive-assistant",
     "title": "Building an assistant that carries work across conversations",
-    "description": "How routing, persistent task state, relevance-filtered briefings and confirmation before external actions fit together in a stateful multi-agent assistant, and what still needs verifying.",
+    "description": "Notes from a work project: an assistant that remembers tasks across a conversation, filters its news briefings, and asks before it touches Teams or Planner.",
     "date": "2026-10-14",
-    "readingTime": "8 min read",
+    "readingTime": "6 min read",
     "tags": [
       "langgraph",
       "fastapi",
@@ -12,15 +12,15 @@
       "microsoft graph",
       "pdf / docx"
     ],
-    "content": "How routing, persistent task state, relevance-filtered briefings and confirmation before external actions fit together in a stateful multi-agent assistant, and what still needs verifying.",
+    "content": "Notes from a work project: an assistant that remembers tasks across a conversation, filters its news briefings, and asks before it touches Teams or Planner.",
     "published": true
   },
   {
     "slug": "prism",
     "title": "Building PRISM: a self-reflection app for iPhone",
-    "description": "What PRISM is, the principles I am building it around, how its pieces fit together and what I have and have not verified. Coming soon: the app is in internal QA.",
+    "description": "What PRISM is, why I'm building it the way I am, and where it stands while it's still unreleased. Coming soon: the app is in internal QA.",
     "date": "2026-10-14",
-    "readingTime": "3 min read",
+    "readingTime": "4 min read",
     "tags": [
       "flutter",
       "fastapi",
@@ -28,15 +28,15 @@
       "redis",
       "revenuecat"
     ],
-    "content": "What PRISM is, the principles I am building it around, how its pieces fit together and what I have and have not verified. Coming soon: the app is in internal QA.",
+    "content": "What PRISM is, why I'm building it the way I am, and where it stands while it's still unreleased. Coming soon: the app is in internal QA.",
     "published": true
   },
   {
     "slug": "covid-chatbot",
-    "title": "Building a Vietnamese dialogue system before LLMs",
-    "description": "Intent classification, rule-based information extraction, conversation state and structured replies in a historical Vietnamese Covid-19 consultation chatbot, read directly from the repository.",
+    "title": "A Vietnamese Covid chatbot, built the pre-LLM way",
+    "description": "A team project from 2021 to 2023: a Vietnamese chatbot for Covid-19 patients built from an intent classifier, regex extraction, a stored conversation state and hand-written replies.",
     "date": "2026-10-14",
-    "readingTime": "9 min read",
+    "readingTime": "6 min read",
     "tags": [
       "python",
       "fastapi",
@@ -44,15 +44,15 @@
       "knn / svm",
       "mongodb"
     ],
-    "content": "Intent classification, rule-based information extraction, conversation state and structured replies in a historical Vietnamese Covid-19 consultation chatbot, read directly from the repository.",
+    "content": "A team project from 2021 to 2023: a Vietnamese chatbot for Covid-19 patients built from an intent classifier, regex extraction, a stored conversation state and hand-written replies.",
     "published": true
   },
   {
     "slug": "chatbot-template",
-    "title": "Turning a chatbot backend into reusable building blocks",
-    "description": "How Chatbot Template separates specialized experts from injected model, memory, embedding and vector-database components, and where the design is still incomplete.",
+    "title": "I got tired of rebuilding the same chatbot backend",
+    "description": "Why I pulled the shared parts of my chatbots into one FastAPI backend, how the small \"expert\" classes sit on top of it, and the corners I never finished.",
     "date": "2025-11-22",
-    "readingTime": "9 min read",
+    "readingTime": "4 min read",
     "tags": [
       "ai",
       "fastapi",
@@ -60,15 +60,15 @@
       "template",
       "opensource"
     ],
-    "content": "How Chatbot Template separates specialized experts from injected model, memory, embedding and vector-database components, and where the design is still incomplete.",
+    "content": "Why I pulled the shared parts of my chatbots into one FastAPI backend, how the small \"expert\" classes sit on top of it, and the corners I never finished.",
     "published": true
   },
   {
     "slug": "building-blog-with-ai",
     "title": "Building this site with an AI-assisted feedback loop",
-    "description": "How a backend engineer used Cursor, GPT-4o screenshots and later an AI coding assistant to build and redesign a portfolio site, and what kept it honest: one data source, shared components and explicit checks.",
+    "description": "How I built this site with Cursor and screenshots fed to GPT-4o, where that loop fell short, and why I later moved the content into one set of JSON files.",
     "date": "2025-03-30",
-    "readingTime": "8 min read",
+    "readingTime": "5 min read",
     "tags": [
       "ai",
       "development",
@@ -76,22 +76,22 @@
       "gpt4",
       "nextjs"
     ],
-    "content": "How a backend engineer used Cursor, GPT-4o screenshots and later an AI coding assistant to build and redesign a portfolio site, and what kept it honest: one data source, shared components and explicit checks.",
+    "content": "How I built this site with Cursor and screenshots fed to GPT-4o, where that loop fell short, and why I later moved the content into one set of JSON files.",
     "published": true
   },
   {
     "slug": "langchain-chatbot",
     "title": "From a model call to a configurable chatbot",
-    "description": "How the LangChain chatbot combines MongoDB conversation memory, optional Presidio anonymization, provider configuration and LangSmith tracing, with the trade-offs and the parts that are still open.",
+    "description": "I started with a Gradio chat that remembered things in MongoDB and ended up with a FastAPI and Next.js bot that can hide phone numbers from the model provider.",
     "date": "2025-03-26",
-    "readingTime": "9 min read",
+    "readingTime": "5 min read",
     "tags": [
       "ai",
       "langchain",
       "privacy",
       "development"
     ],
-    "content": "How the LangChain chatbot combines MongoDB conversation memory, optional Presidio anonymization, provider configuration and LangSmith tracing, with the trade-offs and the parts that are still open.",
+    "content": "I started with a Gradio chat that remembered things in MongoDB and ended up with a FastAPI and Next.js bot that can hide phone numbers from the model provider.",
     "published": true
   }
 ]

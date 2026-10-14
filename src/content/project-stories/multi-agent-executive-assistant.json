@@ -2,8 +2,8 @@
   "slug": "multi-agent-executive-assistant",
   "project": "Multi-Agent Executive Assistant",
   "title": "Building an assistant that carries work across conversations",
-  "summary": "How routing, persistent task state, relevance-filtered briefings and confirmation before external actions fit together in a stateful multi-agent assistant, and what still needs verifying.",
-  "lead": "An executive assistant has to do more than answer questions. In this post I describe a stateful multi-agent system I helped build with LangGraph and FastAPI. It routes requests to specialists, keeps task records in PostgreSQL, produces news briefings in a requested format, and asks for confirmation before acting in Microsoft Teams or Planner. I explain my design reasoning, the failure modes we designed for, what I have verified, and what I would measure next.",
+  "summary": "Notes from a work project: an assistant that remembers tasks across a conversation, filters its news briefings, and asks before it touches Teams or Planner.",
+  "lead": "One conversation with an executive assistant can create a task, push its deadline, ask for a news briefing and then circle back to an earlier decision. I helped build one on LangGraph, FastAPI and PostgreSQL. This is how I thought about keeping its memory honest and keeping it from doing anything in Teams or Planner that nobody approved.",
   "status": "Work project",
   "stack": [
     "LangGraph",
@@ -27,257 +27,80 @@
   },
   "sections": [
     {
-      "title": "Context and problem",
+      "title": "Five jobs in one conversation",
       "paragraphs": [
-        "The assistant covers five kinds of work: task management, news briefings, meeting summaries, email drafting and document search. It is a stateful multi-agent system, meaning a request is routed to a specialist and the conversation keeps its context between turns. The backend is Python with FastAPI, the orchestration is a LangGraph graph, and durable records live in PostgreSQL. Teams and Planner integrations go through Microsoft Graph.",
-        "The difficulty is not any single capability. A single conversation can create a task, move its deadline, ask for a news briefing and return to an earlier decision. Two properties make that hard to do well. First, the system has to remember work across turns without confusing a chat transcript with a record. Second, some of its outputs leave the system, as a message in Teams or a task in Planner, and those cannot be undone by editing a chat message.",
-        "In this post I describe the design reasoning behind those two properties. The project is work I contributed to, not a public repository, so I describe mechanisms and decisions rather than code, and I say explicitly where I have not verified something.",
-        "The rest of the post follows the order in which the problems appeared for me: how to divide the work, where state lives, how task changes become records, how news is filtered, how external actions are gated, and finally which claims I can and cannot make."
-      ],
-      "definitions": [
-        {
-          "term": "Stateful workflow",
-          "text": "A flow whose later steps depend on earlier ones, such as a task that is created, edited and completed over several messages."
-        },
-        {
-          "term": "Checkpoint",
-          "text": "A saved snapshot of the orchestration state that lets a graph resume a conversation. Here the checkpoints are stored in PostgreSQL."
-        },
-        {
-          "term": "Human-in-the-loop confirmation",
-          "text": "A step where the system shows a proposed action, waits for an explicit decision, and continues with only what was approved."
-        }
+        "The assistant does five kinds of work: tasks, news briefings, meeting summaries, email drafting and document search. The backend is Python with FastAPI, the orchestration is a LangGraph graph, durable records live in PostgreSQL, and Teams and Planner are reached through Microsoft Graph. It was a work project and I contributed to it, so there's no public repo to point at. I'll talk about decisions rather than code.",
+        "No single capability was the hard part. The hard part was that one conversation hops between them. Someone creates a task, moves the deadline, asks for a briefing, then comes back to the task. That raised two problems for me. The system has to remember work across turns without treating a chat transcript as a record. And some of what it produces leaves the system, as a message in Teams or a task in Planner, and you can't fix that by editing a chat bubble."
       ]
     },
     {
-      "title": "Design around workflows, then define the agents",
+      "title": "A router and a handful of specialists",
       "paragraphs": [
-        "The unit worth designing is the workflow that survives changes of topic, not the individual message. I organized the work into task management, news analysis, meeting summaries, email drafting and document search. These capabilities share conversation context but need different tools and output contracts.",
-        "A news agent produces an evidence-based briefing in a requested format. A task agent must preserve a specific record and its current state. Treating both as free-form text would make the interface look simple while making the backend hard to trust. Separating them lets each specialist have its own tools and its own definition of a correct result.",
-        "A router sits in front of the specialists. Its job is narrow: decide which specialist handles the request and hand over the shared context. Keeping that decision separate from the specialists means a new capability is added by adding a specialist and a routing option, not by changing every existing one.",
-        "There is a cost to this split. Every specialist needs a clear boundary, and a request that spans two of them, such as drafting an email about a task, depends on the shared context being accurate. That is one reason the conversation state matters as much as the individual tools. I did not measure routing accuracy, so I cannot say how often the router picks the right specialist; that is on the list of things to evaluate."
+        "I started from the workflow, not the message. A news agent has to produce a briefing in a requested format. A task agent has to keep one specific record and its current state. If both just return free-form text, the interface looks simple and the backend becomes impossible to trust, so each specialist got its own tools and its own idea of a correct result.",
+        "In front of them sits a router with a deliberately small job: pick the specialist and pass along the shared context. The payoff is that adding a capability means adding a specialist and a routing option, not touching the ones that already work.",
+        "The cost shows up when a request spans two specialists, like drafting an email about a task. That only works if the shared context is accurate, which is why the conversation state ended up mattering as much as the tools. I never measured how often the router picks the right specialist."
       ],
       "diagrams": [
         {
           "chart": "flowchart TD\n    A[\"Incoming message\"] --> B[\"Router chooses specialist\"]\n    B --> C[\"Specialist uses its tools\"]\n    C --> D{\"Result or action?\"}\n    D -- \"result\" --> E[\"Reply to user\"]\n    D -- \"external action\" --> F[\"Ask for confirmation\"]\n    F --> G[\"Act on approved scope\"]\n    G --> E",
-          "caption": "Generic request lifecycle implied by the design: route, work, then either reply or pause for confirmation. The step names are an abstraction, not a transcript of the real graph."
+          "caption": "The shape of a request: route it, do the work, then either reply or pause for confirmation. A simplified view, not a transcript of the real graph."
         }
       ]
     },
     {
-      "title": "Separate routing from persistence",
+      "title": "The checkpoint is not the task",
       "paragraphs": [
-        "LangGraph represents routing and stateful execution. FastAPI connects that execution to application services, and PostgreSQL stores durable records. Each has its own job: a graph checkpoint is not a replacement for a task table, and a successful model response is not proof that a database update succeeded.",
-        "I worked on the PostgreSQL checkpoint connection lifecycle and on asynchronous task persistence, because those are the seams where a convincing demo becomes unreliable. Connections need a defined lifetime, and the state returned to the user should reflect what was actually persisted rather than what the model said it would persist.",
-        "The orchestration layer also has to resume a conversation without assuming that every earlier side effect can safely be repeated. That matters most for actions that touch external systems, which is why the confirmation step described below exists as a distinct stage.",
-        "As background, a checkpoint in a graph framework records the state of a run so it can continue later. That is valuable for conversation continuity, but it describes the run, not the business object. If a task is later queried from another screen or another conversation, the answer has to come from the task record. Keeping the two apart also makes failures easier to localize: a stuck conversation and a wrong task status are different bugs with different places to look."
-      ],
-      "table": {
-        "caption": "What each layer is responsible for, and what it should not be trusted to do.",
-        "headers": [
-          "Layer",
-          "Responsible for",
-          "Not a substitute for"
-        ],
-        "rows": [
-          [
-            "LangGraph checkpoint",
-            "Resuming the conversation and routing state",
-            "The task table; durable business records"
-          ],
-          [
-            "FastAPI service layer",
-            "Validation and calling application services",
-            "Model judgment about whether an update succeeded"
-          ],
-          [
-            "PostgreSQL task records",
-            "Task identity, status, assignee, priority, deadline",
-            "Conversation memory or user-facing wording"
-          ],
-          [
-            "Confirmation step",
-            "Showing a proposed external action and collecting a decision",
-            "An undo for actions already taken"
-          ]
-        ]
-      }
+        "A LangGraph checkpoint records where a run is so the conversation can pick up later. That's useful, but it describes the run, not the business object. If someone asks about a task from another screen or another conversation, the answer has to come from the task record in PostgreSQL, not from whatever the model said earlier.",
+        "This is the part I spent most of my time on: the lifetime of the PostgreSQL checkpoint connection, and asynchronous task persistence. Those are the seams where a good demo turns flaky. Connections need a defined lifetime, and what the user sees afterwards should be what was actually saved, not what the model said it would save.",
+        "Keeping the two layers apart also made bugs easier to place. A stuck conversation and a wrong task status are different problems with different places to look."
+      ]
     },
     {
-      "title": "Make task operations explicit",
+      "title": "Tasks are records, not paragraphs",
       "paragraphs": [
-        "The task tools expose separate operations to list, create, update and complete work. Status, assignee, priority and deadline are structured fields. The list operation forwards a status filter, and update logic parses dates before they reach the service layer.",
-        "This turns a request such as moving a deadline into a record operation instead of another paragraph in the chat. It also gives debugging a clear boundary: the requested update, the service result and the returned record can each be inspected on their own. A malformed deadline returns a validation response instead of silently becoming a different date.",
-        "Structured fields also support the follow-up behavior people expect from an assistant. When a user says to push something to next Friday, the system needs the task it refers to, the field being changed, and a date it can validate. If any of those is missing or ambiguous, returning a validation response is better than guessing, because a guessed deadline looks identical to a correct one in the chat."
-      ],
-      "points": [
-        "Keep task identity stable across follow-up messages.",
-        "Distinguish an absent field from a field the user wants to change.",
-        "Refresh persisted state before showing the resulting task."
-      ],
-      "diagrams": [
-        {
-          "chart": "stateDiagram-v2\n    [*] --> Open\n    Open --> InProgress : update status\n    Open --> Done : complete\n    InProgress --> Done : complete\n    Done --> [*]",
-          "caption": "An illustrative task lifecycle. The sources state that tasks have a status and complete, update, create and list operations; the specific status names and allowed transitions shown here are generic examples, not the real status set."
-        }
-      ],
-      "table": {
-        "caption": "Failure cases in task updates and the intended handling. These describe design intent, not measured behavior.",
-        "headers": [
-          "Case",
-          "Risk",
-          "Handling by design"
-        ],
-        "rows": [
-          [
-            "Malformed deadline",
-            "Becomes a different date silently",
-            "Date is parsed before the service layer; a validation response is returned"
-          ],
-          [
-            "Field not mentioned in follow-up",
-            "An unchanged field is overwritten",
-            "Absent field is treated differently from a requested change"
-          ],
-          [
-            "Update succeeds but reply is stale",
-            "User sees outdated task",
-            "Persisted state is refreshed before the task is shown"
-          ],
-          [
-            "Ambiguous task reference",
-            "Wrong record is edited",
-            "Stable task identity across follow-up messages"
-          ]
-        ]
-      }
+        "The task tools list, create, update and complete work, and status, assignee, priority and deadline are real fields. The list operation takes a status filter, and update logic parses dates before they reach the service layer.",
+        "So \"push it to next Friday\" becomes a record operation instead of another paragraph in the chat. It needs the task being referred to, the field being changed and a date that parses. If any of those is missing, the assistant returns a validation response instead of guessing. A guessed deadline looks exactly like a correct one in the chat, and that's what worried me.",
+        "Two smaller rules came out of that: an absent field is not the same as a field the user wants to change, and the task is reloaded from the database before it's shown, so the reply can't be stale."
+      ]
     },
     {
-      "title": "Filter for relevance before polishing the briefing",
+      "title": "Filter the news before polishing it",
       "paragraphs": [
-        "The news pipeline scores candidate articles for relevance with a model and drops lower-scoring items before the report is assembled. This solves a different problem from summarization: a well-written summary of an irrelevant article is still noise. Filtering first also means later steps work on a smaller, more relevant set.",
-        "I also worked on extracting report structure from sample PDF and DOCX files. The sample defines headings, ordering and presentation, so generated briefings follow the requested format instead of one hard-coded layout. Export then turns the selected material into a PDF or DOCX document that can be used outside the chat.",
-        "The format work is a design choice about who controls presentation. Instead of encoding one layout in code, a sample document supplies the structure and the generator follows it. The benefit is that a different requested format does not require a code change to the layout. The risk is fidelity: extracting structure from a document is an approximation, so export fidelity is something I would check against real samples rather than assume."
-      ],
-      "steps": [
-        {
-          "title": "Collect candidate articles",
-          "text": "The news agent gathers candidates for the requested topic."
-        },
-        {
-          "title": "Score relevance with a model",
-          "text": "Each candidate gets a relevance score."
-        },
-        {
-          "title": "Drop lower-scoring items",
-          "text": "Only items that pass the filter reach the report."
-        },
-        {
-          "title": "Apply the requested structure",
-          "text": "Headings and order follow the structure extracted from a sample PDF or DOCX."
-        },
-        {
-          "title": "Export",
-          "text": "The result is exported as PDF or DOCX."
-        }
+        "For briefings, the news agent has a model score each candidate article for relevance and drops the low scorers before the report is assembled. A beautifully summarized article that nobody needed is still noise, and filtering first means the later steps work on less.",
+        "I also worked on pulling report structure out of sample PDF and DOCX files. The sample supplies headings, ordering and presentation, so a briefing follows whatever format was asked for instead of one layout hard-coded in the generator. Export then writes the result as PDF or DOCX so it can be used outside the chat."
       ],
       "callout": {
         "label": "Trade-off",
-        "text": "A model-based relevance filter can drop an article a reader would have wanted. The threshold and its error rate have not been measured, so I treat reader-judged relevance as the first thing to evaluate."
+        "text": "A model-based filter will sometimes drop an article a reader would have wanted. I never measured the threshold or its error rate."
       }
     },
     {
-      "title": "Separate drafting from acting",
+      "title": "Asking before touching Teams or Planner",
       "paragraphs": [
-        "Teams and Planner integrations put the assistant close to real work, so confirmation is part of the workflow design. I implemented human-in-the-loop confirmation flows for those integrations. A proposed task or message should be understandable before the user approves it.",
-        "Human-in-the-loop flows give the system a place to show the proposed action, collect a decision and continue with only the approved scope. The same pause also gives the orchestration layer a natural point to persist state, which is useful when a conversation is interrupted between a proposal and a decision.",
-        "Two failure modes drive this design. The first is acting on a misunderstanding, for example creating a task with the wrong assignee. Confirmation catches that before the side effect. The second is repeating an action after an interrupted request, for example sending the same message twice. Persisting the proposal and the decision gives the system something to check before it acts again. I have not measured the duplicate-action rate, so I describe this as the intent of the design, and it is the metric I would watch first once the integrations run against a real tenant."
+        "Teams and Planner put the assistant close to real work, so I built human-in-the-loop confirmation for those integrations. The assistant shows the proposed task or message, waits for a decision, and goes ahead with only what was approved.",
+        "Two failures pushed me there. One is acting on a misunderstanding, like creating a task with the wrong assignee; confirmation catches that before the side effect. The other is repeating an action after an interrupted request, like sending the same message twice. Persisting the proposal and the decision gives the system something to check before it acts again.",
+        "I haven't run any of this against a production tenant, so permissions, retries and what Microsoft Graph does on partial failures are still open for me."
       ],
       "diagrams": [
         {
           "chart": "sequenceDiagram\n    participant U as User\n    participant A as Assistant\n    participant S as Task or email specialist\n    participant G as Microsoft Graph\n    U->>A: Request an action in Teams or Planner\n    A->>S: Prepare proposal\n    S-->>A: Proposed action\n    A-->>U: Show proposal and ask to confirm\n    alt Approved\n        U->>A: Approve\n        A->>G: Perform approved action\n        G-->>A: Result\n        A-->>U: Report outcome\n    else Declined\n        U->>A: Decline\n        A-->>U: No external action taken\n    end",
-          "caption": "Confirmation flow before an external action. The approve and decline branches are the generic shape of a confirmation step; the real graph may name or order its nodes differently."
+          "caption": "The confirmation step before an external action. The real graph may name or order its nodes differently."
         }
-      ],
-      "table": {
-        "caption": "Trade-offs of requiring confirmation before external actions.",
-        "headers": [
-          "Choice",
-          "Benefit",
-          "Cost"
-        ],
-        "rows": [
-          [
-            "Confirm before every external action",
-            "The user sees the exact task or message first",
-            "An extra turn in the conversation"
-          ],
-          [
-            "Act only on the approved scope",
-            "Declined or edited parts are not sent",
-            "The proposal must be represented precisely enough to be approved piece by piece"
-          ],
-          [
-            "Keep proposal separate from execution",
-            "Execution can be audited against what was approved",
-            "More state to store between turns"
-          ]
-        ]
-      }
+      ]
     },
     {
-      "title": "What is verified and what is not",
+      "title": "What I'd do next",
       "paragraphs": [
-        "What I can state is what the implementation does: routing across five specialist areas, structured task operations with date parsing, model-based relevance filtering, template-informed report structure with PDF and DOCX export, PostgreSQL checkpoint and task persistence work, and confirmation flows for Teams and Planner.",
-        "What I have not verified is behavior in a production tenant. Permissions, retries and downstream state for the Microsoft Graph integrations still need that check. I also have no measurements to publish, so I make no claim about accuracy, speed, cost or scale.",
-        "I keep this separation explicit in my own write-ups. That the mechanisms are implemented does not show how the system behaves with real permissions, real users, rate limits or partial failures in Microsoft services. Those need an environment I could not treat as production."
-      ],
-      "table": {
-        "caption": "Verification status by area, based on what I can state rather than what I hope is true.",
-        "headers": [
-          "Area",
-          "Stated by the implementation",
-          "Not yet verified"
-        ],
-        "rows": [
-          [
-            "Task operations",
-            "List, create, update, complete; structured fields; date parsing",
-            "Completion accuracy on real requests"
-          ],
-          [
-            "News briefings",
-            "Relevance filtering; format taken from sample files; PDF and DOCX export",
-            "Relevance as judged by readers; export fidelity"
-          ],
-          [
-            "Persistence",
-            "Checkpoint connection lifecycle and async task persistence worked on",
-            "Behavior under interrupted or repeated requests"
-          ],
-          [
-            "Teams and Planner",
-            "Confirmation flows before external actions",
-            "Permissions, retries and downstream state against a production tenant"
-          ]
-        ]
-      }
-    },
-    {
-      "title": "What to measure next",
-      "paragraphs": [
-        "The measurements that would show whether the system helps are task completion accuracy, deadline parsing failures, briefing relevance as judged by readers, export fidelity, and the rate of duplicate actions after interrupted requests. Each maps to a mechanism above: structured task fields, date parsing, relevance filtering, template-informed export and confirmation before acting.",
-        "The main lesson is that an agent becomes useful when its state and actions can be inspected. Adding another specialist is easier than making the boundary between a conversation and an external side effect reliable, so that boundary is where I would spend the next round of effort."
+        "Adding another specialist turned out to be the easy part. Making the boundary between a conversation and an external side effect dependable is harder, and that's where I'd spend the next round: task completion on real requests, deadline parsing failures, whether readers find the briefings relevant, and how often an interrupted request produces a duplicate action."
       ]
     }
   ],
   "date": "2026-10-14",
   "takeaways": [
-    "Design the workflow first; agents are specialists with their own tools and output contracts.",
-    "A graph checkpoint, a task table and a model reply are different kinds of state, and none substitutes for another.",
-    "Structured task fields and date parsing make a chat request into an inspectable record operation.",
-    "Confirmation before external actions separates drafting from acting and limits what is sent to the approved scope.",
-    "Production-tenant behavior and quality metrics are not yet verified, so no outcome claims are made."
+    "Design the workflow first; specialists get their own tools and their own definition of a correct result.",
+    "A graph checkpoint, a task table and a model reply are different kinds of state, and none can stand in for another.",
+    "Structured task fields and date parsing turn a chat request into a record operation you can inspect.",
+    "Confirming before external actions limits what gets sent to what the user approved."
   ],
   "reviewNotes": [
     "Added a date (2026-10-14); the original file had none. Confirm the intended publication date.",
@@ -285,7 +108,10 @@
     "Confirm the request lifecycle flowchart and the confirmation sequence diagram match the real implementation; they are generic abstractions.",
     "Confirm the task state diagram: status names and transitions are illustrative, not from the sources.",
     "Confirm the Docker mention in the stack (taken from the resume tags) and your exact ownership of each module.",
-    "Optional: add an anonymized example request and result, and measured outcomes only if logs or feedback support them."
+    "Optional: add an anonymized example request and result, and measured outcomes only if logs or feedback support them.",
+    "Removed the illustrative task state diagram, the tables and the definitions block in the rewrite; restore if wanted.",
+    "The 'helped build' / 'contributed to' framing is from the old text. Which parts were yours beyond checkpoint connections, async task persistence, report-structure extraction and confirmation flows?",
+    "Why LangGraph and PostgreSQL were chosen, and what actually went wrong during development, is not in the sources. Add a real bug or decision story if you have one."
   ],
   "sources": [
     {
