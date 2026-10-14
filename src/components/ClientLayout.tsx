@@ -193,10 +193,10 @@ export default function ClientLayout({
             {/* Left: Mac buttons + terminal */}
             <div className="flex min-w-0 items-center gap-3">
               {/* Mac-style window controls */}
-              <div className="hidden shrink-0 gap-1.5 sm:flex" aria-hidden="true">
-                <div className="h-3 w-3 rounded-full bg-primary"></div>
-                <div className="h-3 w-3 rounded-full bg-base-content/35"></div>
-                <div className="h-3 w-3 rounded-full bg-base-content/35"></div>
+              <div className="hidden shrink-0 gap-2 sm:flex" aria-hidden="true">
+                <div className="h-3 w-3 rounded-full border border-black/15 bg-[#ff5f57]"></div>
+                <div className="h-3 w-3 rounded-full border border-black/15 bg-[#febc2e]"></div>
+                <div className="h-3 w-3 rounded-full border border-black/15 bg-[#28c840]"></div>
               </div>
 
               {/* Terminal path display */}

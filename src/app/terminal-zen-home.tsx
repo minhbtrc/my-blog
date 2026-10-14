@@ -16,11 +16,11 @@ export default function TerminalZenHome() {
         </div>
         <div className="min-w-0 text-center md:text-left">
           <p className="mb-4 font-mono text-xs text-primary">minhbtc@ai-eng:~$ whoami</p>
-          <h1 className="text-5xl font-semibold leading-none tracking-tight sm:text-7xl">
-            Minh <span className="text-primary">Bui</span>
-            <span className="ml-1.5 inline-block h-[0.72em] w-[0.09em] translate-y-[0.04em] animate-blink bg-primary motion-reduce:animate-none" aria-hidden="true" />
+          <h1 className="text-6xl leading-none tracking-tighter sm:text-8xl">
+            <span className="font-light">Minh</span> <span className="font-bold text-primary">Bui</span>
+            <span className="ml-2 inline-block h-[0.7em] w-[0.08em] translate-y-[0.03em] animate-blink bg-base-content/70 motion-reduce:animate-none" aria-hidden="true" />
           </h1>
-          <div className="mt-5 h-px w-16 bg-primary/60 md:mx-0 mx-auto" aria-hidden="true" />
+          <div className="mt-6 h-0.5 w-12 rounded bg-primary md:mx-0 mx-auto" aria-hidden="true" />
           <p className="mt-5 text-xl font-medium leading-8">{profile.title}</p>
           <p className="mt-3 text-base leading-8 text-base-content/70">{profile.intro}</p>
           <p className="mt-5 font-mono text-xs leading-6 text-base-content/70">Agentic AI · Technical leadership · Enterprise delivery</p>
