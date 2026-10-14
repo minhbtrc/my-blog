@@ -97,7 +97,7 @@ const config: Config = {
           'base-100': '#1d232a',        // Dark slate for primary background
           'base-200': '#1e293b',        // Slightly lighter for secondary
           'base-300': '#334155',        // Medium slate for tertiary
-          'base-content': '#94a3b8',    // Medium slate for better dark mode contrast
+          'base-content': '#cbd5e1',    // Light slate: 10:1 on base-100 (was #94a3b8, ~5.6:1)
         },
       },
     ],

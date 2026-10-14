@@ -12,6 +12,8 @@ export interface SkillCategory {
   title: string;
   /** Array of skills in this category */
   skills: string[];
+  /** Keep the full About profile while selecting entries for the PDF. */
+  resume?: boolean;
   /** Animation delay value (used for staggered animations) */
   delay?: number;
 }

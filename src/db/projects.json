@@ -1,23 +1,123 @@
 [
   {
-    "title": "The AI-Driven Blog",
-    "tags": ["llm", "cursor", "agent"],
-    "description": "New blog project that heavily uses ChatGPT and Cursor. As a back-end enthusiast who's no fan of CSS, I relied on these AI tools to help shape both the design and content. From styling advice to layout tweaks, the entire process was an AI-driven collaboration—and it turned out surprisingly well!",
-    "url": "https://minhbtc.blog",
-    "image": "/images/projects/blog.png",
-    "featured": true
+    "title": "Multi-Agent Executive Assistant",
+    "tags": [
+      "LangGraph",
+      "FastAPI",
+      "PostgreSQL",
+      "Microsoft Graph",
+      "Docker"
+    ],
+    "description": "Stateful agent workflows for executive tasks, news, meetings, email and document search.",
+    "points": [
+      "Developed a stateful multi-agent assistant routing requests across task management, news briefings, meeting summaries, email drafting and document search.",
+      "Implemented LLM relevance filtering for news and extracted report structure from sample PDF/DOCX files so generated briefings follow the requested format; supported PDF and DOCX export.",
+      "Worked on PostgreSQL checkpoint connection lifecycle, async task persistence and deadline/status handling; implemented human-in-the-loop confirmation flows for Teams/Planner integration."
+    ],
+    "featured": true,
+    "resume": true,
+    "slug": "multi-agent-executive-assistant"
   },
   {
-    "title": "Langchain Chatbot",
-    "tags": ["ai", "llm", "chatbot"],
-    "description": "Developed a chatbot using the Langchain framework, integrated with Vertex AI or OpenAI API. Implemented MongoDB for memory management, utilized Gradio and Langchain UI, and incorporated Microsoft Presidio for data anonymization.",
+    "title": "PRISM | AI Self-Reflection App",
+    "tags": [
+      "Flutter",
+      "FastAPI",
+      "PostgreSQL",
+      "Redis",
+      "RevenueCat"
+    ],
+    "description": "A bilingual iOS self-reflection product with streamed AI responses and a privacy-conscious backend.",
+    "points": [
+      "Developed a bilingual iOS product and async Python backend with provider-agnostic AI responses streamed over server-sent events (SSE).",
+      "Implemented Redis-backed cost reservations and cancellation cleanup to control concurrent generation spend and release resources after interrupted requests.",
+      "Worked on subscription webhook reconciliation and account-merge consistency, alongside encrypted private text and privacy-conscious telemetry; prepared release checks and local validation."
+    ],
+    "featured": true,
+    "status": "Internal QA",
+    "resume": true,
+    "slug": "prism"
+  },
+  {
+    "title": "LangChain Chatbot",
+    "tags": [
+      "OpenAI / Vertex AI",
+      "MongoDB",
+      "Gradio",
+      "LangSmith",
+      "Microsoft Presidio"
+    ],
+    "description": "A streaming chatbot with conversation memory, prompt tracing and PII anonymization.",
+    "points": [
+      "Built a streaming chatbot with MongoDB-backed conversation memory and configurable bot behavior; added LangSmith prompt versioning and tracing.",
+      "Integrated Microsoft Presidio to anonymize personally identifiable information before sending content to the LLM."
+    ],
+    "featured": false,
     "url": "https://github.com/minhbtrc/langchain-chatbot",
-    "image": "/images/projects/langchain.png"
+    "resume": true,
+    "article": "/blog/langchain-chatbot",
+    "slug": "langchain-chatbot"
+  },
+  {
+    "title": "The AI-Driven Blog",
+    "tags": [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "ChatGPT",
+      "Cursor"
+    ],
+    "description": "New blog project that heavily uses ChatGPT and Cursor. As a back-end enthusiast who's no fan of CSS, I relied on these AI tools to help shape both the design and content. From styling advice to layout tweaks, the entire process was an AI-driven collaboration—and it turned out surprisingly well!",
+    "url": "https://minhbtc.blog",
+    "featured": true,
+    "resume": false,
+    "article": "/blog/building-blog-with-ai",
+    "points": [
+      "Used AI-assisted iteration to build and refine the site: implementation in Cursor, browser review, screenshot-based feedback and targeted UI adjustments.",
+      "Built a personal publishing and portfolio site with searchable blog posts, topic filters, light/dark themes and responsive layouts.",
+      "Connected structured profile data to the About page and a reproducible PDF resume, keeping the full website portfolio separate from the CV selection."
+    ],
+    "slug": "building-blog-with-ai"
   },
   {
     "title": "Covid Chatbot",
-    "tags": ["ai", "nlp", "healthcare"],
+    "tags": [
+      "Python",
+      "FastAPI",
+      "Vietnamese NLP",
+      "scikit-learn",
+      "MongoDB"
+    ],
     "description": "Led the development of a consultancy chatbot for SARS-COVID-2 patients, providing symptom assessment and self-care advice. Implemented machine learning models (KNN, SVM) for Intent Classification and developed a Named Entity Recognition system using PhoBERT and CRF.",
-    "url": "https://github.com/minhbtrc/covid-consultant-chatbot"
+    "url": "https://github.com/minhbtrc/covid-consultant-chatbot",
+    "resume": false,
+    "points": [
+      "Separated natural language understanding, dialogue management and response generation, with structured intent/entity results passed between stages.",
+      "Used TF-IDF features with KNN and SVM classification; maintained conversation context to support follow-up questions rather than isolated one-turn replies.",
+      "Connected the conversation API and frontend, with stored dialogue state and structured response options. This is a historical engineering project; no clinical validation or deployment scale is claimed."
+    ],
+    "slug": "covid-chatbot"
+  },
+  {
+    "title": "Chatbot Template",
+    "tags": [
+      "FastAPI",
+      "LangChain",
+      "RAG",
+      "Dependency injection",
+      "MongoDB",
+      "Docker"
+    ],
+    "description": "A reusable AI application backend organized around specialized experts, configurable model components and interchangeable conversation memory.",
+    "points": [
+      "Separated expert behavior from shared model, memory, embedding and vector-database interfaces to make new workflows easier to add.",
+      "Implemented a document retrieval expert with PDF loading, semantic chunking, document metadata and synchronous/asynchronous indexing paths.",
+      "Organized reusable application setup and containerized development around the same backend foundation used for conversational applications."
+    ],
+    "url": "https://github.com/minhbtrc/chatbot-template",
+    "article": "/blog/chatbot-template",
+    "resume": false,
+    "slug": "chatbot-template"
   }
-] 
+]

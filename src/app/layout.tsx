@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import ClientLayout from '../components/ClientLayout'
+import { ThemeProvider } from '@/components/theme-provider'
+import { profile } from '@/data/profile'
 import dynamic from 'next/dynamic'
 import './globals.css'
 
@@ -27,7 +29,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'MinhBTC - Personal Blog',
-  description: 'A personal blog focusing on software development and technology.',
+  description: profile.intro,
 }
 
 export default function RootLayout({
@@ -43,8 +45,10 @@ export default function RootLayout({
       data-theme="light"
     >
       <body className="font-sans">
-        <ParticleBackground />
-        <ClientLayout>{children}</ClientLayout>
+        <ThemeProvider>
+          <ParticleBackground />
+          <ClientLayout>{children}</ClientLayout>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

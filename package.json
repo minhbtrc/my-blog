@@ -14,7 +14,9 @@
     "lint": "next lint",
     "lint:watch": "nodemon --watch src --ext ts,tsx --exec 'next lint' --signal SIGTERM",
     "migrate": "tsx db.up.ts",
-    "migrate:watch": "nodemon --watch db.up.ts --watch src --ext md,mdx --exec 'yarn migrate' --signal SIGTERM"
+    "migrate:watch": "nodemon --watch db.up.ts --watch src --ext md,mdx --exec 'yarn migrate' --signal SIGTERM",
+    "resume:build": "python3 scripts/build_resume.py",
+    "resume:check": "python3 scripts/build_resume.py --check"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.2",
@@ -34,7 +36,7 @@
     "ky": "^1.7.0",
     "lucide-react": "^0.399.0",
     "lunr": "^2.3.9",
-    "mermaid": "^10.9.1",
+    "mermaid": "^11.12.1",
     "next": "14.2.4",
     "next-mdx-remote": "^5.0.0",
     "next-nprogress-bar": "^2.3.12",

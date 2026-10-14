@@ -1,451 +1,184 @@
-import Image from 'next/image'
-import { BlogPostStyle } from '@/components/BlogPostStyle'
+import dynamic from 'next/dynamic'
+import { Article, Callout, CodeBlock, Definitions, Figure, FigurePair, Lead, PostBody, PostFooter, PostHeader, References, Steps } from '@/components/post'
+
+const Mermaid = dynamic(() => import('@/components/Mermaid'))
 
 export const metadata = {
   title: 'Building a Privacy-First AI Chatbot with LangChain',
-  description: 'A comprehensive guide to creating a full-stack AI chatbot using LangChain, with a focus on privacy, customization, and developer experience.'
+  description: 'How the langchain-chatbot project combines LangChain, MongoDB memory, Microsoft Presidio anonymization and LangSmith tracing.'
 }
+
+const architecture = `
+graph TD
+    subgraph compose["Docker Compose environment"]
+        web["Next.js frontend<br/>port 3000"] <--> api["FastAPI backend<br/>port 8080"]
+        api <--> db[("MongoDB<br/>port 27017")]
+        api --> chain["LangChain agent"]
+        chain --> presidio["Presidio anonymizer<br/>optional"]
+        chain --> llm["LLM provider<br/>OpenAI or Vertex AI"]
+        chain --> trace["LangSmith tracing"]
+    end
+`
 
 export default function LangchainChatbotPage() {
   return (
-    <BlogPostStyle
-      title="Building a Privacy-First AI Chatbot with LangChain"
-      date="2023-07-15"
-      readTime="8 min read"
-      tags={["ai", "langchain", "privacy", "development"]}
-      coverImage={{
-        src: "/images/blog/langchain-cover.png",
-        alt: "LangChain Chatbot Architecture",
-        caption: "Privacy-first architecture for modern AI applications"
-      }}
-      author={{
-        name: "MinhBTC",
-        avatar: "/images/avatar.jpg"
-      }}
-    >
-      <div className="bg-muted/30 p-6 rounded-xl border border-border mb-8">
-        <p className="italic text-lg mb-0 text-muted-foreground">
-          A comprehensive guide to creating a full-stack AI chatbot using LangChain, with a focus on privacy, customization, and developer experience.
+    <Article>
+      <PostHeader
+        title="Building a Privacy-First AI Chatbot with LangChain"
+        subtitle="A walkthrough of langchain-chatbot: conversation memory, optional anonymization before the model call, and tracing."
+        author="Minh Bui"
+        date="2025-03-26"
+        readingTime="6 min read"
+        tags={['ai', 'langchain', 'privacy', 'development']}
+      />
+      <PostBody>
+        <Lead>
+          <p>
+            langchain-chatbot is an open-source chatbot that keeps conversation history in MongoDB, can anonymize personal data before it reaches the language model, and traces each request with LangSmith. This post covers what it does, how the pieces fit together, and how to run it.
+          </p>
+        </Lead>
+
+        <h2>What it is</h2>
+        <p>
+          The project is a full-stack chatbot built on LangChain. It talks to a hosted model (OpenAI or Vertex AI), stores per-conversation memory in MongoDB, and exposes the bot through a FastAPI backend with a Next.js frontend. The first version, released as v1.0, used a Gradio interface; the Next.js frontend and the FastAPI service came later.
         </p>
-      </div>
-
-      <p>
-        In an era where AI-powered conversations are transforming how we interact with technology, building a chatbot that balances functionality with user privacy is more critical than ever. The open-source langchain-chatbot repository offers a compelling solution. This project leverages the LangChain framework to deliver a customizable, memory-enabled chatbot with robust privacy features and developer-friendly tools. Whether you&apos;re a developer exploring AI applications or a business seeking a conversational tool, this repo is worth a closer look. In this blog post, we&apos;ll dive into its key features, architecture, setup process, and more—complete with visuals to bring it to life.
-      </p>
-
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-border">What is langchain-chatbot?</h2>
-
-      <p>
-        At its core, langchain-chatbot is a full-stack chatbot implementation that uses the LangChain framework to connect with large language models (LLMs) like Vertex AI or OpenAI. What sets it apart is its focus on privacy, ease of use, and customization. It stores conversation history in MongoDB, anonymizes sensitive data with Microsoft Presidio, and provides tracing capabilities via LangSmith. Plus, it&apos;s built with a modern tech stack—Next.js for the frontend and FastAPI for the backend—making it a ready-to-deploy solution.
-      </p>
-
-      <div className="bg-muted/30 p-5 rounded-xl border-l-4 border-primary my-6">
-        <p className="mb-0 text-muted-foreground">
-          <strong>Why it matters:</strong> Chatbots often handle sensitive user data, and ensuring privacy while maintaining a seamless experience is a challenge. This repo tackles that head-on, making it an excellent choice for developers who value security and flexibility.
+        <p>
+          Chatbots often receive names, phone numbers and emails. The design goal was to keep that data out of third-party model APIs without losing context-aware answers.
         </p>
-      </div>
 
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-border">Key Features</h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-card p-6 rounded-xl border border-border">
-          <h3 className="text-xl font-bold mb-3 text-foreground">1. LangChain-Powered LLM Integration</h3>
-          <p className="text-muted-foreground">
-            LangChain is a framework that simplifies building applications with LLMs. In this repo, it connects the chatbot to powerful models like Vertex AI or OpenAI via their APIs. This flexibility lets developers choose their preferred provider without major code changes.
-          </p>
-          <p className="mt-2 text-primary">
-            <strong>Why it&apos;s cool:</strong> You&apos;re not locked into one LLM—experiment with different models to suit your needs.
-          </p>
-        </div>
-
-        <div className="bg-card p-6 rounded-xl border border-border">
-          <h3 className="text-xl font-bold mb-3 text-foreground">2. Memory System with MongoDB</h3>
-          <p className="text-muted-foreground">
-            Ever chatted with a bot that forgets everything you just said? Not here. The chatbot uses MongoDB to store conversation history, enabling context-aware responses that feel more natural.
-          </p>
-        </div>
-
-        <div className="bg-card p-6 rounded-xl border border-border">
-          <h3 className="text-xl font-bold mb-3 text-foreground">3. Customizable Personality</h3>
-          <p className="text-muted-foreground">
-            Want a chatbot that sounds like a friendly 30-year-old teacher or a witty teenager? You can tweak its personality by setting attributes like gender and age, tailoring the tone to your audience.
-          </p>
-          <p className="mt-2 text-primary">
-            <strong>Use Case:</strong> Perfect for educational tools or customer service bots with a specific vibe.
-          </p>
-        </div>
-
-        <div className="bg-card p-6 rounded-xl border border-border">
-          <h3 className="text-xl font-bold mb-3 text-foreground">4. Privacy with Microsoft Presidio</h3>
-          <p className="text-muted-foreground">
-            Privacy is a standout feature. The chatbot uses Microsoft Presidio to anonymize personally identifiable information (PII) before sending it to the LLM API. Think of it like redacting a sensitive document—your name becomes &quot;[NAME]&quot; to keep it safe.
-          </p>
-          <p className="mt-2">
-            <a href="https://microsoft.github.io/presidio/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Learn more about Presidio →</a>
-          </p>
-        </div>
-
-        <div className="bg-card p-6 rounded-xl border border-border md:col-span-2">
-          <h3 className="text-xl font-bold mb-3 text-foreground">5. LangSmith Tracing</h3>
-          <p className="text-muted-foreground">
-            Debugging AI can be tricky, but LangSmith makes it easier. This tool traces how the chatbot processes inputs and generates outputs, giving developers a window into its behavior.
-          </p>
-          <p className="mt-2 text-primary">
-            <strong>Why it&apos;s handy:</strong> Spot issues fast and optimize performance.
-            <a href="https://docs.smith.langchain.com/" target="_blank" rel="noopener noreferrer" className="ml-2 text-primary hover:underline">LangSmith Documentation →</a>
-          </p>
-        </div>
-      </div>
-
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-border">The Architecture</h2>
-      <p>
-        This isn&apos;t just a backend script—it&apos;s a full-stack app:
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
-        <div className="bg-card p-6 rounded-xl border border-border">
-          <h3 className="text-xl font-bold mb-3 text-foreground">Frontend (Next.js)</h3>
-          <p className="text-muted-foreground">
-            A sleek, responsive interface built with Next.js handles user interactions. It&apos;s where you type your messages and see the bot reply.
-          </p>
-          <div className="mt-4 bg-muted/50 p-4 rounded-lg">
-            <p className="text-sm text-center text-muted-foreground">
-              Modern chat interface with message bubbles, input field at the bottom, and clean design.
-              User messages appear on the right in primary color, while bot responses are on the left.
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-card p-6 rounded-xl border border-border">
-          <h3 className="text-xl font-bold mb-3 text-foreground">Backend (FastAPI)</h3>
-          <p className="text-muted-foreground">
-            The FastAPI-powered backend manages the logic—connecting to LangChain, MongoDB, and the LLM API. It&apos;s fast, modern, and perfect for handling API requests.
-          </p>
-          <p className="mt-3 text-muted-foreground">
-            <strong>How It Works Together:</strong> User input goes from the frontend to the backend, gets anonymized, queries the LLM, and pulls context from MongoDB before sending a response back.
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-card p-6 rounded-xl border border-border my-8">
-        <h3 className="text-xl font-bold mb-3 text-foreground">Complete Architecture Overview</h3>
-        <pre className="bg-muted/50 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed whitespace-pre">
-          {`┌─────────────────────────────────────────────────────────────────────────────┐
-│                                                                             │
-│                           Docker Compose Environment                        │
-│                                                                             │
-│  ┌───────────────┐       ┌────────────────┐        ┌───────────────────┐    │
-│  │               │       │                │        │                   │    │
-│  │    Next.js    │◄─────►│    FastAPI     │◄──────►│     MongoDB       │    │
-│  │   Frontend    │       │    Backend     │        │     Database      │    │
-│  │  (Port 3000)  │       │   (Port 8080)  │        │    (Port 27017)   │    │
-│  │               │       │                │        │                   │    │
-│  └───────────────┘       └────────┬───────┘        └───────────────────┘    │
-│                                   │                                         │
-│                                   ▼                                         │
-│                          ┌─────────────────┐      ┌──────────────────┐      │
-│                          │                 │      │                  │      │
-│                          │   LangChain     │─────►│  LangSmith       │      │
-│                          │   Framework     │      │  (Tracing)       │      │
-│                          │                 │      │                  │      │
-│                          └────────┬────────┘      └──────────────────┘      │
-│                                   │                                         │
-│                                   ▼                                         │
-│                          ┌─────────────────┐      ┌──────────────────┐      │
-│                          │                 │      │                  │      │
-│                          │   LLM Provider  │      │  Presidio        │      │
-│                          │ (OpenAI/Vertex) │      │  Anonymizer      │      │
-│                          │                 │      │  (PII Protection)│      │
-│                          └─────────────────┘      └──────────────────┘      │
-│                                                                             │
-└─────────────────────────────────────────────────────────────────────────────┘`}
-        </pre>
-        <p className="text-sm text-center mt-2 text-muted-foreground">
-          Comprehensive architecture diagram of the langchain-chatbot system.
-        </p>
-      </div>
-
-      <p>
-        Here&apos;s a peek at how the backend might set up the LangChain chain (simplified for illustration):
-      </p>
-
-      <div className="bg-card border border-border rounded-xl overflow-hidden my-6">
-        <div className="bg-muted text-muted-foreground py-2 px-4 font-semibold">backend/chains.py</div>
-        <pre className="bg-muted/30 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed">
-          {`# Import the required libraries
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationChain
-
-
-# Initialize the language model with your API key
-llm = ChatOpenAI(api_key="your-openai-key")
-
-# Create a conversation chain
-conversation = ConversationChain(llm=llm)
-
-# Generate a response
-response = conversation.predict(input="Hello, how can I assist you today?")`}
-        </pre>
-      </div>
-
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-border">Getting Started</h2>
-      <p>
-        Ready to try it? Here&apos;s how to get langchain-chatbot running:
-      </p>
-
-      <div className="bg-card p-6 rounded-xl border border-border my-6">
-        <h3 className="text-xl font-bold mb-3 text-foreground">Prerequisites:</h3>
-        <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-          <li>Python 3.9+</li>
-          <li>Node.js (for the frontend)</li>
-          <li>API keys for Vertex AI or OpenAI</li>
-          <li>MongoDB (local or cloud instance)</li>
-        </ul>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-        <div className="bg-card border border-border rounded-xl overflow-hidden">
-          <div className="bg-muted text-muted-foreground py-2 px-4 font-semibold">Clone the Repository</div>
-          <pre className="bg-muted/30 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed">
-            {`# Clone the repository
-git clone https://github.com/minhbtrc/langchain-chatbot.git
-
-# Navigate to the project directory
-cd langchain-chatbot`}
-          </pre>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl overflow-hidden">
-          <div className="bg-muted text-muted-foreground py-2 px-4 font-semibold">Install Dependencies</div>
-          <pre className="bg-muted/30 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed">
-            {`# Create a virtual environment
-python -m venv venv
-
-# Activate the virtual environment
-# On Windows
-venv\\Scripts\\activate
-# On macOS/Linux
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt`}
-          </pre>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-        <div className="bg-card border border-border rounded-xl overflow-hidden">
-          <div className="bg-muted text-muted-foreground py-2 px-4 font-semibold">Configure Environment Variables</div>
-          <div className="p-4">
-            <p className="text-muted-foreground">Create a <code className="bg-muted text-foreground px-1 py-0.5 rounded">.env</code> file in the project root with:</p>
-            <pre className="bg-muted/30 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed mt-2">
-              {`OPENAI_API_KEY=your_openai_api_key
-MONGODB_URI=your_mongodb_connection_string
-ANONYMIZATION_KEY=your_encryption_secret_key`}
-            </pre>
-          </div>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl overflow-hidden">
-          <div className="bg-muted text-muted-foreground py-2 px-4 font-semibold">Launch the Application</div>
-          <div className="p-4">
-            <div className="mb-4">
-              <h4 className="font-bold text-foreground">Standard Method</h4>
-              <pre className="bg-muted/30 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed mt-2">
-                {`# Run the application
-python app.py
-
-# The app will be available at http://localhost:5000`}
-              </pre>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-foreground">Docker Option</h4>
-              <pre className="bg-muted/30 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed mt-2">
-                {`# Build and run using Docker
-docker-compose up --build
-
-# The app will be available at http://localhost:5000`}
-              </pre>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-muted/30 p-5 rounded-xl border-l-4 border-yellow-500 my-8">
-        <p className="mb-0 text-muted-foreground">
-          <strong>Note:</strong> If using LangSmith, add tracing variables like <code className="bg-muted text-foreground px-1 py-0.5 rounded">LANGCHAIN_TRACING_V2=true</code> in <code className="bg-muted text-foreground px-1 py-0.5 rounded">backend/.env</code>.
-        </p>
-      </div>
-
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-border">Privacy Features in Action</h2>
-      <p>
-        In 2025, data privacy isn&apos;t optional—it&apos;s essential. By integrating Microsoft Presidio, langchain-chatbot ensures that sensitive info like names or emails is masked before leaving your system. This is a game-changer for industries like healthcare or finance, where compliance is non-negotiable.
-      </p>
-
-      <h3 className="text-xl font-bold mt-8 mb-4">Implementing Anonymization</h3>
-      <p>Here&apos;s how the anonymization layer is implemented in our solution:</p>
-
-      <div className="bg-card border border-border rounded-xl overflow-hidden my-6">
-        <div className="bg-muted text-muted-foreground py-2 px-4 font-semibold">anonymization_handler.py</div>
-        <pre className="bg-muted/30 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed">
-          {`from langchain.callbacks import BaseCallbackHandler
-from cryptography.fernet import Fernet
-import re
-import os
-
-class AnonymizationHandler(BaseCallbackHandler):
-    def __init__(self, encryption_key):
-        self.cipher = Fernet(encryption_key)
-        self.pii_patterns = {
-            'email': '\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b',
-            'phone': '\\b(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}\\b',
-            'ssn': '\\b\\d{3}-\\d{2}-\\d{4}\\b',
-            'credit_card': '\\b\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}[\\s-]?\\d{4}\\b'
-        }
-        self.anonymized_data = {}
-    
-    def anonymize_text(self, text):
-        for pii_type, pattern in self.pii_patterns.items():
-            for match in re.finditer(pattern, text):
-                original = match.group(0)
-                if original not in self.anonymized_data:
-                    # Encrypt and store original data
-                    encrypted = self.cipher.encrypt(original.encode()).decode()
-                    self.anonymized_data[original] = f"[{pii_type.upper()}_{len(self.anonymized_data)+1}]"
-                
-                # Replace in text
-                text = text.replace(original, self.anonymized_data[original])
-        
-        return text
-    
-    def deanonymize_text(self, text):
-        # Reverse the anonymization
-        for original, anonymized in self.anonymized_data.items():
-            text = text.replace(anonymized, original)
-        return text`}
-        </pre>
-      </div>
-
-      <h3 className="text-xl font-bold mt-8 mb-4 text-foreground">Using the Anonymization Handler</h3>
-      <div className="bg-card border border-border rounded-xl overflow-hidden my-6">
-        <div className="bg-muted text-muted-foreground py-2 px-4 font-semibold">chain_setup.py</div>
-        <pre className="bg-muted/30 text-foreground p-4 rounded-lg overflow-auto font-mono text-sm leading-relaxed">
-          {`# Initialize the handler with your encryption key
-handler = AnonymizationHandler(os.getenv("ANONYMIZATION_KEY"))
-
-# Setup the chain with callbacks
-llm = ChatOpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    callbacks=[handler]
-)
-
-# The handler will automatically process inputs and outputs
-chain = ConversationChain(llm=llm)`}
-        </pre>
-      </div>
-
-      <h3 className="text-xl font-bold mt-8 mb-4 text-foreground">Anonymization in Practice</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
-        <div className="bg-card p-6 rounded-xl border border-border flex flex-col h-full">
-          <h4 className="font-bold mb-4 text-center text-foreground">Before Anonymization</h4>
-          <div className="flex-grow flex items-center justify-center">
-            <Image
-              src="/images/langchain-chatbot/before-anonymization.png"
-              alt="Screenshot showing sensitive data before anonymization"
-              width={400}
-              height={300}
-              className="rounded-lg border border-border object-contain max-h-[300px]"
-            />
-          </div>
-        </div>
-        <div className="bg-card p-6 rounded-xl border border-border flex flex-col h-full">
-          <h4 className="font-bold mb-4 text-center text-foreground">After Anonymization</h4>
-          <div className="flex-grow flex items-center justify-center">
-            <Image
-              src="/images/langchain-chatbot/after-anonymization.png"
-              alt="Screenshot showing data after being anonymized"
-              width={400}
-              height={300}
-              className="rounded-lg border border-border object-contain max-h-[300px]"
-            />
-          </div>
-        </div>
-      </div>
-
-
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-border">Why Privacy Matters</h2>
-      <p>
-        In 2025, data privacy isn&apos;t optional—it&apos;s essential. By integrating Microsoft Presidio, langchain-chatbot ensures that sensitive info like names or emails is masked before leaving your system. This is a game-changer for industries like healthcare or finance, where compliance is non-negotiable.
-      </p>
-
-      <div className="my-6">
-        <Image
-          src="/images/langchain-chatbot/de-anonymized-output.png"
-          alt="De-anonymized Output Example - Showing how anonymized data can be restored for context"
-          width={800}
-          height={450}
-          className="rounded-lg shadow-md"
+        <h2>Key features</h2>
+        <Definitions
+          items={[
+            { term: 'Provider-agnostic models', text: 'LangChain sits between the application and the model API, so switching between OpenAI and Vertex AI is a configuration change.' },
+            { term: 'Conversation memory', text: 'History is stored in MongoDB and loaded into each request, so the bot can answer follow-up questions in context.' },
+            { term: 'Configurable personality', text: 'Attributes such as age and gender change the tone of the assistant, which is useful for education or support scenarios.' },
+            { term: 'PII anonymization', text: <>An optional layer built on Microsoft Presidio replaces personal data before the prompt is sent and restores it in the reply. See the <a href="https://microsoft.github.io/presidio/" target="_blank" rel="noopener noreferrer">Presidio documentation</a>.</> },
+            { term: 'Tracing', text: <>LangSmith records each step of a request, which makes it possible to inspect prompts and intermediate values. See the <a href="https://docs.smith.langchain.com/" target="_blank" rel="noopener noreferrer">LangSmith documentation</a>.</> },
+          ]}
         />
-        <p className="text-sm text-center mt-2 text-muted-foreground">
-          De-anonymized Output Example - Showing how anonymized data can be restored for context.
+
+        <h2>Architecture</h2>
+        <p>
+          The frontend sends a message to the backend. The backend loads the conversation history from MongoDB, optionally anonymizes the input and the history, runs the LangChain agent against the configured model, restores the original values in the answer, and stores the exchange.
         </p>
-      </div>
+        <Mermaid chart={architecture} caption="Services in the Docker Compose environment and how a request moves between them." />
+        <p>
+          In code, the request is a chain of runnables. When the anonymizer is enabled it sits directly before the model call, and the de-anonymizer sits directly after it:
+        </p>
+        <CodeBlock title="backend/bot.py" language="python">
+{`if self.config.enable_anonymizer:
+    anonymizer_runnable = self.anonymizer.get_runnable_anonymizer().with_config(run_name="AnonymizeSentence")
+    de_anonymizer = RunnableLambda(self.anonymizer.anonymizer.deanonymize).with_config(run_name="DeAnonymizeResponse")
 
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-border">Who&apos;s It For?</h2>
-      <p className="text-muted-foreground">
-        This repo shines for:
-      </p>
+    agent = (history_loader
+             | anonymizer_runnable
+             | self.chain.chain
+             | de_anonymizer
+             | ReActSingleInputOutputParser())
+else:
+    agent = history_loader | self.chain.chain | ReActSingleInputOutputParser()`}
+        </CodeBlock>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-        <div className="bg-card p-6 rounded-xl border border-border text-center">
-          <div className="text-primary font-bold text-xl mb-3">Developers</div>
-          <p className="text-muted-foreground">
-            Experiment with LangChain and LLMs in a pre-built application. Ideal for learning how to implement privacy-focused AI systems.
+        <h2>Getting started</h2>
+        <p>You need Python 3.9 or later, Docker with Docker Compose, an API key for OpenAI (or Vertex AI credentials), and, for local development without Docker, a MongoDB instance and Node.js.</p>
+        <Steps
+          title="Run with Docker Compose"
+          items={[
+            { title: 'Clone the repository', text: 'git clone https://github.com/minhbtrc/langchain-chatbot' },
+            { title: 'Copy the environment files', text: 'cp backend/.env.example backend/.env and cp frontend/.env.example frontend/.env' },
+            { title: 'Add your model key', text: 'Set OPENAI_API_KEY in backend/.env' },
+            { title: 'Start the services', text: 'docker-compose up -d' },
+            { title: 'Open the app', text: 'Frontend at http://localhost:3000, API docs at http://localhost:8080/docs' },
+          ]}
+        />
+        <p>
+          A <code>setup.sh</code> script (and <code>setup.bat</code> on Windows) does the same steps interactively. The settings you are most likely to change are:
+        </p>
+        <CodeBlock title="backend/.env" language="shell">
+{`OPENAI_API_KEY=your_openai_api_key
+ENABLE_ANONYMIZER=true
+
+# Optional: LangSmith tracing
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=your_langsmith_api_key
+LANGCHAIN_PROJECT=chatbot-with-langchain`}
+        </CodeBlock>
+        <Callout label="Note">
+          <p>
+            The anonymizer is off by default. For local runs without Docker, download the spaCy model first with <code>python -m spacy download en_core_web_md</code>.
           </p>
-        </div>
+        </Callout>
 
-        <div className="bg-card p-6 rounded-xl border border-border text-center">
-          <div className="text-green-600 font-bold text-xl mb-3">Businesses</div>
-          <p className="text-muted-foreground">
-            Deploy a customer support bot with memory and customizable personality. Perfect for regulated industries needing secure AI solutions.
-          </p>
-        </div>
+        <h2>Anonymization in practice</h2>
+        <p>
+          Before a prompt leaves the system, personal data is replaced with a substitute value. After the model responds, the substitute is mapped back to the original, so the user sees a natural answer while the provider never receives the real data.
+        </p>
+        <p>
+          The project wraps LangChain's <code>PresidioReversibleAnonymizer</code>. It first detects the language (Vietnamese or English), then anonymizes the user input, the conversation history and the agent scratchpad:
+        </p>
+        <CodeBlock title="backend/utils/anonymizer.py" language="python">
+{`class BotAnonymizer(BaseObject):
+    def __init__(self, config: Config = None):
+        super().__init__()
+        self.config = config if config is not None else Config()
+        self._anonymizer = PresidioReversibleAnonymizer(languages_config=NLP_CONFIG)
+        self._anonymizer.add_recognizer_for_entities(ANONYMIZED_FIELDS)
 
-        <div className="bg-card p-6 rounded-xl border border-border text-center">
-          <div className="text-blue-600 font-bold text-xl mb-3">AI Enthusiasts</div>
-          <p className="text-muted-foreground">
-            Tinker with a privacy-first chatbot for personal projects. Great for exploring LangChain capabilities without building from scratch.
-          </p>
-        </div>
-      </div>
+    def anonymize_func(self, input_dict):
+        language = input_dict.get("language")
+        anonymized_input = self.anonymizer.anonymize(input_dict["input"], language)
+        history = input_dict.get("history", "")
+        anonymized_history = self.anonymizer.anonymize(history, language) if history else ""
+        ...
 
-      <h2 className="text-2xl font-bold mt-10 mb-6 pb-2 border-b border-border">Conclusion</h2>
-      <div className="bg-card p-6 rounded-xl border border-border">
-        <p className="mb-4 text-muted-foreground">
-          The langchain-chatbot repository is a gem for anyone looking to build a smart, secure, and user-friendly chatbot. Its blend of LangChain&apos;s power, MongoDB&apos;s memory, Presidio&apos;s privacy, and a full-stack design makes it both practical and innovative. Whether you&apos;re enhancing a business or exploring AI, this project offers a solid starting point.
+    def get_runnable_anonymizer(self):
+        return RunnableLambda(self._detect_lang) | RunnableLambda(self.anonymize_func)`}
+        </CodeBlock>
+        <p>
+          The abridged listing leaves out the agent scratchpad handling and error paths.
         </p>
 
-        <p className="mb-0 text-muted-foreground">
-          Ready to dive in? <a href="https://github.com/minhbtrc/langchain-chatbot" target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">Visit the GitHub repo</a>, clone it, and give it a spin. Have ideas to improve it? It&apos;s open-source—jump in and contribute!
+        <h3>What the traces show</h3>
+        <p>
+          The LangSmith traces below come from a Vietnamese conversation in which the user gives a phone number. The first trace shows the anonymize step turning the real number into a different, realistic-looking one. The second shows that the model only ever receives the substitute. The last shows the original restored in the reply.
         </p>
-      </div>
+        <FigurePair
+          items={[
+            { src: '/images/langchain-chatbot/before-anonymization.png', alt: 'LangSmith trace of the anonymize step: the input contains the real phone number and the output contains a substitute number', caption: 'The anonymize step: real number in, substitute number out.', width: 943, height: 770 },
+            { src: '/images/langchain-chatbot/after-anonymization.png', alt: 'LangSmith trace of the model call: the user message and the model reply both contain only the substitute number', caption: 'The model call sees only the substitute value.', width: 940, height: 874 },
+          ]}
+        />
+        <Figure
+          src="/images/langchain-chatbot/de-anonymized-output.png"
+          alt="LangSmith trace of the deanonymize step restoring the original phone number in the response"
+          caption="The deanonymize step maps the substitute back to the original number in the reply."
+          width={948}
+          height={410}
+        />
 
-      <h3 className="text-xl font-bold mt-8 mb-4 text-foreground">Resources:</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <a href="https://js.langchain.com/docs/" target="_blank" rel="noopener noreferrer" className="bg-card p-4 rounded-xl border border-border hover:border-primary hover:shadow-md transition-all text-center">
-          <div className="font-bold mb-2 text-foreground">LangChain Documentation</div>
-          <p className="text-sm text-muted-foreground mb-0">Explore the framework that powers this chatbot</p>
-        </a>
-        <a href="https://microsoft.github.io/presidio/" target="_blank" rel="noopener noreferrer" className="bg-card p-4 rounded-xl border border-border hover:border-primary hover:shadow-md transition-all text-center">
-          <div className="font-bold mb-2 text-foreground">Microsoft Presidio</div>
-          <p className="text-sm text-muted-foreground mb-0">Learn about the privacy framework used for PII protection</p>
-        </a>
-        <a href="https://docs.smith.langchain.com/" target="_blank" rel="noopener noreferrer" className="bg-card p-4 rounded-xl border border-border hover:border-primary hover:shadow-md transition-all text-center">
-          <div className="font-bold mb-2 text-foreground">LangSmith</div>
-          <p className="text-sm text-muted-foreground mb-0">Discover how to trace and debug LLM applications</p>
-        </a>
-      </div>
-    </BlogPostStyle>
+        <h2>Who it is for</h2>
+        <ul>
+          <li><strong>Developers</strong> learning how to build privacy-aware LLM applications on a working reference.</li>
+          <li><strong>Teams in regulated settings</strong> that need memory and customization but cannot send raw personal data to a provider.</li>
+          <li><strong>Hobbyists</strong> who want a starting point for a personal assistant without building the plumbing first.</li>
+        </ul>
+
+        <h2>Conclusion</h2>
+        <p>
+          The project combines four ideas that are usually built separately: model-agnostic access, persistent memory, optional anonymization around the model call, and request tracing. The source is on GitHub, and contributions are welcome.
+        </p>
+
+        <References
+          items={[
+            { label: 'langchain-chatbot on GitHub', url: 'https://github.com/minhbtrc/langchain-chatbot' },
+            { label: 'LangChain documentation', url: 'https://python.langchain.com/docs/', note: 'framework used for model access and chains' },
+            { label: 'Presidio data anonymization in LangChain', url: 'https://python.langchain.com/docs/guides/privacy/presidio_data_anonymization/', note: 'the reversible anonymizer the project builds on' },
+            { label: 'Microsoft Presidio', url: 'https://microsoft.github.io/presidio/', note: 'PII detection and anonymization' },
+            { label: 'LangSmith documentation', url: 'https://docs.smith.langchain.com/', note: 'tracing and debugging' },
+          ]}
+        />
+      </PostBody>
+      <PostFooter />
+    </Article>
   )
 }

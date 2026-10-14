@@ -1,0 +1,85 @@
+{
+  "slug": "chatbot-template",
+  "project": "Chatbot Template",
+  "title": "Turning a chatbot backend into reusable building blocks",
+  "summary": "Specialized experts, injected components and a document-ingestion boundary that make an AI backend easier to extend.",
+  "lead": "A second chatbot usually needs most of the first one's infrastructure: model configuration, memory, streaming, document ingestion and API handling. Chatbot Template packages that foundation as shared components and small specialist classes called experts, so a new behavior is an addition rather than a rewrite.",
+  "status": "Draft for review",
+  "stack": [
+    "FastAPI",
+    "LangChain",
+    "Dependency injection",
+    "RAG",
+    "MongoDB",
+    "Docker"
+  ],
+  "flow": [
+    "Accept an application request",
+    "Select an expert",
+    "Inject configured components",
+    "Retrieve context when needed",
+    "Generate a response",
+    "Use shared memory and delivery infrastructure"
+  ],
+  "diagram": {
+    "chart": "graph TD\n    REQ[\"API request\"] --> SEL[\"Expert selection\"]\n    SEL --> QA[\"Q&A expert\"]\n    SEL --> RAG[\"Retrieval expert\"]\n    SEL --> RES[\"Research expert\"]\n    RAG --> EMB[\"Embeddings\"]\n    RAG --> VEC[(\"Vector database\")]\n    QA --> LLM[\"Model provider\"]\n    RAG --> LLM\n    RES --> LLM\n    QA --> MEM[(\"Conversation memory\")]\n    RAG --> MEM",
+    "caption": "Experts share injected infrastructure: model provider, memory, embeddings and vector storage."
+  },
+  "sections": [
+    {
+      "title": "Give each expert a narrow responsibility",
+      "paragraphs": [
+        "An expert encapsulates workflow-specific behavior. The repository includes Q&A, retrieval, research and MCP-oriented experts. A retrieval expert needs embeddings and a vector database, while a conversational expert may not, and keeping those dependencies explicit makes the difference visible in each interface.",
+        "The retrieval expert receives configuration, embedding, vector-database, memory and model components through dependency injection. Orchestration code then depends on capabilities instead of building every infrastructure client, and tests can substitute their own implementations. The interface alone does not prove full test coverage."
+      ]
+    },
+    {
+      "title": "Make ingestion a pipeline with checks",
+      "paragraphs": [
+        "The document path checks that the file exists and is readable, loads PDF pages, attaches user and document metadata, creates semantic chunks and indexes them. Empty extracted content and empty chunks are handled explicitly instead of being reported as a successful index.",
+        "Metadata is part of the retrieval contract: a chunk is more useful when its origin travels with it into retrieval and response handling. Attaching a user identifier does not by itself enforce access isolation, so retrieval filters need their own review."
+      ]
+    },
+    {
+      "title": "Support asynchronous work deliberately",
+      "paragraphs": [
+        "The retrieval implementation offers synchronous and asynchronous ingestion and indexing, so it fits both ordinary application code and async services.",
+        "An async method is only part of the design. Behavior under concurrent ingestion, partial failure and repeated submission of the same document still needs a defined contract, and for a template, predictable failure behavior matters as much as a successful first upload."
+      ]
+    },
+    {
+      "title": "Replace components without overstating support",
+      "paragraphs": [
+        "The memory factory selects configured implementations such as MongoDB and in-memory history. Other adapters may exist in the source tree without being wired into the factory, and the presence of a file is not a finished integration.",
+        "That distinction applies to any framework: interfaces that exist, paths that are wired up and deployments that have been validated are three different claims. Each provider or storage combination still needs its own configuration and integration checks."
+      ]
+    },
+    {
+      "title": "Package a foundation, then evaluate it",
+      "paragraphs": [
+        "The repository includes setup documentation and a containerized development environment, which makes infrastructure requirements and entry points visible. The value is less duplicated backend structure, not a benchmark claim about a model.",
+        "The evidence I would collect next is practical: how much project-specific code a new expert needs, which integration tests can be reused, and where configuration mistakes still need manual debugging. Until production reliability has been shown for a specific deployment, it is best described as a reusable foundation."
+      ]
+    }
+  ],
+  "reviewNotes": [
+    "Confirm how Chatbot Template evolved from LangChain Chatbot and which changes you owned.",
+    "Add one real example of an expert introduced through the shared interfaces.",
+    "Review enabled adapters and deployment evidence before using production-ready language.",
+    "The published article title says 'Production-Ready'; this draft avoids that wording."
+  ],
+  "sources": [
+    {
+      "label": "chatbot-template on GitHub",
+      "url": "https://github.com/minhbtrc/chatbot-template"
+    },
+    {
+      "label": "Original article",
+      "url": "/blog/chatbot-template"
+    },
+    {
+      "label": "FastAPI: dependencies",
+      "url": "https://fastapi.tiangolo.com/tutorial/dependencies/"
+    }
+  ]
+}

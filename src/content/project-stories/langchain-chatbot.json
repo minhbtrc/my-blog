@@ -1,0 +1,125 @@
+{
+  "slug": "langchain-chatbot",
+  "project": "LangChain Chatbot",
+  "title": "From a model call to a configurable chatbot",
+  "summary": "Conversation memory, optional PII processing, provider configuration and tracing in the LangChain chatbot project.",
+  "lead": "A model API can return an answer in a few lines of code. A reusable chatbot needs more decisions: how to keep a conversation, how to configure behavior, which provider to call, what to store and how to debug a bad answer. This project turns those decisions into a full application with MongoDB memory, optional Presidio anonymization, provider configuration and LangSmith tracing.",
+  "status": "Draft for review",
+  "stack": [
+    "LangChain",
+    "FastAPI",
+    "OpenAI / Vertex AI",
+    "MongoDB",
+    "LangSmith",
+    "Microsoft Presidio"
+  ],
+  "flow": [
+    "Receive a message",
+    "Load conversation context",
+    "Apply configured PII processing",
+    "Build the model request",
+    "Stream and format output",
+    "Store conversation history"
+  ],
+  "diagram": {
+    "chart": "graph LR\n    UI[\"Chat interface\"] --> API[\"Backend\"]\n    API --> MEM[(\"MongoDB history\")]\n    API --> PII[\"Presidio anonymizer (optional)\"]\n    PII --> LLM[\"OpenAI / Vertex AI\"]\n    LLM --> PII\n    API -.-> TRACE[\"LangSmith traces\"]",
+    "caption": "The backend owns configuration and orchestration. Memory, anonymization, the model provider and tracing are separate components."
+  },
+  "sections": [
+    {
+      "title": "Separate the interface from orchestration",
+      "paragraphs": [
+        "The project began with a Gradio interface (v1.0 in the changelog). The repository now contains a Next.js frontend and a FastAPI backend, which is the version described here.",
+        "A message travels from the interface to a backend that owns bot configuration and orchestration. Model integration, conversation memory and optional anonymization are separate components, not behavior hard-coded into a UI callback. That makes it easier to change a provider or a prompt, and easier to locate a failure: an empty answer can come from transport, prompt assembly, model invocation or output handling, and those layers stay distinguishable."
+      ],
+      "figures": [
+        {
+          "src": "/images/langchain-chatbot/ui-screenshot.png",
+          "alt": "Gradio chat interface titled LLM Assistant showing a short Vietnamese conversation",
+          "caption": "The Gradio interface of the early version, with a Vietnamese conversation.",
+          "width": 1505,
+          "height": 912
+        }
+      ]
+    },
+    {
+      "title": "Scope memory to the conversation",
+      "paragraphs": [
+        "The MongoDB memory adapter is configured with a connection, database, collection and session identifier. The session identifier matters most: history should load for the intended conversation, not for whichever request last updated a shared variable.",
+        "Persistent history gives continuity across requests, and it brings obligations. Retention, deletion and access isolation need deliberate decisions. Storing history also does not mean every earlier message belongs in every new prompt, so context selection is a separate concern."
+      ]
+    },
+    {
+      "title": "Put PII handling at the provider boundary",
+      "paragraphs": [
+        "The project wraps LangChain's PresidioReversibleAnonymizer as an optional layer, enabled with ENABLE_ANONYMIZER and off by default. It detects the language, anonymizes the input, the conversation history and the agent scratchpad before the model call, and maps the substituted values back in the reply, so the user sees a natural answer and the provider never receives the original value.",
+        "The boundary is configuration and data flow. An anonymizer does not guarantee that every sensitive span is detected, and it only helps in deployments where it is switched on. Raw history, traces and model input can follow different paths, so each one needs inspection."
+      ],
+      "figures": [
+        {
+          "src": "/images/langchain-chatbot/before-anonymization.png",
+          "alt": "LangSmith trace of the anonymize step: the input contains the real phone number and the output contains a substitute number",
+          "caption": "The anonymize step: real number in, substitute number out.",
+          "width": 943,
+          "height": 770
+        },
+        {
+          "src": "/images/langchain-chatbot/after-anonymization.png",
+          "alt": "LangSmith trace of the model call: the user message and reply contain only the substitute number",
+          "caption": "The model call sees only the substitute value.",
+          "width": 940,
+          "height": 874
+        }
+      ]
+    },
+    {
+      "title": "Use configuration and tracing to iterate",
+      "paragraphs": [
+        "Bot behavior and provider choice are configurable, including OpenAI and Vertex AI options. LangSmith provides prompt versioning and tracing, which makes it possible to see which prompt and execution path produced a given response.",
+        "Traces have privacy implications of their own. A good debugging setup shows enough structure to understand a failure without assuming every user message is safe to keep in a third-party dashboard."
+      ],
+      "figures": [
+        {
+          "src": "/images/langchain-chatbot/de-anonymized-output.png",
+          "alt": "LangSmith trace of the deanonymize step restoring the original phone number in the reply",
+          "caption": "The deanonymize step maps the substitute back to the original number in the reply.",
+          "width": 948,
+          "height": 410
+        }
+      ]
+    },
+    {
+      "title": "Package the pieces so they run together",
+      "paragraphs": [
+        "The repository documents a containerized setup for the frontend, backend and database. That removes repeated manual setup and makes the service boundaries visible.",
+        "The outcome is a configurable chatbot foundation with persistent memory, provider selection, optional anonymization and inspection tools. There is no benchmark here for throughput, response quality or cost. A useful next evaluation would run fixed conversations while varying prompts, context windows and privacy settings."
+      ]
+    }
+  ],
+  "reviewNotes": [
+    "Chronology confirmed from the repo: v1.0 used Gradio, later versions added Next.js and FastAPI (CHANGELOG.md).",
+    "Select a synthetic conversation for the screenshots rather than using personal messages, and replace the phone number 0345678999 (a real mobile prefix) with an obviously fake one.",
+    "Confirm any benchmark dataset and results before adding accuracy or latency claims.",
+    "The assistant's system prompt in the screenshots credits 'Cong Minh and Tran Hieu'. Confirm co-developer credit and which parts you built."
+  ],
+  "sources": [
+    {
+      "label": "langchain-chatbot on GitHub",
+      "url": "https://github.com/minhbtrc/langchain-chatbot"
+    },
+    {
+      "label": "Original article",
+      "url": "/blog/langchain-chatbot"
+    },
+    {
+      "label": "Microsoft Presidio",
+      "url": "https://microsoft.github.io/presidio/",
+      "note": "PII detection and anonymization"
+    },
+    {
+      "label": "LangSmith documentation",
+      "url": "https://docs.smith.langchain.com/",
+      "note": "tracing and prompt versioning"
+    }
+  ]
+}

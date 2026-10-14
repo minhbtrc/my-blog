@@ -18,6 +18,8 @@ export interface JobPosition {
   isCurrent: boolean;
   /** Bullet points describing achievements/responsibilities */
   points: string[];
+  /** Project or responsibility groups, shared with the PDF renderer. */
+  sections?: { title: string; points: string[] }[];
   /** Technologies used in this role */
   technologies: string[];
 }
@@ -34,7 +36,7 @@ export interface CompanyExperience {
 /**
  * Array of all work experiences imported from the JSON file
  */
-export const experiences: CompanyExperience[] = experiencesData as unknown as CompanyExperience[];
+export const experiences: CompanyExperience[] = experiencesData as CompanyExperience[];
 
 /**
  * Helper functions to work with work experiences

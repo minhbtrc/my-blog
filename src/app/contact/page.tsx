@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { profile } from '@/data/profile'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { MapPin, Coffee, Play } from 'lucide-react'
 import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
@@ -92,19 +93,14 @@ export default function ContactPage() {
       }, 1000)
     }
     
-    // Simulate form submission - replace with actual API call
     try {
-      // await fetch('/api/contact', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify(formData)
-      // })
-      
-      // Simulating network delay
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      if (!response.ok) throw new Error(`Contact request failed with status ${response.status}`)
+
       setFormStatus('success')
       setFormData({ name: '', email: '', message: '' })
       
@@ -483,7 +479,7 @@ export default function ContactPage() {
                       </div>
                     </div>
                   ) : (
-                    <span>exec("Not working yet")</span>
+                    <span>send_message()</span>
                   )}
                 </motion.button>
               </motion.div>
@@ -545,7 +541,7 @@ export default function ContactPage() {
                 className="space-y-4 pt-2"
               >
                 <motion.a
-                  href={process.env.NEXT_PUBLIC_GITHUB_URL || "https://github.com/minhbtc"}
+                  href={process.env.NEXT_PUBLIC_GITHUB_URL || profile.github}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-center gap-3"
@@ -554,12 +550,12 @@ export default function ContactPage() {
                 >
                   <SiGithub className="w-4 h-4 text-emerald-600 dark:text-blue-400" />
                   <span className="group-hover:text-emerald-700 dark:group-hover:text-blue-300 transition-colors">
-                    github.com/minhbtc
+                    github.com/minhbtrc
                   </span>
                 </motion.a>
                 
                 <motion.a
-                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || "https://linkedin.com/in/minhbtc"}
+                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || profile.linkedin}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-center gap-3"
@@ -568,7 +564,7 @@ export default function ContactPage() {
                 >
                   <SiLinkedin className="w-4 h-4 text-emerald-600 dark:text-blue-400" />
                   <span className="group-hover:text-emerald-700 dark:group-hover:text-blue-300 transition-colors">
-                    linkedin.com/in/minhbtc
+                    linkedin.com/in/minhbtcm00
                   </span>
                 </motion.a>
               </motion.div>
@@ -584,10 +580,10 @@ export default function ContactPage() {
                     href={process.env.NEXT_PUBLIC_BUYMEACOFFEE_URL || "https://www.buymeacoffee.com/minhbtc"}
                     target="_blank"
                     rel="noreferrer" 
-                    className="group flex items-center gap-2.5 py-2.5 px-4 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 dark:from-amber-500/80 dark:to-amber-600/80 dark:hover:from-amber-500 dark:hover:to-amber-600 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                    className="group flex items-center gap-2.5 py-2.5 px-4 rounded-md border border-base-300 text-base-content transition-colors hover:border-base-content/40"
                   >
                     <div className="relative">
-                      <Coffee className="w-5 h-5 text-white group-hover:animate-coffee-wiggle" />
+                      <Coffee className="w-5 h-5" />
                       <motion.div
                         className="absolute -top-3 left-1/2 transform -translate-x-1/2"
                         animate={{
@@ -603,12 +599,11 @@ export default function ContactPage() {
                         <div className="w-1.5 h-1.5 rounded-full bg-white/70 blur-sm" />
                       </motion.div>
                     </div>
-                    <span className="font-medium group-hover:text-white/95">Buy me a coffee</span>
+                    <span className="font-medium">Buy me a coffee</span>
                   </Link>
-                  <div className="absolute inset-0 -z-10 rounded-full bg-amber-200/30 dark:bg-amber-700/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 group-hover:animate-pulse"></div>
                 </motion.div>
                 <span className="text-sm text-gray-600 dark:text-gray-400 ml-2 italic">
-                  ☕ Your support fuels my code!
+                  Support the blog and open-source work.
                 </span>
               </motion.div>
               

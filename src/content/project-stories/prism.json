@@ -1,0 +1,107 @@
+{
+  "slug": "prism",
+  "project": "PRISM | AI Self-Reflection App",
+  "title": "Building PRISM: a reflective AI product with an operational backend",
+  "summary": "Streaming, cancellation, concurrent generation cost control and subscription consistency in a bilingual iOS reflection app.",
+  "lead": "PRISM is a bilingual iOS self-reflection app with a Flutter client and an asynchronous Python backend. The interesting engineering is operational: streaming generated text over server-sent events, reserving spend before a provider call, cleaning up interrupted requests, keeping subscriptions consistent, and keeping private text out of logs.",
+  "status": "Draft for review",
+  "stack": [
+    "Flutter",
+    "FastAPI",
+    "PostgreSQL",
+    "Redis",
+    "RevenueCat",
+    "SSE"
+  ],
+  "flow": [
+    "Check account and entitlement",
+    "Reserve generation capacity",
+    "Build contextual input",
+    "Stream the response",
+    "Settle or release the reservation",
+    "Persist the user-visible result"
+  ],
+  "diagram": {
+    "chart": "sequenceDiagram\n    participant App as Flutter app\n    participant API as FastAPI\n    participant Guard as Redis guard\n    participant LLM as AI provider\n    App->>API: Start reflection\n    API->>Guard: Reserve expected spend\n    Guard-->>API: Reservation granted\n    API->>LLM: Generate\n    LLM-->>API: Tokens\n    API-->>App: Stream over SSE\n    alt Completed\n        API->>Guard: Settle against actual usage\n    else Client disconnected\n        API->>Guard: Release or settle by usage\n    end",
+    "caption": "A generation request reserves spend first, streams the response, and always ends in a settle or release step."
+  },
+  "sections": [
+    {
+      "title": "Start with a product boundary",
+      "paragraphs": [
+        "PRISM is a self-reflection product for iPhone. The experience centers on checking in, considering a question and returning to personal notes over time. The AI supports reflection; it is not positioned as prediction or therapy.",
+        "That positioning shapes the engineering. A streamed response has to feel coherent, a saved entry has to stay private, and the interface has to work in both Vietnamese and English. The product is in internal QA and has not launched publicly."
+      ]
+    },
+    {
+      "title": "Connect a mobile app to a streaming service",
+      "paragraphs": [
+        "I worked across a Flutter application and an asynchronous Python backend. The backend is the boundary between product behavior and the selected AI provider, so the provider can change without changing the client. Server-sent events deliver generated text incrementally.",
+        "Streaming adds states that a normal request and response does not have. A request is admitted, starts generating, streams partial text and may then be interrupted. The client has to tell a partial result from a completed one, and the server needs a defined cleanup path. Treating a disconnect as an ordinary success leaves both data and accounting inconsistent."
+      ]
+    },
+    {
+      "title": "Reserve capacity before spending it",
+      "paragraphs": [
+        "A Redis-backed generation guard makes admission and cost tracking explicit. A reservation represents the expected spend before the provider call starts. Completion settles the reservation against actual usage, and a request that has not incurred spend releases its hold.",
+        "The guard uses user-scoped locks and ownership tokens. Cleanup must not delete a lock that expired and was then acquired by another request, so interruption handling respects who owns the work.",
+        "These mechanisms bound concurrent generation exposure. They are not a claim about reduced model bills, which still depend on pricing, token usage and real demand."
+      ]
+    },
+    {
+      "title": "Treat cancellation as part of the lifecycle",
+      "paragraphs": [
+        "A user leaving a screen is a normal event. I worked on cancellation cleanup so interrupted generation does not leave resources reserved indefinitely.",
+        "The useful question is what had already happened when the request stopped: was a provider call started, did it incur usage, was a result persisted, and which cleanup is still safe? Reasoning about those transitions keeps cost tracking and user-visible state aligned."
+      ]
+    },
+    {
+      "title": "Keep entitlement and identity consistent",
+      "paragraphs": [
+        "Subscription webhooks and account changes can arrive outside the active app session. I worked on webhook reconciliation and account-merge consistency, so access follows durable account state instead of whatever a client screen last showed.",
+        "Duplicate or reordered events, sign-in transitions and interrupted updates all need explicit handling. Local checks cover the implementation, but purchase, restore, refund and identity-provider flows still need validation against the real services and devices."
+      ]
+    },
+    {
+      "title": "Design privacy into storage and observability",
+      "paragraphs": [
+        "Private text should not become routine diagnostic output. The backend encrypts private text and uses privacy-conscious telemetry that keeps operational events separate from the substance of a reflection.",
+        "The trade-off is that debugging is less convenient when raw content is unavailable. The answer is to define useful event types, failure categories and correlation identifiers early, not to log personal entries by default."
+      ]
+    },
+    {
+      "title": "Where the project stands",
+      "paragraphs": [
+        "PRISM covers mobile interaction, streaming APIs, persistent data, generation guards and subscription handling end to end. The remaining work is validating the full product in its real deployment context.",
+        "Before publishing numbers I would collect completion and interruption rates, response quality feedback, cost per completed interaction, and results from real purchase and restore tests. Source code alone cannot establish those."
+      ]
+    }
+  ],
+  "reviewNotes": [
+    "Confirm which product details and screenshots you want public while PRISM remains in internal QA.",
+    "Add a specific implementation milestone and your preferred product narrative.",
+    "Do not add launch dates, pricing, revenue or live user counts without a separate confirmation.",
+    "Confirm the sequence diagram, especially the disconnect behavior (release vs settle by usage)."
+  ],
+  "sources": [
+    {
+      "label": "Server-sent events (MDN)",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events",
+      "note": "streaming transport"
+    },
+    {
+      "label": "RevenueCat documentation",
+      "url": "https://www.revenuecat.com/docs",
+      "note": "subscriptions and webhooks"
+    },
+    {
+      "label": "Redis documentation",
+      "url": "https://redis.io/docs/",
+      "note": "locks and atomic counters"
+    },
+    {
+      "label": "Flutter documentation",
+      "url": "https://docs.flutter.dev/"
+    }
+  ]
+}

@@ -1,515 +1,110 @@
-'use client'
-
-import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
-import { SiGithub, SiLinkedin } from '@icons-pack/react-simple-icons'
-import { motion, useInView } from 'framer-motion'
-import { certificates } from '@/data/certificates'
+import Link from 'next/link'
+import { ArrowUpRight, Github, Linkedin, MapPin } from 'lucide-react'
+import { profile } from '@/data/profile'
 import { experiences } from '@/data/experiences'
-import { skillCategories } from '@/data/skills'
-import { education } from '@/data/education'
 import { projects } from '@/data/projects'
+import { education } from '@/data/education'
+import { skillCategories } from '@/data/skills'
+import { certificates } from '@/data/certificates'
+import ResumeGenerator from './ResumeGenerator'
+
+const sections = ['Experience', 'Projects', 'Expertise', 'Education', 'Learning']
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section id={title.toLowerCase()} aria-labelledby={`${title.toLowerCase()}-heading`} className="scroll-mt-24 border-t border-base-300 pt-8 sm:pt-10">
+      <h2 id={`${title.toLowerCase()}-heading`} className="mb-7 font-mono text-sm font-medium uppercase tracking-widest text-primary">{title}</h2>
+      {children}
+    </section>
+  )
+}
+
+function Points({ items }: { items: string[] }) {
+  if (!items.length) return null
+  return <ul className="list-outside list-disc space-y-2 pl-5 text-sm leading-7 text-base-content/80 marker:text-primary/60">{items.map(point => <li key={point}>{point}</li>)}</ul>
+}
 
 export default function AboutContent() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    // Set mounted to true after component mounts to trigger animations
-    const timer = setTimeout(() => {
-      setMounted(true)
-    }, 100) // Small delay for better effect
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  // Container variants for staggered children
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.1
-      }
-    }
-  }
-
-  // Item variants for children animation
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    }
-  }
-
-  // Social link animation
-  const socialVariants = {
-    hover: { scale: 1.05, color: "var(--color-primary)" },
-    tap: { scale: 0.95 }
-  }
-
   return (
-    <motion.div
-      className="w-full max-w-full relative"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
-      <main className="max-w-3xl mx-auto py-16 space-y-20">
-        {/* Header Section */}
-        <motion.section
-          id="profile"
-          className="space-y-6"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-        >
-          <div className="flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <motion.div
-              className="w-20 h-20 md:w-24 md:h-24 relative rounded-full overflow-hidden shadow-sm"
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Image
-                src="/profile.png"
-                alt="Minh Bui Tran Cong"
-                width={96}
-                height={96}
-                className="object-cover w-full h-full"
-                unoptimized={true}
-                priority={true}
-              />
-            </motion.div>
+    <div className="mx-auto max-w-3xl space-y-12 py-10 sm:space-y-16 sm:py-16">
+      <header>
+        <div className="flex flex-col-reverse items-start justify-between gap-6 sm:flex-row sm:gap-8">
+          <div className="min-w-0">
+            <p className="mb-3 font-mono text-xs tracking-wide text-primary">About / MinhBTC</p>
+            <h1 className="text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">{profile.name}</h1>
+            <p className="mt-3 text-lg font-medium">{profile.title}</p>
+            <p className="mt-2 flex items-center gap-2 text-sm text-base-content/70"><MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />{profile.location}</p>
+          </div>
+          <Image src="/profile.png" alt={profile.name} width={96} height={96} className="h-20 w-20 shrink-0 rounded-full object-cover sm:h-24 sm:w-24" priority />
+        </div>
+        <p className="mt-7 text-base leading-8 text-base-content/80">{profile.summary}</p>
+        <div className="mt-7"><ResumeGenerator /></div>
+        <div className="mt-5 flex flex-wrap gap-5 text-sm text-base-content/70">
+          <a href={profile.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-primary"><Github className="h-4 w-4" aria-hidden="true" />GitHub<span className="sr-only"> (opens in a new tab)</span></a>
+          <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-primary"><Linkedin className="h-4 w-4" aria-hidden="true" />LinkedIn<span className="sr-only"> (opens in a new tab)</span></a>
+          <Link href="/contact" className="inline-flex items-center gap-1 hover:text-primary">Get in touch <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></Link>
+        </div>
+        <dl className="mt-9 grid gap-5 border-y border-base-300 py-6 sm:grid-cols-3 sm:gap-8">
+          {profile.highlights.map(item => <div key={item.label}><dt className="text-xs leading-5 text-base-content/70">{item.label}</dt><dd className="mt-1 text-xl font-semibold tracking-tight">{item.value}</dd></div>)}
+        </dl>
+        <nav aria-label="Profile sections" className="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm text-base-content/70">
+          {sections.map(s => <a key={s} href={`#${s.toLowerCase()}`} className="hover:text-primary">{s}</a>)}
+        </nav>
+      </header>
 
-            <div className="flex-1 text-center md:text-left">
-              <motion.h1
-                className="text-3xl md:text-4xl font-bold tracking-tight mb-2"
-                initial={{ y: -10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-              >
-                MINH BUI TRAN CONG
-              </motion.h1>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-              >
-                <p className="font-mono text-muted-foreground mb-4 flex items-center gap-2 justify-center md:justify-start">
-                  <span className="text-muted-foreground font-mono inline-flex items-center">
-                    minhbtc@ai-eng:~$<span className="inline-block w-2 h-4 bg-primary/70 ml-1 animate-pulse"></span>
-                  </span>
-                  <span>AI/NLP Engineer</span>
-                </p>
-              </motion.div>
-              <motion.p
-                className="text-sm text-muted-foreground mb-5 max-w-xl"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-              >
-                Building real-world AI systems with a focus on large language models and their applications. Passionate about creating tools that bridge the gap between cutting-edge research and practical solutions.
-              </motion.p>
+      <Section title="Experience">
+        <div className="space-y-10">
+          {experiences.map(company => <article key={company.company} className="space-y-4">
+            <h3 className="text-xl font-semibold tracking-tight">{company.company}</h3>
+            {company.positions.map(position => <div key={`${position.title}-${position.period}`} className="space-y-5">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <p className="font-medium">{position.title}</p>
+                <p className="font-mono text-xs text-base-content/70">{position.period}</p>
+              </div>
+              {position.description && <p className="text-sm leading-7 text-base-content/80">{position.description}</p>}
+              <Points items={position.points} />
+              {position.sections?.map(group => <div key={group.title} className="space-y-3 border-l border-base-300 pl-4 sm:pl-5">
+                <h4 className="text-sm font-semibold leading-6">{group.title}</h4>
+                <Points items={group.points} />
+              </div>)}
+            </div>)}
+          </article>)}
+        </div>
+      </Section>
 
-              <motion.div
-                className="flex flex-wrap gap-4 justify-center md:justify-start"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-              >
-                <motion.a
-                  href={process.env.NEXT_PUBLIC_GITHUB_URL || ""}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2 transition-colors"
-                  whileHover={socialVariants.hover}
-                  whileTap={socialVariants.tap}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <span className="inline-flex items-center gap-1">
-                    <SiGithub className="w-4 h-4" />
-                    GitHub
-                  </span>
-                </motion.a>
-                <motion.a
-                  href={process.env.NEXT_PUBLIC_LINKEDIN_URL || ""}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm text-muted-foreground hover:text-primary hover:underline underline-offset-2 transition-colors"
-                  whileHover={socialVariants.hover}
-                  whileTap={socialVariants.tap}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <span className="inline-flex items-center gap-1">
-                    <SiLinkedin className="w-4 h-4" />
-                    LinkedIn
-                  </span>
-                </motion.a>
-
-              </motion.div>
+      <Section title="Projects">
+        <p className="mb-7 text-sm leading-7 text-base-content/70">Current work and earlier projects, from Vietnamese NLP to agent workflows and product development.</p>
+        <nav aria-label="Project directory" className="mb-8 grid gap-3 sm:grid-cols-2">{projects.map(project => <a key={project.slug} href={`#project-${project.slug}`} className="rounded border border-base-300 px-4 py-3 text-sm hover:border-primary hover:text-primary">{project.title}</a>)}</nav>
+        <div className="space-y-8">
+          {projects.map(project => <article id={`project-${project.slug}`} key={project.title} className="scroll-mt-24 rounded-lg border border-base-300 p-5 sm:p-6">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <h3 className="text-lg font-semibold">{project.title}</h3>
+              {project.status && <span className="rounded border border-base-300 px-2 py-1 font-mono text-xs text-base-content/70">{project.status}</span>}
             </div>
-          </div>
-        </motion.section>
-
-        {/* Remaining sections with scroll-based animations */}
-        {/* About Me Section */}
-        <ScrollRevealSection id="about" title="About Me">
-          <div className="text-muted-foreground space-y-4">
-            <p>
-              AI Engineer by day, LLM whisperer by night. I work with Transformers (the model kind, not the robot kind) to build cool things like question generators, sentiment detectors, and data diggers. Big fan of LLM-related tools, clever hacks, and shipping stuff that works.
-            </p>
-            <p>
-              When I'm not wrangling models, I'm reading AI papers, pretending to be productive with a book, or chasing a football like it owes me money.
-            </p>
-          </div>
-        </ScrollRevealSection>
-
-        {/* Work Experience Section */}
-        <ScrollRevealSection id="experience" title="Work Experience">
-          <div className="space-y-8">
-            {experiences.map((exp, index) => (
-              <JobCard
-                key={`exp-${index}`}
-                company={exp.company}
-                positions={exp.positions}
-                delay={index * 0.05}
-              />
-            ))}
-          </div>
-        </ScrollRevealSection>
-
-        {/* Education Section */}
-        <ScrollRevealSection id="education" title="Education">
-          <div className="space-y-8">
-            {education.map((edu, index) => (
-              <EducationCard
-                key={`edu-${index}`}
-                title={edu.title}
-                institution={edu.institution}
-                period={edu.period}
-                subjects={edu.subjects}
-                delay={index * 0.05}
-              />
-            ))}
-          </div>
-        </ScrollRevealSection>
-
-        {/* Projects Section */}
-        <ScrollRevealSection id="projects" title="Projects">
-          <div className="space-y-8">
-            {projects.map((project, index) => (
-              <ProjectCard
-                key={`project-${index}`}
-                title={project.title}
-                tags={project.tags}
-                description={project.description}
-                url={project.url || ''}
-                delay={index * 0.05}
-              />
-            ))}
-          </div>
-        </ScrollRevealSection>
-
-        {/* Skills Section */}
-        <ScrollRevealSection id="skills" title="Skills & Technologies">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {skillCategories.map((category, index) => (
-              <SkillsCard
-                key={`skill-${index}`}
-                title={category.title}
-                skills={category.skills}
-                delay={index * 0.05}
-              />
-            ))}
-          </div>
-        </ScrollRevealSection>
-
-        {/* Certificates Section */}
-        <ScrollRevealSection id="certificates" title="Certifications">
-          <div className="space-y-6">
-            {certificates.map((cert, index) => (
-              <CertificationCard
-                key={`cert-${index}`}
-                name={cert.name}
-                issuer={cert.issuer}
-                date={cert.date}
-                url={cert.url}
-                delay={index * 0.05}
-              />
-            ))}
-          </div>
-        </ScrollRevealSection>
-      </main>
-    </motion.div>
-  );
-}
-
-// Component for scroll-based reveal animation
-function ScrollRevealSection({ id, title, children }: { id: string, title: string, children: React.ReactNode }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  return (
-    <motion.section
-      id={id}
-      className="space-y-4"
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-    >
-      <motion.h2
-        className="text-xl font-semibold mb-6"
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-      >
-        {title}
-      </motion.h2>
-      {children}
-    </motion.section>
-  );
-}
-
-// Component for job experience card
-function JobCard(
-  { company, positions, delay = 0 }: { company: string, positions: any[], delay: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
-  return (
-    <motion.div
-      className="space-y-6"
-      ref={ref}
-      initial={{ opacity: 0, x: -5 }}
-      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -5 }}
-      transition={{ duration: 0.3, delay: delay }}
-    >
-      <div className="flex items-center gap-3">
-        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-          <span className="font-bold text-primary text-lg">{company.charAt(0)}</span>
-        </div>
-        <h3 className="text-xl font-bold">{company}</h3>
-      </div>
-
-      <div className="ml-4 pl-6 border-l-2 border-muted space-y-8 pb-2">
-        {positions.map((position, index) => (
-          <div key={index} className="relative">
-            {/* Timeline dot */}
-            <div className={`absolute -left-[31px] top-1.5 h-4 w-4 rounded-full border-2 border-background ${position.isCurrent ? 'bg-green-500' : 'bg-muted-foreground/30'}`} />
-
-            <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1 mb-2">
-              <div>
-                <h4 className="font-semibold text-lg">{position.title}</h4>
-                <div className="text-sm text-muted-foreground">
-                  {position.description}
-                </div>
-              </div>
-              <div className="text-xs text-muted whitespace-nowrap flex items-center mt-1 md:mt-0 bg-muted/20 px-2 py-1 rounded">
-                {position.period}
-                {position.isCurrent && <span className="ml-1.5 w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>}
-              </div>
+            <p className="mt-2 text-sm leading-7 text-base-content/80">{project.description}</p>
+            <p className="mb-5 mt-3 font-mono text-xs leading-6 text-primary">{project.tags.join(' · ')}</p>
+            <Points items={project.points || []} />
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-3">
+              {process.env.NODE_ENV === "development" && <Link href={`/blog/review/${project.slug}`} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">Review draft article <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></Link>}
+              {project.url && <a href={project.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-primary hover:underline">{project.url.startsWith('https://github.com/') ? 'View source' : 'Visit project'} <ArrowUpRight className="h-4 w-4" aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>}
+              {project.article && <Link href={project.article} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">Read the full write-up <ArrowUpRight className="h-4 w-4" aria-hidden="true" /></Link>}
             </div>
-
-            {position.points.length > 0 && (
-              <ul className="list-disc list-outside ml-4 text-sm text-muted-foreground space-y-1 mb-3">
-                {position.points.map((point: string, idx: number) => (
-                  <li key={idx}>{point}</li>
-                ))}
-              </ul>
-            )}
-
-            {position.technologies.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {position.technologies.map((tech: string) => (
-                  <span
-                    key={tech}
-                    className="px-2 py-0.5 bg-muted/30 text-muted-foreground rounded-full text-xs"
-                  >
-                    {tech.toLowerCase()}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  );
-}
-
-// Component for education card
-function EducationCard({ title, institution, period, subjects = [], delay = 0 }: { title: string, institution: string, period: string, subjects: string[], delay: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
-  return (
-    <motion.div
-      className="space-y-2 relative pl-4 border-l border-muted"
-      ref={ref}
-      initial={{ opacity: 0, x: -5 }}
-      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -5 }}
-      transition={{ duration: 0.3, delay: delay }}
-    >
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1">
-        <div>
-          <h3 className="font-medium">{title}</h3>
-          <div className="text-sm text-muted-foreground">
-            {institution}
-          </div>
+          </article>)}
         </div>
-        <div className="text-xs text-muted whitespace-nowrap">
-          {period}
-        </div>
-      </div>
+      </Section>
 
-      {subjects.length > 0 && (
-        <motion.div
-          className="flex flex-wrap gap-2 pt-2"
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 0.3, delay: delay + 0.1 }}
-        >
-          {subjects.map((subject) => (
-            <span
-              key={subject}
-              className="px-2 py-0.5 bg-muted/30 text-muted-foreground rounded-full text-xs"
-            >
-              {subject}
-            </span>
-          ))}
-        </motion.div>
-      )}
-    </motion.div>
-  );
+      <Section title="Expertise">
+        <dl className="space-y-6">{skillCategories.map(category => <div key={category.title} className="grid gap-2 sm:grid-cols-[10rem_1fr] sm:gap-6"><dt className="text-sm font-semibold">{category.title}</dt><dd className="text-sm leading-7 text-base-content/80">{category.skills.join(' · ')}</dd></div>)}</dl>
+      </Section>
+
+      <Section title="Education">
+        <div className="space-y-6">{education.map(edu => <article key={edu.title} className="flex flex-col justify-between gap-2 sm:flex-row sm:gap-6"><div><h3 className="font-semibold">{edu.title}</h3><p className="mt-1 text-sm leading-6 text-base-content/70">{edu.institution}</p>{edu.description && <p className="mt-2 text-sm leading-7 text-base-content/80">{edu.description}</p>}{edu.subjects.length > 0 && <p className="mt-2 text-xs leading-6 text-base-content/70">{edu.subjects.join(" · ")}</p>}</div><p className="shrink-0 font-mono text-xs leading-6 text-base-content/70">{edu.period}</p></article>)}</div>
+      </Section>
+
+      <Section title="Learning">
+        <ul className="divide-y divide-base-300">{certificates.map(cert => <li key={cert.name} className="py-4 first:pt-0"><a href={cert.url} target="_blank" rel="noopener noreferrer" className="group flex items-start justify-between gap-5"><div><h3 className="text-sm font-medium leading-6 group-hover:text-primary">{cert.name}</h3><p className="mt-1 text-xs leading-5 text-base-content/70">{cert.issuer} · {cert.date}</p></div><ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-base-content/60 group-hover:text-primary" aria-hidden="true" /><span className="sr-only">Credential (opens in a new tab)</span></a></li>)}</ul>
+      </Section>
+    </div>
+  )
 }
-
-// Component for project card
-function ProjectCard({ title, tags = [], description, url, delay = 0 }: { title: string, tags: string[], description: string, url: string, delay: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
-  return (
-    <motion.div
-      className="space-y-2"
-      ref={ref}
-      initial={{ opacity: 0, y: 10 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-      transition={{ duration: 0.3, delay: delay }}
-      whileHover={{ x: 2 }}
-    >
-      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1">
-        <h3 className="font-medium">{title}</h3>
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <span
-              key={tag}
-              className="px-2 py-0.5 bg-muted/30 text-muted-foreground rounded-full text-xs"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-      <p className="text-sm text-muted-foreground">
-        {description}
-      </p>
-      {url && (
-        <motion.a
-          href={url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm text-primary inline-flex items-center hover:underline underline-offset-2 transition-colors mt-1"
-          whileHover={{ x: 3 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          View project <ArrowRight className="ml-1 h-3.5 w-3.5" />
-        </motion.a>
-      )}
-    </motion.div>
-  );
-}
-
-// Component for skills card
-function SkillsCard({ title, skills = [], delay = 0 }: { title: string, skills: string[], delay: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
-  return (
-    <motion.div
-      className="space-y-4"
-      ref={ref}
-      initial={{ opacity: 0, y: 10 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-      transition={{ duration: 0.3, delay: delay }}
-    >
-      <h3 className="text-base font-medium">
-        {title}
-      </h3>
-      <motion.div
-        className="flex flex-wrap gap-2"
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-        transition={{
-          duration: 0.4,
-          delay: delay + 0.1,
-          staggerChildren: 0.05
-        }}
-      >
-        {skills.map((skill, index) => (
-          <motion.span
-            key={skill}
-            className="px-2.5 py-1 bg-muted/30 text-muted-foreground rounded-full text-xs"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.2, delay: delay + 0.1 + (index * 0.03) }}
-            whileHover={{ scale: 1.05 }}
-          >
-            {skill.toLowerCase()}
-          </motion.span>
-        ))}
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// Component for certification card
-function CertificationCard({ name, issuer, date, url, delay = 0 }: { name: string, issuer: string, date: string, url: string, delay: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
-  return (
-    <motion.div
-      ref={ref}
-      className="relative pl-4 border-l border-muted"
-      initial={{ opacity: 0, x: -5 }}
-      animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -5 }}
-      transition={{ duration: 0.3, delay: delay }}
-      whileHover={{ x: 2 }}
-    >
-      <a
-        href={url || '#'}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block group"
-      >
-        <h4 className="font-medium group-hover:text-primary transition-colors">
-          {name}
-        </h4>
-        <div className="flex justify-between items-center text-sm mt-1">
-          <span className="text-muted-foreground">{issuer}</span>
-          <span className="text-xs text-muted">{date}</span>
-        </div>
-      </a>
-    </motion.div>
-  );
-} 

@@ -1,0 +1,85 @@
+{
+  "slug": "covid-chatbot",
+  "project": "Covid Chatbot",
+  "title": "Building a Vietnamese dialogue system before LLMs",
+  "summary": "Intent classification, information extraction, conversation state and structured responses in a historical Covid chatbot project.",
+  "lead": "This was an earlier Vietnamese NLP project in a narrow domain: a consultation chatbot for COVID-19 patients. The engineering problem was to understand what a user asked, remember what they said in earlier turns, and return an appropriate reply through an application interface. It is a technical retrospective, not medical guidance, and no clinical validation or deployment scale is claimed.",
+  "status": "Draft for review",
+  "stack": [
+    "Python",
+    "FastAPI",
+    "TF-IDF",
+    "KNN / SVM",
+    "MongoDB",
+    "Vietnamese NLP"
+  ],
+  "flow": [
+    "Load prior conversation state",
+    "Extract intent and information",
+    "Choose a dialogue action",
+    "Generate a structured reply",
+    "Persist the updated conversation",
+    "Return text and response options"
+  ],
+  "diagram": {
+    "chart": "graph LR\n    MSG[\"User message\"] --> NLU[\"Understanding: intent and entities\"]\n    STATE[(\"Conversation state\")] --> DM[\"Dialogue management\"]\n    NLU --> DM\n    DM --> NLG[\"Response generation\"]\n    NLG --> OUT[\"Reply text and options\"]\n    DM --> STATE",
+    "caption": "Understanding, dialogue management and response generation are separate stages with explicit intermediate results."
+  },
+  "sections": [
+    {
+      "title": "Split understanding, dialogue and generation",
+      "paragraphs": [
+        "The backend separates natural language understanding, dialogue management and response generation. A message enters through the conversation API; the bot retrieves earlier context, extracts intent and entities, passes the results to dialogue logic and then builds a reply.",
+        "The split makes failures easier to classify. A wrong answer may come from a wrong intent, missing extracted information, a dialogue transition or the response text, and explicit intermediate results let each be investigated on its own."
+      ]
+    },
+    {
+      "title": "Use intent models with visible training boundaries",
+      "paragraphs": [
+        "Intent classification uses TF-IDF features with KNN and SVM classifiers. The KNN setup uses cosine distance, and the SVM training path includes a hyperparameter search and a held-out split.",
+        "A training score would not describe conversation quality. A model can classify familiar phrasing well and still fail on short follow-ups, misspellings or requests that overlap several intents. A useful evaluation separates classification quality from the correctness of the full dialogue response. No accuracy figure is claimed here."
+      ]
+    },
+    {
+      "title": "Let conversation state change the interpretation",
+      "paragraphs": [
+        "The reply pipeline retrieves the previous intent and information from stored conversation state and passes both, together with the current message, to the dialogue manager. A follow-up is interpreted as part of an ongoing exchange instead of starting from an empty form.",
+        "The backend returns a structured response with reply text and available options. That contract lets the frontend present the next step without reconstructing backend decisions from natural language, so persistence supports both continuity and the interface."
+      ]
+    },
+    {
+      "title": "Entity extraction",
+      "paragraphs": [
+        "The portfolio describes named entity recognition with PhoBERT and CRF, and the backend has an information-extraction module that supplies entities to the dialogue manager.",
+        "The boundary between intent and entity extraction is the part of the design worth describing: the dialogue logic receives structured results and does not parse raw text itself."
+      ]
+    },
+    {
+      "title": "What the project taught me",
+      "paragraphs": [
+        "A chatbot is a state machine as much as a text generator. Explicit intents, structured extracted information and a separate response contract make its behavior inspectable.",
+        "The same questions apply to current agent work: which state belongs to this conversation, what does the next action need, and what has actually been persisted? Newer models change the implementation, not the need for clear state and action boundaries."
+      ]
+    }
+  ],
+  "reviewNotes": [
+    "Confirm the project timeline, team size and your exact contribution.",
+    "Locate the PhoBERT/CRF training code or explain which version contained it. The Entity extraction section is deliberately short until you do.",
+    "Provide evaluation records if you want model scores; omit clinical or deployment claims without evidence."
+  ],
+  "sources": [
+    {
+      "label": "covid-consultant-chatbot on GitHub",
+      "url": "https://github.com/minhbtrc/covid-consultant-chatbot"
+    },
+    {
+      "label": "PhoBERT",
+      "url": "https://huggingface.co/vinai/phobert-base",
+      "note": "pretrained Vietnamese language model"
+    },
+    {
+      "label": "scikit-learn: nearest neighbors",
+      "url": "https://scikit-learn.org/stable/modules/neighbors.html"
+    }
+  ]
+}

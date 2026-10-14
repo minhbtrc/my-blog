@@ -11,6 +11,7 @@ import { X, Filter, Terminal } from "lucide-react";
 import Link from 'next/link';
 import { Input } from "@/components/ui/input";
 import { getSortedBlogs } from "@/data/blogs";
+import { projectStorySummaries } from "@/data/project-story-list";
 
 // Helper to format dates nicely
 function formatDate(dateString) {
@@ -48,15 +49,15 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="flex items-center gap-2 border-b border-muted/30 py-2">
-        <div className="flex items-center text-muted-foreground text-sm font-mono">
+      <div className="flex items-center gap-2 border-b border-base-300 py-2">
+        <div className="flex items-center text-base-content/60 text-sm font-mono">
         minhbtc@ai-eng:~$
         </div>
         <div className="relative flex-1">
           <Input
             type="text"
             placeholder={placeholder}
-            className="w-full py-1 px-2 bg-transparent border-0 rounded-none text-sm font-mono text-blue-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="w-full py-1 px-2 bg-transparent border-0 rounded-none text-sm font-mono text-primary focus-visible:ring-0 focus-visible:ring-offset-0"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -69,8 +70,8 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
           whileTap={{ scale: 0.95 }}
           className={`px-2 py-1 rounded text-xs font-mono flex items-center ${
             filterOpen 
-              ? 'text-blue-400'
-              : 'text-muted-foreground hover:text-foreground'
+              ? 'text-primary'
+              : 'text-base-content/60 hover:text-base-content'
           }`}
         >
           <Filter className={`h-3.5 w-3.5 mr-1 transition-transform duration-300 ${filterOpen ? 'rotate-180' : ''}`} />
@@ -79,7 +80,7 @@ const SearchBar = ({ onFilterToggle, filterOpen, selectedTagsCount, searchQuery,
             <motion.span 
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-blue-400/20 text-[10px] text-blue-400"
+              className="ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary/15 text-[10px] text-primary"
             >
               {selectedTagsCount}
             </motion.span>
@@ -95,19 +96,19 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
   
   return (
     <motion.div 
-      className="max-w-3xl mx-auto mb-4 font-mono text-sm border-l-2 border-emerald-300 dark:border-muted/30 pl-4 py-2"
+      className="max-w-3xl mx-auto mb-4 font-mono text-sm border-l-2 border-base-300 pl-4 py-2"
       initial={{ opacity: 0, height: 0 }}
       animate={{ opacity: 1, height: 'auto' }}
       exit={{ opacity: 0, height: 0 }}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs text-emerald-600 dark:text-blue-400">
-          # Filter by tag
+        <span className="text-xs text-base-content/60">
+          Filter by tag
         </span>
         {selectedTags.length > 0 && (
           <button
             onClick={onClearTags}
-            className="text-xs text-gray-500 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground transition-colors flex items-center"
+            className="text-xs text-base-content/60 hover:text-base-content transition-colors flex items-center"
           >
             <X className="h-3 w-3 mr-1" />
             clear
@@ -121,8 +122,8 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
             onClick={() => onTagClick(tag)}
             className={`text-xs font-mono py-0.5 px-2 transition-colors ${
               selectedTags.includes(tag)
-                ? 'text-emerald-600 bg-emerald-50 dark:text-blue-400 dark:bg-blue-400/10' 
-                : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'
+                ? 'text-primary bg-primary/10' 
+                : 'text-base-content/70 hover:text-base-content'
             }`}
           >
             {tag}
@@ -133,42 +134,15 @@ const FilterTags = ({ isOpen, tags, selectedTags, onTagClick, onClearTags }) => 
   );
 };
 
-const BlogPost = ({ post, index }) => (
-  <motion.div
-    variants={item}
-    className="mb-6 border-l border-muted/30 pl-4 space-y-2 hover:border-blue-400/30 transition-colors"
-  >
-    <Link href={post.route} className="block space-y-2 group">
-      <h3 className="text-lg font-semibold group-hover:text-blue-400 transition-colors">
-        <span className="font-mono text-purple-400">post</span>
-        <span className="font-mono text-muted-foreground">(</span>
-        <span className="font-mono text-emerald-400">"</span>
-        <span className="text-emerald-500 dark:text-emerald-400">{post.title}</span>
-        <span className="font-mono text-emerald-400">"</span>
-        <span className="font-mono text-muted-foreground">)</span>
-      </h3>
-      
-      <div className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
-        <span>•</span>
-        <span>{formatDate(post.date)}</span>
-        <span>•</span>
-        <span>{post.readingTime}</span>
-      </div>
-      
-      <div className="text-xs font-mono text-muted-foreground opacity-60">
-        <span>•</span>
-        {post.tags.map((tag, i) => (
-          <React.Fragment key={tag}>
-            <span className="ml-1">{tag}</span>
-            {i < post.tags.length - 1 && <span className="mx-0.5">•</span>}
-          </React.Fragment>
-        ))}
-      </div>
-      
-      <div className="text-xs text-blue-400 font-mono group-hover:underline underline-offset-4 inline-flex items-center">
-        <span>•</span>
-        <span className="ml-1">→ Read</span>
-      </div>
+const BlogPost = ({ post }) => (
+  <motion.div variants={item} className="border-t border-base-300 py-6 first:border-t-0">
+    <Link href={post.route} className="group block space-y-2">
+      <p className="font-mono text-xs text-base-content/60">
+        {formatDate(post.date)}  ·  {post.readingTime}
+      </p>
+      <h3 className="text-lg font-semibold leading-7 text-base-content transition-colors group-hover:text-primary">{post.title}</h3>
+      {post.description && <p className="text-sm leading-6 text-base-content/70">{post.description}</p>}
+      <p className="font-mono text-xs text-base-content/50">{(post.tags || []).join('  ·  ')}</p>
     </Link>
   </motion.div>
 );
@@ -180,23 +154,23 @@ const ShellView = ({ posts }) => (
     initial="hidden"
     animate="show"
   >
-    <motion.div variants={item} className="text-muted-foreground mb-4">
-      <span className="text-blue-400">minhbtc@ai-eng:~$</span> cat my_posts.txt
+    <motion.div variants={item} className="text-base-content/60 mb-4">
+      <span className="text-primary">minhbtc@ai-eng:~$</span> cat my_posts.txt
     </motion.div>
     
     {posts.map((post, index) => (
       <motion.div 
         key={post.route}
         variants={item}
-        className="flex gap-2 pl-2 border-l border-muted/30 hover:border-blue-400/30 transition-colors"
+        className="flex gap-2 pl-2 border-l border-base-300 hover:border-base-content/30 transition-colors"
       >
-        <span className="text-muted-foreground">-</span>
+        <span className="text-base-content/60">-</span>
         <Link 
           href={post.route}
-          className="hover:text-blue-400 transition-colors truncate"
+          className="hover:text-primary transition-colors truncate"
         >
-          <span className="text-muted-foreground">{formatDate(post.date).replace(',', '')}</span>
-          <span className="text-muted-foreground mx-1">|</span>
+          <span className="text-base-content/60">{formatDate(post.date).replace(',', '')}</span>
+          <span className="text-base-content/60 mx-1">|</span>
           <span>{post.title}</span>
         </Link>
       </motion.div>
@@ -211,21 +185,21 @@ const EmptyState = ({ onClear }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
     >
-      <div className="text-muted-foreground mb-4 inline-block">
+      <div className="text-base-content/60 mb-4 inline-block">
         <Terminal className="h-10 w-10 mx-auto" />
       </div>
       <div className="space-y-2">
         <div className="text-lg font-semibold">
-          <span className="text-red-400">Error:</span> No posts found
+          No posts found
         </div>
-        <p className="text-xs text-muted-foreground max-w-md mx-auto">
-          # We couldn't find any posts matching your criteria
+        <p className="text-xs text-base-content/60 max-w-md mx-auto">
+          No posts match the current search or filters.
         </p>
         <button 
           onClick={onClear}
-          className="mt-4 text-blue-400 text-sm hover:underline underline-offset-4"
+          className="mt-4 text-primary text-sm hover:underline underline-offset-4"
         >
-          clear_filters()
+          Clear filters
         </button>
       </div>
     </motion.div>
@@ -235,16 +209,16 @@ const EmptyState = ({ onClear }) => {
 // Toggle view component
 const ViewToggle = ({ viewMode, setViewMode }) => (
   <div className="flex items-center justify-end mb-6 text-xs font-mono">
-    <div className="flex rounded-md overflow-hidden border border-emerald-200 dark:border-muted/30">
+    <div className="flex rounded-md overflow-hidden border border-base-300">
       <button
         onClick={() => setViewMode('list')}
-        className={`px-3 py-1 ${viewMode === 'list' ? 'bg-emerald-100 text-emerald-700 dark:bg-blue-400/10 dark:text-blue-400' : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'}`}
+        className={`px-3 py-1 ${viewMode === 'list' ? 'bg-base-200 text-base-content' : 'text-base-content/70 hover:text-base-content'}`}
       >
         List
       </button>
       <button
         onClick={() => setViewMode('shell')}
-        className={`px-3 py-1 ${viewMode === 'shell' ? 'bg-emerald-100 text-emerald-700 dark:bg-blue-400/10 dark:text-blue-400' : 'text-gray-600 dark:text-muted-foreground hover:text-emerald-700 dark:hover:text-foreground'}`}
+        className={`px-3 py-1 ${viewMode === 'shell' ? 'bg-base-200 text-base-content' : 'text-base-content/70 hover:text-base-content'}`}
       >
         Shell
       </button>
@@ -336,11 +310,32 @@ function BlogPageContent() {
         className="mb-4 text-center"
       >
         <h1 className="text-2xl font-semibold mb-1">Blog</h1>
-        <p className="text-sm text-muted-foreground font-mono">
-          # Notes on AI engineering, development, and research
+        <p className="text-sm text-base-content/60">
+          Notes on AI engineering, development and research
         </p>
       </motion.div>
       
+      {process.env.NODE_ENV === 'development' && (
+        <section className="mb-10 border-b border-base-300 pb-2" aria-labelledby="drafts-heading">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 id="drafts-heading" className="font-mono text-xs uppercase tracking-widest text-base-content/60">Project stories · drafts ({projectStorySummaries.length})</h2>
+            <Link href="/blog/review" className="text-xs text-primary hover:underline">Review all →</Link>
+          </div>
+          <p className="mt-2 text-xs text-base-content/60">Visible only in local development until each story is approved for publication.</p>
+          <ul className="mt-4">
+            {projectStorySummaries.map(story => (
+              <li key={story.slug} className="border-t border-base-300 py-5 first:border-t-0">
+                <Link href={`/blog/review/${story.slug}`} className="group block space-y-2">
+                  <p className="font-mono text-xs text-base-content/60">Draft  ·  {story.stack.slice(0, 4).join('  ·  ')}</p>
+                  <h3 className="text-lg font-semibold leading-7 text-base-content transition-colors group-hover:text-primary">{story.title}</h3>
+                  <p className="text-sm leading-6 text-base-content/70">{story.summary}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {/* Search and filter */}
       <SearchBar 
         onFilterToggle={() => setFilterOpen(prev => !prev)}
@@ -377,8 +372,8 @@ function BlogPageContent() {
                 variants={container}
                 className="mb-8"
               >
-                {filteredPosts.map((post, index) => (
-                  <BlogPost key={post.route} post={post} index={index} />
+                {filteredPosts.map(post => (
+                  <BlogPost key={post.route} post={post} />
                 ))}
               </motion.div>
             </>

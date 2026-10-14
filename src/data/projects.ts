@@ -10,10 +10,17 @@ import projectsData from '@/db/projects.json';
 export interface Project {
   /** Project title */
   title: string;
+  slug: string;
   /** Array of technologies or keywords */
   tags: string[];
   /** Project description */
   description: string;
+  points?: string[];
+  status?: string;
+  /** Include in the selected PDF portfolio; About always shows every project. */
+  resume?: boolean;
+  /** Local article with the full project write-up. */
+  article?: string;
   /** URL to project (GitHub, live site, etc.) */
   url?: string;
   /** Optional path to project image */
