@@ -4,24 +4,50 @@ Every article, whether a hand-written post or a project story, uses the shared a
 
 ## Voice
 
-- Write every post in the first person singular ("I built", "I chose", "I have not measured"), plainly, as an engineer explaining a decision to a peer. Use "we" only for work a team did, and say so once. Never refer to "the author", "this write-up" or "the repository shows" as if someone else wrote the code; say what I did or what I found. Do not state ownership, roles or decisions the author has not confirmed.
-- Lead with what the post covers and why it matters. The `Lead` block is one short paragraph.
-- Prefer specific nouns and verbs over adjectives. Cut hype ("game-changer", "magic"), jokes that carry no information, and rhetorical questions.
-- State what you did and what you verified. Do not claim outcomes (speed, cost, accuracy, scale) without a measurement you can point to. If you have none, say what you would measure.
-- Do not put editorial notes in the published text ("this draft does not claim..."). Open questions belong in `reviewNotes` (project stories) or in `docs/blog-review-notes.md`.
-- Do not write year-relative statements ("in 2025") that will age badly, and make sure the post date is consistent with the tools and versions it describes.
+Write like a person telling a friend who is also an engineer what happened, not like documentation, a report or an audit. The test: read a paragraph aloud. If you would never say it across a table, rewrite it.
+
+What good personal engineering blogs do (Julia Evans, Simon Willison, Dan Luu, and most of the posts people actually share):
+
+- **Open with the real situation.** Why I started, what annoyed me, what I wanted to try. Not "This post covers...". One or two sentences, then get going.
+- **Tell it as things that happened, in order, with reasons.** "I started with X. It broke when Y, so I switched to Z." Decisions come with the thing that forced them.
+- **Use first person singular and plain words.** "I", "my", contractions are fine ("didn't", "it's"). Use "we" only for work a team did, and say so once. Never "the author", "this write-up", "the repository shows".
+- **Pick a few concrete details and drop the rest.** One odd bug, one number, one file name that matters. Do not recite the README, the port list, the env vars, the folder layout or every dependency. If a reader could get it from the repo in ten seconds, link the repo instead.
+- **Have opinions and small asides.** "This turned out to be the hard part." "I'd skip this next time." A dry joke is fine if it is real; a forced one is not.
+- **Be honest about what you don't know, once, specifically.** "I never measured whether the spell fixer helps." Not a disclaimer every other paragraph, and never a block that lists everything you did not verify. Cut "I do not claim...", "I have not verified...", "as it stands", "to my knowledge".
+- **Vary sentence length.** Short ones land points. A longer one can carry a reason. Avoid three sentences in a row that start the same way.
+- **End when you are done.** A last thought, what I would change, or what is next. No summary of the post, no "In conclusion".
+
+Words and shapes to avoid: "the manual path follows my README", "I describe the code as it stands", "this section covers", "it is worth noting", "robust", "leverage", "seamless", "comprehensive", lists of three adjectives, headings that read like a spec ("Design constraints"), paragraphs that only restate a table, and sentences that exist to defend the author ("I do not claim production readiness").
+
+Facts still come first. Do not invent history, motives, results, ownership or numbers. When the sources do not say why I did something, write only what is visible ("I used X") and put the question in `reviewNotes`. A natural voice is not permission to make things up.
+
+Other rules:
+
+- Prefer specific nouns and verbs over adjectives. No hype, no rhetorical questions as filler.
+- Do not put editorial notes in the published text. Open questions belong in `reviewNotes` (stories) or `docs/blog-review-notes.md`.
+- Do not write year-relative statements ("in 2025") and keep the post date consistent with the tools it describes.
 - No emoji.
+
+### Before and after
+
+Stiff: "The manual path follows my README. After the services are up, the frontend is on port 3000, the backend on 8080 and the API documentation on /docs."
+
+Natural: "Getting it running is `docker compose up`. If you want to poke at the API, it has the usual FastAPI docs page."
+
+Stiff: "I describe the code as it stands. I do not claim production readiness, and I have not measured accuracy."
+
+Natural: "It's a side project, not something I'd put in front of customers. I never measured how accurate the answers are, so I can't tell you."
 
 ## Structure
 
 1. `PostHeader`: title, one-sentence subtitle, author, ISO date, reading time, 3–5 lowercase tags.
 2. `Lead`: what this is and what the reader will get.
 3. Body sections with `h2` headings that read as statements or noun phrases ("Scope memory to the conversation"). Use `h3` sparingly.
-4. A closing section: outcome, limits, and what you would do or measure next.
+4. A short closing: where it ended up, what I would change, what is next. Skip it if the last section already ends well.
 5. `References`: every link cited in the body, with a short note on why it is relevant.
 6. `PostFooter`.
 
-Aim for 600–1,200 words. Longer material belongs in a series.
+Aim for 500–1,000 words; shorter is fine. Longer material belongs in a series.
 
 ## Components
 

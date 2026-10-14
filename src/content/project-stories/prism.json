@@ -12,8 +12,8 @@
   ],
   "date": "2026-10-14",
   "title": "Building PRISM: a self-reflection app for iPhone",
-  "summary": "What PRISM is, the principles I am building it around, how its pieces fit together, and what I have and have not verified while it is in internal QA.",
-  "lead": "PRISM is a bilingual iPhone app for self-reflection that I am building with a Flutter client and a FastAPI backend. It has a daily check-in, readings with a streamed AI reply, a private journal and a Self Map of patterns over time. It is in internal QA and has not been released. In this post I describe the product, the principles that shape the engineering, how the pieces fit together at a high level, and what I still have to prove before I would call it ready.",
+  "summary": "What PRISM is, why I'm building it the way I am, and where it stands while it's still unreleased.",
+  "lead": "PRISM is an iPhone app I'm building for reflecting on your day: a short daily check-in, readings with a streamed AI reply, a private journal and a Self Map. It isn't out yet. Here is what it is, the few rules I keep coming back to, and what I still have to prove.",
   "flow": [
     "Open the app and check in",
     "Choose a question and a spread",
@@ -28,11 +28,11 @@
   },
   "sections": [
     {
-      "title": "What PRISM is",
+      "title": "What it is",
       "paragraphs": [
-        "PRISM is meant to be a calm place to check in with how you feel, think something through and notice your own patterns. Each day has a short check-in with a card to reflect on. A reading starts from a question you choose, a spread and the cards you draw, and ends with a reply that explains each card in its position and suggests one small next step. A journal keeps notes and past readings, and a Self Map brings together a few ways of looking at yourself.",
-        "I use tarot as a mirror for reflection, not for prediction, and PRISM is not therapy. That positioning is a product decision with engineering consequences: replies must stay grounded in the cards and in what the person shared, and the app must behave carefully when someone writes something that sounds like distress.",
-        "The app is Vietnamese first and English from the start, so every string and every reply exists in both languages."
+        "PRISM is meant to be a calm place to check in with how you feel and notice your own patterns. Every day there's a short check-in with a card to think about. A reading starts from a question you pick, a spread and the cards you draw, and ends with a reply that explains each card in its position and suggests one small next step. The journal keeps your notes and past readings, and the Self Map pulls a few ways of looking at yourself into one place.",
+        "I use tarot as a mirror, not a crystal ball. PRISM isn't therapy and it doesn't predict anything. That sounds like a product detail, but it shapes the engineering: replies have to stay grounded in the cards and in what the person actually wrote, and the app has to be careful when someone writes something that sounds like distress.",
+        "It's Vietnamese first, with English from the start, so every string and every reply exists in both."
       ],
       "definitions": [
         {
@@ -54,43 +54,43 @@
       ]
     },
     {
-      "title": "Principles I am building around",
+      "title": "Four rules I keep coming back to",
       "paragraphs": [
-        "Four principles drive most of the decisions, and I try to turn each into a check I can run.",
-        "Reflection, not prediction. Replies avoid dates, yes or no verdicts and claims about what other people think. This is easier to say than to enforce, so I treat it as something to evaluate on real Vietnamese and English cases.",
-        "Private by default. A journal is the most personal data in the app. I keep private text encrypted in storage and keep it out of logs and analytics, and I would rather debug from event types and request identifiers than from what someone wrote.",
-        "The server decides access. What is free, what needs a subscription and what a purchase unlocks is decided on the backend, so the app is a view of the account and not the authority on it.",
-        "Calm when things fail. A streamed reply can be cut off, a phone can go offline and a purchase can be delayed. I want each of those to end in a clear state the person understands, not in a spinner."
+        "Most decisions trace back to four rules. I try to turn each one into something I can test.",
+        "Reflection, not prediction. No dates, no yes or no verdicts, no claims about what other people think. Easy to say, hard to enforce, so I treat it as something to evaluate on real Vietnamese and English cases.",
+        "Private by default. A journal is the most personal thing in the app. Private text stays encrypted in storage and out of logs and analytics. I'd rather debug from event types and request ids than from what someone wrote.",
+        "The server decides access. What's free, what needs a subscription and what a purchase unlocks is decided on the backend. The app only shows what the account has.",
+        "Fail calmly. A streamed reply can get cut off, a phone can go offline, a purchase can arrive late. Each of those should end in a state the person understands, not a spinner."
       ]
     },
     {
-      "title": "How the pieces fit",
+      "title": "How it fits together",
       "paragraphs": [
-        "The app is written in Flutter with Riverpod for state, and it queues journal changes offline so that a note written without a connection is not lost. The backend is a FastAPI modular monolith with async SQLAlchemy over PostgreSQL, which is the system of record. Redis supports rate limits and short-lived coordination, and a background worker handles scheduled maintenance.",
-        "Replies reach the app as a stream of text events over HTTP, so the first words appear while the rest is still being written. I chose a one-way stream because data only flows from the server to the app. The AI provider is selected by configuration, with separate settings for readings, chat and letters, and a built-in stand-in model lets every flow run locally without keys. Subscriptions and purchases go through a third-party subscription service.",
-        "I describe these pieces at a high level on purpose. The app is not released, and I do not want to publish the details of how access and usage are protected."
+        "The app is Flutter with Riverpod. Journal changes queue up offline, so a note written on a train isn't lost. The backend is a FastAPI monolith over PostgreSQL, with Redis for rate limits and a small worker for scheduled jobs.",
+        "Replies stream in as text events, so the first words show up while the rest is still being written. I picked a one-way stream because data only flows from the server to the app. The AI provider is a config choice, and there's a stand-in model so I can run every flow locally without keys. Subscriptions go through a third-party service.",
+        "I'm keeping this high level on purpose. The app isn't released and I'd rather not publish how access and usage are protected."
       ]
     },
     {
-      "title": "What I have verified, and what I have not",
+      "title": "What's tested and what isn't",
       "paragraphs": [
-        "The backend has an automated test suite that runs in continuous integration against a real database and cache, and the app has layout tests across phone sizes from small iPhones to wide displays. I have also reviewed screens in both languages on simulators. I did not rerun any of these for this post, and I treat passing tests as evidence about the code only.",
-        "What only real services can prove is still open. I have not yet completed the sandbox purchase and restore checks on real devices, a measured evaluation of reply quality in Vietnamese and English, or a review of how the whole system behaves with real subscribers. Until I have those results, I make no claims about cost, speed, quality or scale."
+        "The backend has an automated test suite that runs in CI against a real database and cache, and the app has layout tests from small iPhones up to wide screens. Tests only tell me about the code, though.",
+        "The things only real services can answer are still open: sandbox purchases and restores on real devices, a proper evaluation of reply quality in Vietnamese and English, and how the whole thing behaves with real subscribers. Until I've done those, I won't make claims about cost, speed, quality or scale."
       ]
     },
     {
-      "title": "What comes next",
+      "title": "Next",
       "paragraphs": [
-        "Next I want to finish the real-device purchase checks, run a larger evaluation of replies in both languages, including low-mood and prompt-injection cases, and measure how quickly the first words of a reply appear. When the app is on the App Store, I will link it here and write a follow-up with measured results."
+        "Real-device purchase checks first. After that, a bigger evaluation of replies in both languages, including low-mood and prompt-injection cases, and a measurement of how fast the first words appear. When the app is on the App Store I'll link it here and write a follow-up with real numbers."
       ]
     }
   ],
   "takeaways": [
-    "Turn product principles, such as reflection not prediction, into things you can test.",
-    "Keep private text encrypted and out of logs and analytics from the start.",
-    "Decide access on the server so the app only shows the account's state.",
-    "Design each failure, such as a cut-off reply or an offline note, to end in a clear state.",
-    "Say what is built, what is tested and what is still unproven while the app is unreleased."
+    "Turn product principles into things you can test.",
+    "Keep private text encrypted and out of logs from the start.",
+    "Decide access on the server.",
+    "Design each failure to end in a clear state.",
+    "While an app is unreleased, say plainly what is built, tested and unproven."
   ],
   "reviewNotes": [
     "This is the high-level version you chose. It leaves out budget, billing-event, device-check, trial and account-merge details, plus all screenshots and diagrams from the private repository.",
