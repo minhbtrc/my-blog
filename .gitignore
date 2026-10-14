@@ -8,3 +8,9 @@ build
 .env.test.local
 .env.production.local
 .DS_Store
+# Local CV iterations, render previews and Python environments
+/output/
+/tmp/
+/.venv-resume/
+*.tsbuildinfo
+__pycache__/

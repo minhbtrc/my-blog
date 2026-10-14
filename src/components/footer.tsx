@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { Github } from 'lucide-react'
+import { profile } from '@/data/profile'
 
 export default function Footer() {
   const year = new Date().getFullYear()
-  
+
   return (
     <footer className="w-full border-t border-base-200 py-6 mt-12">
       <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
@@ -14,31 +15,32 @@ export default function Footer() {
           <div className="text-xs text-base-content/60">
             © {year} Minh Bui. All rights reserved.
           </div>
-          
+
           {/* Links */}
           <div className="flex items-center gap-4 text-xs">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="text-base-content/60 hover:text-base-content transition-colors"
             >
               Home
             </Link>
-            <Link 
-              href="/blog" 
+            <Link
+              href="/blog"
               className="text-base-content/60 hover:text-base-content transition-colors"
             >
               Blog
             </Link>
-            <Link 
-              href="/about" 
+            <Link
+              href="/about"
               className="text-base-content/60 hover:text-base-content transition-colors"
             >
               About
             </Link>
-            <a 
-              href={process.env.NEXT_PUBLIC_GITHUB_URL} 
-              target="_blank" 
-              rel="noreferrer" 
+            <Link href="/resume" className="text-base-content/60 hover:text-base-content">CV</Link>
+            <a
+              href={profile.github}
+              target="_blank"
+              rel="noreferrer"
               className="text-base-content/60 hover:text-base-content transition-colors flex items-center gap-1"
             >
               <Github className="h-3.5 w-3.5" />
@@ -49,4 +51,4 @@ export default function Footer() {
       </div>
     </footer>
   )
-} 
+}

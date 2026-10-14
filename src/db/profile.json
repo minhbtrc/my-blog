@@ -1,0 +1,31 @@
+{
+  "name": "Minh Bui Tran Cong",
+  "shortName": "Minh Bui",
+  "title": "Senior Applied AI Engineer",
+  "tagline": "Agentic AI | Technical Leadership | Enterprise Solution Delivery",
+  "summary": "AI engineer with 5 years of experience and technical leadership across enterprise AI systems. Evaluate and apply agentic workflows, knowledge graphs and document AI to automate business processes and improve software lifecycle traceability. Translate stakeholder requirements into architecture, guide experimentation and code reviews, and coordinate delivery with attention to context quality, resource use and operational reliability.",
+  "intro": "I build AI systems for document-heavy workflows, from retrieval and agent orchestration to enterprise integration and product delivery.",
+  "location": "Ho Chi Minh City, Vietnam",
+  "github": "https://github.com/minhbtrc",
+  "linkedin": "https://www.linkedin.com/in/minhbtcm00/",
+  "resume": {
+    "url": "/resume/MinhBTC_Senior_Applied_AI_Engineer.pdf",
+    "filename": "MinhBTC_Senior_Applied_AI_Engineer.pdf",
+    "pages": 3,
+    "updated": "2026-10-14"
+  },
+  "highlights": [
+    {
+      "value": "5 years",
+      "label": "AI engineering experience"
+    },
+    {
+      "value": "8–9 people",
+      "label": "Team technical leadership"
+    },
+    {
+      "value": "~1,000 users",
+      "label": "Enterprise contract platform"
+    }
+  ]
+}

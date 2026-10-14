@@ -63,11 +63,11 @@
 
 /* Typography */
 .font-mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono, ui-monospace), SFMono-Regular, Menlo, monospace;
 }
 
 .font-sans {
-  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-inter, Arial), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Prose customization for content */
@@ -194,4 +194,21 @@ input:focus, textarea:focus {
 html, body, * {
   transition-property: background-color, border-color, color, fill, stroke !important;
   transition-duration: 50ms !important;
+}
+
+/* Keyboard and motion accessibility; reuse the existing theme palette. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

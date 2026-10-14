@@ -16,6 +16,7 @@ export interface Certificate {
   date: string;
   /** URL to the certificate verification page */
   url: string;
+  resume?: boolean;
   /** Optional description of the certificate */
   description?: string;
   /** Optional image of the certificate (relative path from public directory) */

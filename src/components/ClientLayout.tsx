@@ -4,13 +4,14 @@ import { AppProgressBar as NextProgressBar } from 'next-nprogress-bar'
 import { MotionConfig } from 'framer-motion'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Code, Home, User, Mail, Menu, X, Github, Command, Terminal, Disc3 } from 'lucide-react'
+import { Code, Home, User, Mail, Menu, X, Github, Command, Terminal, Disc3, FileText } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { cn } from '../lib/utils'
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import Footer from './footer'
+import { profile } from '@/data/profile'
 import dynamic from 'next/dynamic'
 
 // Dynamically import ReactPlayer to prevent SSR issues
@@ -24,37 +25,37 @@ function PlayButton() {
   const [hasInteracted, setHasInteracted] = useState(false)
   const playerRef = useRef(null)
   const hasUrl = !!process.env.NEXT_PUBLIC_LISTEN_URL
-  
+
   useEffect(() => {
     setMounted(true)
-    
+
     // Check for previous user interaction
     const hasUserInteracted = localStorage.getItem('music-interaction')
     if (hasUserInteracted === 'true') {
       setHasInteracted(true)
     }
-    
+
     // Listen for first interaction
     const handleFirstInteraction = () => {
       setHasInteracted(true)
       localStorage.setItem('music-interaction', 'true')
     }
-    
+
     window.addEventListener('click', handleFirstInteraction, { once: true })
-    
+
     return () => {
       window.removeEventListener('click', handleFirstInteraction)
     }
   }, [])
-  
+
   const togglePlay = () => {
     setPlaying(prev => !prev)
   }
-  
+
   if (!mounted || !hasUrl) {
     return null
   }
-  
+
   return (
     <>
       {/* Hidden player */}
@@ -72,20 +73,20 @@ function PlayButton() {
           onError={(e) => console.error("Player error:", e)}
         />
       </div>
-      
+
       {/* Button */}
       <button
         onClick={togglePlay}
         className="relative group text-base-content/70 hover:text-base-content transition-colors cursor-pointer"
         aria-label={playing ? "Pause music" : "Play music"}
       >
-        <Disc3 
+        <Disc3
           className={cn(
             "h-4 w-4",
             playing && hasInteracted && "animate-[spin_3s_linear_infinite]"
           )}
         />
-        
+
         {/* Tooltip on hover */}
         <span className="hidden group-hover:block absolute top-full mt-1 left-1/2 -translate-x-1/2 text-xs font-mono bg-base-300 text-base-content px-2 py-1 rounded whitespace-nowrap z-50">
           {playing ? "Pause" : "Listen"} {!hasInteracted && "(Click to enable)"}
@@ -109,9 +110,7 @@ export default function ClientLayout({
 
   // Track scroll position for sticky header
   const [scrolled, setScrolled] = useState<boolean>(false)
-  const prevScrollY = useRef(0)
-  const [cursorVisible, setCursorVisible] = useState(true)
-  const [currentTheme, setCurrentTheme] = useState<string | undefined>('loading') // Track theme separately
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Get terminal path based on current pathname
   const getTerminalPath = () => {
@@ -125,147 +124,21 @@ export default function ClientLayout({
 
   useEffect(() => {
     setMounted(true)
-    
-    // Update the theme attributes based on the resolved theme
-    if (resolvedTheme) {
-      console.log('Initial theme:', resolvedTheme);
-      setCurrentTheme(resolvedTheme);
-      
-      // Ensure the theme is applied to the document
-      document.documentElement.classList.remove('light', 'dark')
-      document.documentElement.classList.add(resolvedTheme)
-      document.documentElement.setAttribute('data-theme', resolvedTheme)
-      document.body.setAttribute('data-theme', resolvedTheme)
-    }
-    
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      if (currentScrollY > 10) {
-        setScrolled(true)
-      } else {
-        setScrolled(false)
-      }
-      prevScrollY.current = currentScrollY
-    }
-    
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    
-    // Listen for Cmd+K to open command menu
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault()
-        setShowCommandMenu(prev => !prev)
+    const handleScroll = () => setScrolled(window.scrollY > 10)
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+        event.preventDefault()
+        setShowCommandMenu(open => !open)
       }
     }
-    
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('keydown', handleKeyDown)
-    
-    // Blinking cursor effect
-    const cursorInterval = setInterval(() => {
-      setCursorVisible(prev => !prev)
-    }, 600)
-    
     return () => {
-      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('keydown', handleKeyDown)
-      clearInterval(cursorInterval)
     }
-  }, [resolvedTheme])
-
-  // Monitor theme changes at the document level
-  useEffect(() => {
-    if (!mounted) return;
-    
-    // Set initial theme based on document class
-    const root = document.documentElement;
-    const initialHasLightClass = root.classList.contains('light');
-    const initialHasDarkClass = root.classList.contains('dark');
-    const initialDataTheme = root.getAttribute('data-theme');
-    
-    let initialTheme = currentTheme;
-    if (initialHasLightClass || initialDataTheme === 'light') {
-      initialTheme = 'light';
-    } else if (initialHasDarkClass || initialDataTheme === 'dark') {
-      initialTheme = 'dark';
-    }
-    
-    console.log('Initial document theme detection:', {
-      hasLightClass: initialHasLightClass,
-      hasDarkClass: initialHasDarkClass,
-      dataTheme: initialDataTheme,
-      detectedTheme: initialTheme,
-      currentThemeState: currentTheme
-    });
-    
-    if (initialTheme && initialTheme !== currentTheme) {
-      setCurrentTheme(initialTheme);
-    }
-    
-    // Monitor class changes for better theme detection
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (
-          mutation.attributeName === 'class' ||
-          mutation.attributeName === 'data-theme'
-        ) {
-          const element = mutation.target as HTMLElement;
-          const hasLightClass = element.classList.contains('light');
-          const hasDarkClass = element.classList.contains('dark');
-          const dataTheme = element.getAttribute('data-theme');
-          
-          let detectedTheme;
-          if (hasLightClass || dataTheme === 'light') {
-            detectedTheme = 'light';
-          } else if (hasDarkClass || dataTheme === 'dark') {
-            detectedTheme = 'dark';
-          } else {
-            console.warn('Observer could not determine theme from classes or attributes');
-            return; // Skip processing if we can't detect theme
-          }
-          
-          console.log('Observer detected DOM change:', {
-            attributeChanged: mutation.attributeName,
-            hasLightClass,
-            hasDarkClass,
-            dataTheme,
-            detectedTheme,
-            currentThemeState: currentTheme
-          });
-          
-          if (detectedTheme && detectedTheme !== currentTheme) {
-            console.log('Observer detected theme change to:', detectedTheme);
-            setCurrentTheme(detectedTheme);
-            
-            // Apply CSS variables immediately
-            if (detectedTheme === 'light') {
-              document.documentElement.style.setProperty('--base-100', '#ffffff');
-              document.documentElement.style.setProperty('--base-content', '#0f172a');
-              document.documentElement.style.setProperty('--primary', '#059669');
-            } else {
-              document.documentElement.style.setProperty('--base-100', '#0f172a');
-              document.documentElement.style.setProperty('--base-content', '#f8fafc');
-              document.documentElement.style.setProperty('--primary', '#3b82f6');
-            }
-            
-            // Force a reflow to ensure theme changes are applied
-            document.body.style.display = 'none';
-            document.body.offsetHeight;
-            document.body.style.display = '';
-          }
-        }
-      });
-    });
-    
-    // Observe document element for class and data-theme changes
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class', 'data-theme']
-    });
-    
-    return () => {
-      observer.disconnect();
-    };
-  }, [mounted, currentTheme]);
+  }, [])
 
   // Typing animation for terminal path
   useEffect(() => {
@@ -273,7 +146,7 @@ export default function ClientLayout({
 
     const path = getTerminalPath()
     setTypedPath("")
-    
+
     let currentIndex = 0
     const pathInterval = setInterval(() => {
       if (currentIndex < path.length) {
@@ -283,7 +156,7 @@ export default function ClientLayout({
         clearInterval(pathInterval)
       }
     }, 30)
-    
+
     return () => {
       clearInterval(pathInterval)
     }
@@ -292,63 +165,65 @@ export default function ClientLayout({
   // Close mobile menu when route changes
   useEffect(() => {
     setMobileMenuOpen(false)
+    setShowCommandMenu(false)
+    setSearchQuery('')
   }, [pathname])
 
   const navLinks = [
     { path: '/', label: 'Home', icon: <Home className="w-4 h-4" /> },
     { path: '/blog', label: 'Blog', icon: <Code className="w-4 h-4" /> },
     { path: '/about', label: 'About', icon: <User className="w-4 h-4" /> },
-    { path: '/contact', label: 'Contact', icon: <Mail className="w-4 h-4" /> }
+    { path: '/contact', label: 'Contact', icon: <Mail className="w-4 h-4" /> },
+    { path: '/resume', label: 'CV', icon: <FileText className="w-4 h-4" /> }
   ]
 
   return (
     <MotionConfig reducedMotion="user">
       <div className="flex flex-col min-h-screen bg-base-100 text-base-content">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:rounded focus:bg-base-100 focus:px-4 focus:py-3 focus:text-primary">Skip to content</a>
         {/* Terminal Header */}
         <header
           className={cn(
             "sticky top-0 z-50 w-full transition-all duration-300 font-mono border-b border-base-200/10",
-            scrolled 
-              ? "bg-base-100/90 backdrop-blur" 
+            scrolled
+              ? "bg-base-100/90 backdrop-blur"
               : "bg-transparent"
           )}
         >
-          <div className="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between">
+          <div className="max-w-5xl mx-auto gap-3 px-4 sm:px-6 py-3 flex items-center justify-between">
             {/* Left: Mac buttons + terminal */}
-            <div className="flex items-center gap-3">
+            <div className="flex min-w-0 items-center gap-3">
               {/* Mac-style window controls */}
-              <div className="flex gap-1" aria-hidden="true">
+              <div className="hidden shrink-0 gap-1 sm:flex" aria-hidden="true">
                 <div className="h-2.5 w-2.5 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors"></div>
                 <div className="h-2.5 w-2.5 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors"></div>
                 <div className="h-2.5 w-2.5 rounded-full bg-green-500/80 hover:bg-green-500 transition-colors"></div>
               </div>
-              
+
               {/* Terminal path display */}
               <Link href="/" className="group">
-                <span className="text-xs font-mono text-base-content/70">
+                <span className="text-xs font-mono text-base-content/70 whitespace-nowrap">
                   <span className="text-primary">[minhbtc@ai-eng]</span>
-                  <span className="text-base-content/60 mx-1">-</span>
-                  <span className="text-primary">[{typedPath}]</span>
-                  {/* <span 
-                    className={cn(
-                      "inline-block w-2 h-4 align-middle ml-1 bg-primary",
-                      cursorVisible ? "opacity-100" : "opacity-0"
-                    )}
-                  /> */}
+                  <span className="hidden lg:inline">
+                    <span className="text-base-content/60 mx-1">-</span>
+                    <span className="text-primary">[{typedPath}]</span>
+                  </span>
+
                 </span>
               </Link>
             </div>
-            
+
             {/* Center: Navigation Links */}
-            <nav className="flex items-center gap-6">
+            <nav aria-label="Main navigation" className="hidden md:flex items-center gap-5">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   href={link.path}
+                  aria-current={pathname === link.path ? 'page' : undefined}
                   className={cn(
                     "text-sm font-medium transition-colors",
                     pathname === link.path || (link.path !== '/' && pathname?.startsWith(link.path))
-                      ? "text-base-content" 
+                      ? "text-base-content"
                       : "text-base-content/70 hover:text-base-content"
                   )}
                 >
@@ -365,57 +240,23 @@ export default function ClientLayout({
                 </Link>
               ))}
             </nav>
-            
+
             {/* Right: Theme + Search */}
-            <div className="flex items-center gap-4 text-sm font-mono text-base-content/70">
+            <div className="flex shrink-0 items-center gap-1 sm:gap-3 text-sm font-mono text-base-content/70">
               {/* Remove Command K button but keep the functionality via keyboard shortcut */}
-              
+
               {/* PlayButton - Music control */}
               <PlayButton />
-              
+
               {/* Theme Toggle */}
               <button
                 aria-label="Toggle theme"
-                className={`transition-all dark-transition hover:rotate-180 duration-300 cursor-pointer ${
-                  resolvedTheme === 'dark' 
-                    ? 'text-blue-400/80 hover:text-blue-400' 
-                    : 'text-emerald-600/80 hover:text-emerald-600'
-                }`}
-                onClick={() => {
-                  // Use currentTheme as fallback if resolvedTheme is undefined
-                  const activeTheme = resolvedTheme || currentTheme || 'light';
-                  const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
-                  console.log(`Switching theme from ${activeTheme} to ${newTheme}`);
-                  
-                  // Update the state
-                  setCurrentTheme(newTheme);
-                  setTheme(newTheme);
-                  
-                  // Force immediate DOM update for daisyUI
-                  document.documentElement.classList.remove('light', 'dark');
-                  document.documentElement.classList.add(newTheme);
-                  document.documentElement.setAttribute('data-theme', newTheme);
-                  
-                  // Apply theme-specific colors manually to speed up transition
-                  if (newTheme === 'light') {
-                    document.documentElement.style.setProperty('--base-100', '#ffffff');
-                    document.documentElement.style.setProperty('--base-content', '#0f172a');
-                    document.documentElement.style.setProperty('--primary', '#059669');
-                  } else {
-                    document.documentElement.style.setProperty('--base-100', '#0f172a');
-                    document.documentElement.style.setProperty('--base-content', '#f8fafc');
-                    document.documentElement.style.setProperty('--primary', '#3b82f6');
-                  }
-                  
-                  // Force a reflow/repaint to ensure styles are applied immediately
-                  document.body.style.display = 'none';
-                  document.body.offsetHeight; // Trigger reflow
-                  document.body.style.display = '';
-                }}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-primary hover:bg-base-200"
+                onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
               >
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
-                    key={resolvedTheme === 'dark' ? 'dark' : 'light'}
+                    key={mounted && resolvedTheme === 'dark' ? 'dark' : 'light'}
                     initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
                     animate={{ opacity: 1, rotate: 0, scale: 1 }}
                     exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
@@ -423,20 +264,21 @@ export default function ClientLayout({
                     className="flex items-center"
                   >
                     {
-                    resolvedTheme === 'dark' ? (
+                    mounted && resolvedTheme === 'dark' ? (
                       <span className="text-sm relative">🌙</span>
                     ) : (<span className="text-sm relative">☀️</span>)
                     }
                   </motion.div>
                 </AnimatePresence>
               </button>
-              
+
               {/* Mobile Menu Toggle - Only visible on smaller screens */}
               <button
                 type="button"
-                className="hover:text-base-content cursor-pointer md:hidden"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-base-200 hover:text-base-content md:hidden"
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open menu"
+                aria-expanded={mobileMenuOpen}
               >
                 <Menu className="h-4 w-4" aria-hidden="true" />
               </button>
@@ -471,6 +313,7 @@ export default function ClientLayout({
                   leaveTo="opacity-0 scale-95"
                 >
                   <Dialog.Panel className="w-full max-w-sm rounded-lg bg-base-100 p-6 shadow-lg font-mono">
+                    <Dialog.Title className="sr-only">Navigation</Dialog.Title>
                     <div className="flex items-center justify-between mb-5">
                       <Link href="/" onClick={() => setMobileMenuOpen(false)}>
                         <span className="flex items-center gap-2">
@@ -489,10 +332,10 @@ export default function ClientLayout({
                         <X className="h-5 w-5" aria-hidden="true" />
                       </button>
                     </div>
-                    
+
                     {/* Command menu trigger (mobile) */}
                     <div className="mb-4">
-                      <button 
+                      <button
                         className="w-full text-xs text-base-content/60 hover:text-base-content border border-base-200 rounded-md px-4 py-2 flex items-center"
                         onClick={() => {
                           setShowCommandMenu(true)
@@ -504,7 +347,7 @@ export default function ClientLayout({
                         <kbd className="ml-auto font-mono text-xs bg-base-200 px-1.5 py-0.5 rounded">⌘K</kbd>
                       </button>
                     </div>
-                    
+
                     <div className="space-y-1">
                       {navLinks.map((link) => (
                         <Link
@@ -513,7 +356,7 @@ export default function ClientLayout({
                           className={cn(
                             "block px-3 py-2 text-xs transition-colors",
                             pathname === link.path
-                              ? "text-primary border-l border-primary pl-2" 
+                              ? "text-primary border-l border-primary pl-2"
                               : "text-base-content/70 hover:text-base-content hover:border-l hover:border-base-200 hover:pl-2"
                           )}
                           onClick={() => setMobileMenuOpen(false)}
@@ -525,10 +368,10 @@ export default function ClientLayout({
                         </Link>
                       ))}
                     </div>
-                    
+
                     <div className="mt-6 pt-6 border-t border-base-200">
                       <a
-                        href={process.env.NEXT_PUBLIC_GITHUB_URL}
+                        href={profile.github}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center px-3 py-2 text-xs text-base-content/70 hover:text-base-content"
@@ -572,21 +415,28 @@ export default function ClientLayout({
                     leaveTo="opacity-0 scale-95"
                   >
                     <Dialog.Panel className="w-full max-w-md rounded-lg bg-base-100 shadow-lg border border-base-200 font-mono">
+                      <Dialog.Title className="sr-only">Find a page</Dialog.Title>
                       <div className="p-2">
                         <div className="flex items-center p-2 border-b border-base-200">
                           <span className="text-primary mr-2">$</span>
-                          <input 
-                            type="text" 
-                            className="w-full bg-transparent focus:outline-none text-base-content text-sm" 
-                            placeholder="search posts..."
+                          <input
+                            type="text"
+                            className="w-full bg-transparent focus:outline-none text-base-content text-sm"
+                            placeholder="find a page..."
+                            aria-label="Find a page"
+                            value={searchQuery}
+                            onChange={event => setSearchQuery(event.target.value)}
                             autoFocus
                           />
                           <kbd className="ml-2 font-mono text-xs bg-base-200 px-1.5 py-0.5 rounded text-base-content/60">Esc</kbd>
                         </div>
-                        
-                        <div className="py-6 px-2 text-xs text-base-content/60 text-center">
-                          # type to search blog posts and pages
-                        </div>
+
+                        <nav aria-label="Quick navigation" className="space-y-1 p-2">
+                          {navLinks.filter(link => link.label.toLowerCase().includes(searchQuery.toLowerCase())).map(link => (
+                            <Link key={link.path} href={link.path} onClick={() => setShowCommandMenu(false)} className="flex items-center gap-3 rounded px-3 py-3 text-sm hover:bg-base-200">{link.icon}{link.label}</Link>
+                          ))}
+                          {!navLinks.some(link => link.label.toLowerCase().includes(searchQuery.toLowerCase())) && <p className="p-3 text-sm text-base-content/70">No matching pages.</p>}
+                        </nav>
                       </div>
                     </Dialog.Panel>
                   </Transition.Child>
@@ -597,7 +447,7 @@ export default function ClientLayout({
         )}
 
         {/* Main content */}
-        <main className="flex-grow">
+        <main id="main-content" className="flex-grow">
           {children}
         </main>
 
@@ -614,4 +464,4 @@ export default function ClientLayout({
       </div>
     </MotionConfig>
   );
-} 
+}

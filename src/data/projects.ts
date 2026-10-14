@@ -14,6 +14,8 @@ export interface Project {
   tags: string[];
   /** Project description */
   description: string;
+  points?: string[];
+  status?: string;
   /** URL to project (GitHub, live site, etc.) */
   url?: string;
   /** Optional path to project image */
