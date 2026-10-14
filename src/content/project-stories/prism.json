@@ -1,10 +1,7 @@
 {
   "slug": "prism",
   "project": "PRISM | AI Self-Reflection App",
-  "title": "Building PRISM: a reflective AI product with an operational backend",
-  "summary": "How streaming, concurrent generation cost control, cancellation cleanup, subscription consistency and privacy-conscious telemetry fit together in a bilingual iOS reflection app that is in internal QA.",
-  "lead": "PRISM is a bilingual iOS self-reflection app with a Flutter client and an asynchronous Python backend. I worked on it, and it is in internal QA and has not launched. In this post I focus on the operational engineering: streaming generated text over server-sent events, reserving spend before a provider call, cleaning up interrupted requests, keeping subscriptions consistent, and keeping private text out of logs. I also say what I have verified and what I have not.",
-  "status": "Internal QA",
+  "status": "Coming soon",
   "stack": [
     "Flutter",
     "FastAPI",
@@ -13,253 +10,113 @@
     "RevenueCat",
     "SSE"
   ],
+  "date": "2026-10-14",
+  "title": "Building PRISM: a self-reflection app for iPhone",
+  "summary": "What PRISM is, the principles I am building it around, how its pieces fit together, and what I have and have not verified while it is in internal QA.",
+  "lead": "PRISM is a bilingual iPhone app for self-reflection that I am building with a Flutter client and a FastAPI backend. It has a daily check-in, readings with a streamed AI reply, a private journal and a Self Map of patterns over time. It is in internal QA and has not been released. In this post I describe the product, the principles that shape the engineering, how the pieces fit together at a high level, and what I still have to prove before I would call it ready.",
   "flow": [
-    "Check account and entitlement",
-    "Reserve generation capacity",
-    "Build contextual input",
-    "Stream the response",
-    "Settle or release the reservation",
-    "Persist the user-visible result"
+    "Open the app and check in",
+    "Choose a question and a spread",
+    "Draw the cards",
+    "Read the streamed reply",
+    "Ask a follow-up",
+    "Save notes to the private journal"
   ],
   "diagram": {
-    "chart": "sequenceDiagram\n    participant App as Flutter app\n    participant API as FastAPI\n    participant Guard as Redis guard\n    participant LLM as AI provider\n    App->>API: Start reflection\n    API->>Guard: Reserve expected spend\n    Guard-->>API: Reservation granted\n    API->>LLM: Generate\n    LLM-->>API: Tokens\n    API-->>App: Stream over SSE\n    alt Completed\n        API->>Guard: Settle against actual usage\n    else Client disconnected\n        API->>Guard: Release or settle by usage\n    end",
-    "caption": "A generation request reserves spend first, streams the response, and always ends in a settle or release step."
+    "chart": "flowchart LR\n    APP[\"iPhone app (Flutter)\"] -- \"REST and streamed replies\" --> API[\"API (FastAPI)\"]\n    API --> DB[\"PostgreSQL\"]\n    API --> CACHE[\"Redis\"]\n    API --> AI[\"AI provider\"]\n    API --> PAY[\"Subscription service\"]\n    JOBS[\"Background worker\"] --> DB",
+    "caption": "The main pieces of PRISM at a high level. The app talks to one API; the API owns data, access rules and every call to outside services."
   },
   "sections": [
     {
-      "title": "Context and product boundary",
+      "title": "What PRISM is",
       "paragraphs": [
-        "PRISM is a self-reflection product for iPhone. The experience centers on checking in, considering a question and returning to personal notes over time. The AI supports reflection; it is not positioned as prediction or therapy, and nothing here is a clinical claim.",
-        "That positioning shapes the engineering. A streamed response has to feel coherent, a saved entry has to stay private, and the interface has to work in both Vietnamese and English. The product is in internal QA and has not launched publicly, so I describe design reasoning and implemented mechanisms, not production results.",
-        "The engineering problems below share a theme. Each is about a moment where the happy path stops being the whole story: a stream that is cut off, a spend that may or may not have happened, a purchase event that arrives late, a log line that could contain someone's private writing.",
-        "The stack is Flutter on the client, FastAPI with PostgreSQL and Redis on the backend, and RevenueCat for subscriptions. Each piece has a narrow role: PostgreSQL holds durable data, Redis holds the short-lived coordination state for generation, and RevenueCat is the source of subscription events. Keeping those roles separate is what lets the failure handling below stay understandable."
+        "PRISM is meant to be a calm place to check in with how you feel, think something through and notice your own patterns. Each day has a short check-in with a card to reflect on. A reading starts from a question you choose, a spread and the cards you draw, and ends with a reply that explains each card in its position and suggests one small next step. A journal keeps notes and past readings, and a Self Map brings together a few ways of looking at yourself.",
+        "I use tarot as a mirror for reflection, not for prediction, and PRISM is not therapy. That positioning is a product decision with engineering consequences: replies must stay grounded in the cards and in what the person shared, and the app must behave carefully when someone writes something that sounds like distress.",
+        "The app is Vietnamese first and English from the start, so every string and every reply exists in both languages."
       ],
       "definitions": [
         {
-          "term": "Server-sent events (SSE)",
-          "text": "A one-way streaming channel from server to client over HTTP. Background: the server keeps the response open and sends text events as they are produced."
+          "term": "Check-in",
+          "text": "A short daily ritual: name how you feel, choose one small intention and read a card's reflection prompt."
         },
         {
-          "term": "Reservation",
-          "text": "A hold placed before a provider call that represents expected spend. It is later settled against actual usage or released."
+          "term": "Reading",
+          "text": "A question, a spread of cards and a streamed reply that explains each card in its position."
         },
         {
-          "term": "Entitlement",
-          "text": "Whether an account currently has access to a paid capability, derived from durable subscription state."
+          "term": "Self Map",
+          "text": "A combined view of a few reflective lenses, such as numerology, birth cards and a personality test."
+        },
+        {
+          "term": "Journal",
+          "text": "Private notes, check-ins and saved readings kept over time."
         }
       ]
     },
     {
-      "title": "Connect a mobile app to a streaming service",
+      "title": "Principles I am building around",
       "paragraphs": [
-        "I worked across a Flutter application and an asynchronous Python backend. The backend is the boundary between product behavior and the selected AI provider, so the provider can change without changing the client. Server-sent events deliver generated text incrementally.",
-        "Streaming adds states that a normal request and response does not have. A request is admitted, starts generating, streams partial text and may then be interrupted. The client has to tell a partial result from a completed one, and the server needs a defined cleanup path. Treating a disconnect as an ordinary success leaves both data and accounting inconsistent.",
-        "Keeping the provider behind the backend also keeps provider-specific details out of the app. The cost is that the backend owns more responsibility: it must translate whatever the provider returns into the stream the client expects, and it must decide what to do when that stream ends early.",
-        "One reason to choose server-sent events for this shape of problem is that the data flows in one direction, from the server to the app, while the request that starts it is an ordinary call. As background, SSE is simpler than a bidirectional channel because there is no need for the client to send messages on the same connection. The trade-off is that the client learns about a problem only through the stream itself, so the end of a stream needs to be unambiguous: a finished response and a dropped connection must not look the same."
-      ],
-      "diagrams": [
-        {
-          "chart": "stateDiagram-v2\n    [*] --> Admitted\n    Admitted --> Generating : provider call starts\n    Generating --> Streaming : first text sent\n    Streaming --> Completed : response finished\n    Streaming --> Interrupted : client disconnects\n    Generating --> Interrupted : client disconnects\n    Completed --> [*]\n    Interrupted --> [*]",
-          "caption": "Generic lifecycle of a streamed generation. The sources describe admission, generation, partial streaming and interruption; the exact state names here are an inference and not the real implementation."
-        }
+        "Four principles drive most of the decisions, and I try to turn each into a check I can run.",
+        "Reflection, not prediction. Replies avoid dates, yes or no verdicts and claims about what other people think. This is easier to say than to enforce, so I treat it as something to evaluate on real Vietnamese and English cases.",
+        "Private by default. A journal is the most personal data in the app. I keep private text encrypted in storage and keep it out of logs and analytics, and I would rather debug from event types and request identifiers than from what someone wrote.",
+        "The server decides access. What is free, what needs a subscription and what a purchase unlocks is decided on the backend, so the app is a view of the account and not the authority on it.",
+        "Calm when things fail. A streamed reply can be cut off, a phone can go offline and a purchase can be delayed. I want each of those to end in a clear state the person understands, not in a spinner."
       ]
     },
     {
-      "title": "Reserve capacity before spending it",
+      "title": "How the pieces fit",
       "paragraphs": [
-        "A Redis-backed generation guard makes admission and cost tracking explicit. A reservation represents the expected spend before the provider call starts. Completion settles the reservation against actual usage, and a request that has not incurred spend releases its hold.",
-        "The reasoning is about concurrency. If several generations start at once and cost is only recorded afterwards, the total exposure is unknown until they finish. Reserving first means each request claims part of a budget before it can spend, so the amount that can be in flight at once is bounded. The purpose is to control concurrent generation spend.",
-        "The guard uses user-scoped locks and ownership tokens. Cleanup must not delete a lock that expired and was then acquired by another request, so interruption handling respects who owns the work. As background, this is a common pattern with Redis locks: a token proves that the party releasing a lock is the one that acquired it.",
-        "These mechanisms bound concurrent generation exposure. They are not a claim about reduced model bills, which still depend on pricing, token usage and real demand.",
-        "What I would be careful about is the estimate. A reservation is an expected amount, and the real usage may differ. The settle step exists to reconcile the two, which is why the diagram ends every path in settle or release. I have not measured how close the estimate is to actual usage, so I treat that comparison as a first-order metric rather than a property I can assert."
-      ],
-      "diagrams": [
-        {
-          "chart": "stateDiagram-v2\n    [*] --> Reserved : hold\n    Reserved --> Settled : completed\n    Reserved --> Released : no spend\n    Reserved --> Settled : interrupted with usage\n    Settled --> [*]\n    Released --> [*]",
-          "caption": "Reservation lifecycle. The sources state reserve, settle against actual usage, and release when no spend was incurred; which interruption cases settle and which release is a design question about the mechanism, not a measured behavior."
-        }
-      ],
-      "table": {
-        "caption": "Trade-offs of reserving before the provider call.",
-        "headers": [
-          "Choice",
-          "Benefit",
-          "Cost or risk"
-        ],
-        "rows": [
-          [
-            "Reserve expected spend first",
-            "Bounds how much can be in flight at once",
-            "An estimate is needed before actual usage is known"
-          ],
-          [
-            "Settle against actual usage",
-            "Accounting reflects what was really used",
-            "Settlement must run even when the request ends early"
-          ],
-          [
-            "User-scoped locks with ownership tokens",
-            "A cleanup cannot remove another request's lock",
-            "Extra bookkeeping for each request"
-          ],
-          [
-            "Release when no spend occurred",
-            "Holds do not stay reserved",
-            "Needs a clear rule for what counts as spend"
-          ]
-        ]
-      }
-    },
-    {
-      "title": "Treat cancellation as part of the lifecycle",
-      "paragraphs": [
-        "A user leaving a screen is a normal event. I worked on cancellation cleanup so interrupted generation does not leave resources reserved indefinitely.",
-        "The useful question is what had already happened when the request stopped: was a provider call started, did it incur usage, was a result persisted, and which cleanup is still safe? Reasoning about those transitions keeps cost tracking and user-visible state aligned.",
-        "A request that stops before the provider call has nothing to settle, so releasing the hold is the natural outcome. A request that stops after text has been generated may already have incurred usage, so the accounting should reflect that rather than pretend nothing happened. The diagram at the top of the article shows this as release or settle by usage, and it is the part of the design most sensitive to implementation detail.",
-        "Cancellation is easy to under-test because it does not fail loudly. If cleanup is skipped, nothing crashes; a hold simply stays in place and a later request is affected. For that reason I think of cancellation as a path that deserves the same design attention as completion, with the same question asked at each stage: what state do we own, and what is safe to release."
-      ],
-      "table": {
-        "caption": "Interruption points and the question each one asks. This is a reasoning aid, not a log of observed behavior.",
-        "headers": [
-          "When the request stops",
-          "What to check",
-          "Intended outcome"
-        ],
-        "rows": [
-          [
-            "Before the provider call",
-            "Was any spend incurred?",
-            "Release the hold"
-          ],
-          [
-            "During generation, before text is sent",
-            "Did the provider report usage?",
-            "Settle by usage, or release if none"
-          ],
-          [
-            "After partial text was streamed",
-            "Is the partial text user-visible?",
-            "Clean up and keep accounting aligned"
-          ],
-          [
-            "After completion",
-            "Was the result persisted?",
-            "Settle and persist the result"
-          ]
-        ]
-      }
-    },
-    {
-      "title": "Keep entitlement and identity consistent",
-      "paragraphs": [
-        "Subscription webhooks and account changes can arrive outside the active app session. I worked on webhook reconciliation and account-merge consistency, so access follows durable account state instead of whatever a client screen last showed.",
-        "As background, a webhook is a message a billing service sends to your backend when something changes, and it may be delivered more than once or out of order. Reconciling means the backend applies an event in a way that tolerates repeats and reordering, so the same input leads to the same stored state. Account merges add a second concern: when two identities become one, the entitlement and records that belong to the account must stay attached to the surviving identity.",
-        "Duplicate or reordered events, sign-in transitions and interrupted updates all need explicit handling. Local checks cover the implementation, but purchase, restore, refund and identity-provider flows still need validation against the real services and devices.",
-        "The design principle is that the client is a view of the account, not the authority on it. A screen can show stale access if a purchase finished moments ago or a restore is in progress, so the backend decision uses durable state. This also means the client can be simple: it asks what access the account has instead of reasoning about subscription events itself."
-      ],
-      "diagrams": [
-        {
-          "chart": "flowchart TD\n    A[\"Subscription event received\"] --> B[\"Identify the account\"]\n    B --> C{\"Already applied?\"}\n    C -- \"yes\" --> D[\"Ignore duplicate\"]\n    C -- \"no\" --> E[\"Reconcile with stored state\"]\n    E --> F[\"Update durable entitlement\"]\n    F --> G[\"Client reads current access\"]",
-          "caption": "Generic webhook reconciliation flow: identify the account, tolerate duplicates, update durable state, and let the client read it. This is an abstraction of the reconciliation work, not the real handler."
-        }
-      ],
-      "table": {
-        "caption": "Cases entitlement handling has to cover and the validation status of each.",
-        "headers": [
-          "Case",
-          "Why it matters",
-          "Status"
-        ],
-        "rows": [
-          [
-            "Duplicate event",
-            "Applying twice must not change the outcome",
-            "Needs explicit handling; real-service validation pending"
-          ],
-          [
-            "Reordered events",
-            "An older event must not overwrite newer state",
-            "Needs explicit handling; real-service validation pending"
-          ],
-          [
-            "Account merge",
-            "Access must stay with the surviving account",
-            "Worked on; needs validation with real identity flows"
-          ],
-          [
-            "Purchase, restore, refund",
-            "Each changes access differently",
-            "Not yet validated against real services and devices"
-          ]
-        ]
-      }
-    },
-    {
-      "title": "Design privacy into storage and observability",
-      "paragraphs": [
-        "Private text should not become routine diagnostic output. The backend encrypts private text and uses privacy-conscious telemetry that keeps operational events separate from the substance of a reflection.",
-        "The trade-off is that debugging is less convenient when raw content is unavailable. The answer is to define useful event types, failure categories and correlation identifiers early, not to log personal entries by default. An event such as a generation that ended early, with a category and an identifier, is enough to find the request without storing what the person wrote.",
-        "The same principle applies to generation input. Private text is needed to produce a response, but needing it in one place does not justify copying it into every log, metric or error report. Keeping the path that handles the text separate from the path that reports on the system limits where personal writing can end up. I have not audited the product against a formal privacy standard, and I make no compliance claim."
-      ],
-      "diagrams": [
-        {
-          "chart": "flowchart TD\n    P[\"Private reflection text\"] --> S[\"Encrypted storage\"]\n    P --> G[\"Generation request\"]\n    G --> O[\"Operational events\"]\n    O --> T[\"Telemetry: event type, category, id\"]\n    P -. \"kept out\" .-> T",
-          "caption": "Data boundary: private text goes to encrypted storage and the generation path, while telemetry carries only operational information. The exact fields in telemetry are not specified in the sources."
-        }
+        "The app is written in Flutter with Riverpod for state, and it queues journal changes offline so that a note written without a connection is not lost. The backend is a FastAPI modular monolith with async SQLAlchemy over PostgreSQL, which is the system of record. Redis supports rate limits and short-lived coordination, and a background worker handles scheduled maintenance.",
+        "Replies reach the app as a stream of text events over HTTP, so the first words appear while the rest is still being written. I chose a one-way stream because data only flows from the server to the app. The AI provider is selected by configuration, with separate settings for readings, chat and letters, and a built-in stand-in model lets every flow run locally without keys. Subscriptions and purchases go through a third-party subscription service.",
+        "I describe these pieces at a high level on purpose. The app is not released, and I do not want to publish the details of how access and usage are protected."
       ]
     },
     {
-      "title": "What has been verified and what has not",
+      "title": "What I have verified, and what I have not",
       "paragraphs": [
-        "PRISM covers mobile interaction, streaming APIs, persistent data, generation guards and subscription handling end to end. I prepared release checks and local validation. That is the extent of what I claim: local checks of the implementation, not results from a launched product.",
-        "Not yet verified are the real purchase, restore, refund and identity-provider flows on real devices, the full product in its deployment context, and any figure about cost, completion or quality. I include no launch date, pricing, revenue or user count because none is established.",
-        "The distinction matters for a product of this kind. A reflection app handles personal writing, and a payment flow handles money, so the cases that matter most are the ones that are hardest to exercise locally: a restore on a second device, a refund arriving after access was granted, a merge of two sign-in methods. Those are the checks I would want complete before describing the system as ready."
+        "The backend has an automated test suite that runs in continuous integration against a real database and cache, and the app has layout tests across phone sizes from small iPhones to wide displays. I have also reviewed screens in both languages on simulators. I did not rerun any of these for this post, and I treat passing tests as evidence about the code only.",
+        "What only real services can prove is still open. I have not yet completed the sandbox purchase and restore checks on real devices, a measured evaluation of reply quality in Vietnamese and English, or a review of how the whole system behaves with real subscribers. Until I have those results, I make no claims about cost, speed, quality or scale."
       ]
     },
     {
-      "title": "What to measure next",
+      "title": "What comes next",
       "paragraphs": [
-        "Before publishing numbers I would collect completion and interruption rates, response quality feedback, cost per completed interaction, and results from real purchase and restore tests. Source code alone cannot establish those.",
-        "Each metric maps to a mechanism above. Interruption rate tests whether cancellation cleanup matters in practice, cost per completed interaction tests the reservation estimate against actual usage, and purchase and restore results test webhook reconciliation. Until then, the accurate summary is that the mechanisms are built and in internal QA."
+        "Next I want to finish the real-device purchase checks, run a larger evaluation of replies in both languages, including low-mood and prompt-injection cases, and measure how quickly the first words of a reply appear. When the app is on the App Store, I will link it here and write a follow-up with measured results."
       ]
     }
   ],
-  "date": "2026-10-14",
   "takeaways": [
-    "Streaming creates states a plain request does not have: admitted, generating, partial, interrupted. Design the cleanup path for each.",
-    "Reserve expected spend before the provider call and settle or release afterwards, so concurrent exposure is bounded.",
-    "Ownership tokens stop cleanup from removing a lock that now belongs to another request.",
-    "Entitlement should follow durable account state, with webhook handling that tolerates duplicate and reordered events.",
-    "Keep private text out of telemetry by defining useful event types and identifiers up front. PRISM is in internal QA and no outcome claims are made."
+    "Turn product principles, such as reflection not prediction, into things you can test.",
+    "Keep private text encrypted and out of logs and analytics from the start.",
+    "Decide access on the server so the app only shows the account's state.",
+    "Design each failure, such as a cut-off reply or an offline note, to end in a clear state.",
+    "Say what is built, what is tested and what is still unproven while the app is unreleased."
   ],
   "reviewNotes": [
-    "Added a date (2026-10-14); the original file had none. Confirm the intended publication date.",
-    "Confirm the main sequence diagram, especially the disconnect behavior (release vs settle by usage).",
-    "Confirm the generation lifecycle state diagram: state names are inferred from the sources.",
-    "Confirm the reservation lifecycle diagram, including which interruptions settle and which release.",
-    "Confirm the webhook reconciliation flow, especially the 'already applied' check, which is a generic abstraction rather than a stated mechanism.",
-    "Confirm the privacy boundary diagram and that stating which fields telemetry carries (event type, category, identifier) matches the implementation.",
-    "Confirm what product details you want public while PRISM remains in internal QA. Do not add launch dates, pricing, revenue or live user counts without separate confirmation."
+    "This is the high-level version you chose. It leaves out budget, billing-event, device-check, trial and account-merge details, plus all screenshots and diagrams from the private repository.",
+    "Check every product sentence against what you are happy to say publicly: spreads, check-ins, Self Map lenses, offline notes.",
+    "I did not mention the target launch date, prices or Moon amounts.",
+    "When the App Store page exists, add the link in the Coming soon callout in src/components/post/story.tsx or on this story.",
+    "Please confirm the claim that layouts were reviewed on simulators in both languages; it comes from the repository README, not from my own run."
   ],
   "sources": [
     {
       "label": "Server-sent events (MDN)",
       "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events",
-      "note": "streaming transport"
-    },
-    {
-      "label": "RevenueCat documentation",
-      "url": "https://www.revenuecat.com/docs",
-      "note": "subscriptions and webhooks"
-    },
-    {
-      "label": "Redis documentation",
-      "url": "https://redis.io/docs/",
-      "note": "locks and atomic counters"
+      "note": "how streamed replies work"
     },
     {
       "label": "Flutter documentation",
       "url": "https://docs.flutter.dev/"
+    },
+    {
+      "label": "FastAPI documentation",
+      "url": "https://fastapi.tiangolo.com/"
+    },
+    {
+      "label": "RevenueCat documentation",
+      "url": "https://www.revenuecat.com/docs",
+      "note": "subscriptions and purchases"
     }
   ]
 }
