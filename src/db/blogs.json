@@ -17,10 +17,10 @@
   },
   {
     "slug": "prism",
-    "title": "Building PRISM: a reflective AI product with an operational backend",
-    "description": "How streaming, concurrent generation cost control, cancellation cleanup, subscription consistency and privacy-conscious telemetry fit together in a bilingual iOS reflection app that is in internal QA.",
+    "title": "Building PRISM: a self-reflection app for iPhone",
+    "description": "What PRISM is, the principles I am building it around, how its pieces fit together and what I have and have not verified. Coming soon: the app is in internal QA.",
     "date": "2026-10-14",
-    "readingTime": "8 min read",
+    "readingTime": "3 min read",
     "tags": [
       "flutter",
       "fastapi",
@@ -28,7 +28,7 @@
       "redis",
       "revenuecat"
     ],
-    "content": "How streaming, concurrent generation cost control, cancellation cleanup, subscription consistency and privacy-conscious telemetry fit together in a bilingual iOS reflection app that is in internal QA.",
+    "content": "What PRISM is, the principles I am building it around, how its pieces fit together and what I have and have not verified. Coming soon: the app is in internal QA.",
     "published": true
   },
   {
